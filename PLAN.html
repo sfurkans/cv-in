@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV Builder — Yapım Aşamaları</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --easy: #3fb950;
+    --medium: #d29922;
+    --hard: #f85149;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 40px 20px;
+  }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 50px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--border);
+  }
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: var(--accent);
+  }
+  header p {
+    color: var(--muted);
+    font-size: 1.1rem;
+  }
+  .nav-link {
+    display: inline-block;
+    margin-top: 15px;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  .nav-link:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .phase {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 25px 30px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+  }
+  .phase:hover { border-color: var(--accent); }
+  .phase-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .phase-title {
+    font-size: 1.4rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .badge.easy   { background: rgba(63, 185, 80, 0.15); color: var(--easy); border: 1px solid var(--easy); }
+  .badge.medium { background: rgba(210, 153, 34, 0.15); color: var(--medium); border: 1px solid var(--medium); }
+  .badge.hard   { background: rgba(248, 81, 73, 0.15); color: var(--hard); border: 1px solid var(--hard); }
+  .description {
+    background: rgba(88, 166, 255, 0.05);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 15px;
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+  .goal {
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 18px;
+    font-size: 0.9rem;
+  }
+  ul {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 10px;
+  }
+  li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+    padding: 10px 0 10px 24px;
+    position: relative;
+    border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+    align-items: start;
+  }
+  li:last-child { border-bottom: none; }
+  li::before {
+    content: "▸";
+    position: absolute;
+    left: 4px;
+    top: 10px;
+    color: var(--accent);
+  }
+  .step { color: var(--text); font-size: 0.92rem; }
+  .desc {
+    color: var(--muted);
+    font-size: 0.84rem;
+    line-height: 1.5;
+    padding-left: 12px;
+    border-left: 2px solid rgba(88, 166, 255, 0.2);
+  }
+  code {
+    background: rgba(110, 118, 129, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Monaco, Consolas, monospace;
+    font-size: 0.9em;
+    color: #ffa657;
+  }
+  footer {
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .stack-tag {
+    display: inline-block;
+    background: rgba(88, 166, 255, 0.1);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin: 3px;
+    border: 1px solid rgba(88, 166, 255, 0.3);
+  }
+  .stack-row {
+    margin: 20px 0;
+    text-align: center;
+  }
+  @media (max-width: 768px) {
+    li {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .desc {
+      padding-left: 0;
+      border-left: none;
+      padding-top: 4px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>CV Builder</h1>
+    <p>Yapım Aşamaları Rehberi</p>
+    <a href="TANITIM.html" class="nav-link">→ Proje Tanıtımı</a>
+    <div class="stack-row">
+      <span class="stack-tag">React</span>
+      <span class="stack-tag">Vite</span>
+      <span class="stack-tag">TypeScript</span>
+      <span class="stack-tag">Tailwind</span>
+      <span class="stack-tag">shadcn/ui</span>
+      <span class="stack-tag">Zustand</span>
+      <span class="stack-tag">react-hook-form</span>
+      <span class="stack-tag">Zod</span>
+      <span class="stack-tag">react-pdf</span>
+      <span class="stack-tag">Express</span>
+      <span class="stack-tag">Prisma</span>
+      <span class="stack-tag">PostgreSQL</span>
+      <span class="stack-tag">Vitest</span>
+      <span class="stack-tag">Testing Library</span>
+      <span class="stack-tag">Supertest</span>
+      <span class="stack-tag">Multer</span>
+      <span class="stack-tag">Axios</span>
+      <span class="stack-tag">@dnd-kit</span>
+    </div>
+  </header>
+
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-title">PHASE 0 — Setup</span>
+      <span class="badge easy">Kolay</span>
+    </div>
+    <div class="description">
+      Geliştirme ortamını sıfırdan kuruyoruz. Boş bir klasörden başlayıp React, TypeScript ve Tailwind ile çalışan bir iskelet oluşturuyoruz. Bu phase bittiğinde tarayıcıda açılan, "Hello CV Builder" yazan bir sayfan olacak.
+    </div>
+    <p class="goal">Hedef: Çalışan bir React + TypeScript + Tailwind iskeleti.</p>
+    <ul>
+      <li>
+        <span class="step"><code>npm create vite@latest client</code> ile React + TS projesi</span>
+        <span class="desc">Vite ile boş bir React + TypeScript projesi oluştur. Hızlı dev server ve modern build aracı.</span>
+      </li>
+      <li>
+        <span class="step">Tailwind CSS kurulumu ve config</span>
+        <span class="desc">Utility-first CSS framework. <code>bg-blue-500</code> gibi hazır class'larla styling yapacağız.</span>
+      </li>
+      <li>
+        <span class="step">shadcn/ui init + Button, Input gibi temel componentler</span>
+        <span class="desc">Hazır, accessible component kütüphanesi. Sıfırdan Button yazmaya gerek kalmaz.</span>
+      </li>
+      <li>
+        <span class="step">ESLint + Prettier kurulumu</span>
+        <span class="desc">Kod kalitesi (ESLint) ve otomatik formatlama (Prettier). Standart bir yazım şekli sağlar.</span>
+      </li>
+      <li>
+        <span class="step">Klasör yapısı oluştur (components, pages, store, types, lib, hooks)</span>
+        <span class="desc">Projenin organize klasör hiyerarşisi. Her dosyanın yeri belli olur.</span>
+      </li>
+      <li>
+        <span class="step">Git init ve ilk commit</span>
+        <span class="desc">Versiyon kontrolü başlat. Her phase sonunda commit atacağız.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-title">PHASE 1 — Types ve Layout</span>
+      <span class="badge easy">Kolay</span>
+    </div>
+    <div class="description">
+      Projenin "iskeleti"ni oluşturuyoruz. CV verisinin TypeScript'te nasıl görüneceğini tanımlıyoruz, sayfalar arası geçişi sağlıyoruz, ana ekranların yerleşimini hazırlıyoruz. Henüz form yok ama header, sidebar, sayfa düzeni hazır.
+    </div>
+    <p class="goal">Hedef: Sayfalar arası gezilebilen, layout'u hazır site.</p>
+    <ul>
+      <li>
+        <span class="step">TypeScript types: <code>Resume, Basics, Work, Education, Skill, Project, Language, Certificate, Volunteer, Publication, CustomSection</code></span>
+        <span class="desc">CV verisinin TypeScript şablonları. Sabit bölümler (deneyim, sertifika, gönüllülük, yayın) + kullanıcının tanımlayacağı özel bölümler için <code>CustomSection</code> type'ı. Basics type'ında <code>profiles</code> array'i (LinkedIn, GitHub, Website).</span>
+      </li>
+      <li>
+        <span class="step">React Router kurulumu</span>
+        <span class="desc">Sayfalar arası geçiş yapan navigation kütüphanesi. URL'ler ile component'ler eşleşir.</span>
+      </li>
+      <li>
+        <span class="step">Sayfalar: Home, Builder, Templates, Dashboard, NotFound</span>
+        <span class="desc">Sitedeki ana sayfaları boş componentler olarak oluştur. Her birinin URL'i olacak.</span>
+      </li>
+      <li>
+        <span class="step">Layout componentleri: Header, Sidebar, Footer</span>
+        <span class="desc">Tüm sayfalarda ortak kullanılacak parçalar. Logo, menü, alt bilgi.</span>
+      </li>
+      <li>
+        <span class="step">Builder sayfası 3 sütun layout: Sidebar | Forms | Preview</span>
+        <span class="desc">Editor sayfasının ana düzeni: solda menü, ortada form, sağda canlı önizleme.</span>
+      </li>
+      <li>
+        <span class="step">Mobile responsive (Tailwind breakpoints)</span>
+        <span class="desc">Telefonda, tablette, masaüstünde uygun görünüm. Tailwind'in <code>sm: md: lg:</code> prefix'leri ile.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-title">PHASE 2 — Form Components</span>
+      <span class="badge medium">Orta</span>
+    </div>
+    <div class="description">
+      Kullanıcının CV bilgilerini gireceği form ekranlarını tasarlıyoruz. Her bölüm için ayrı bir form. Henüz girilen veri kaydedilmiyor, sadece input'lar ve görsel tasarım var.
+    </div>
+    <p class="goal">Hedef: Statik ama görsel olarak tamam form componentleri.</p>
+    <ul>
+      <li>
+        <span class="step">PersonalInfoForm (name, email, phone, label, summary)</span>
+        <span class="desc">Kişisel bilgi formu: isim, iletişim, kısa özet. CV'nin en üst kısmı için.</span>
+      </li>
+      <li>
+        <span class="step">ExperienceForm (company, position, dates, highlights)</span>
+        <span class="desc">İş deneyimi formu: şirket, pozisyon, tarihler, başarılar. CV'nin en önemli kısmı.</span>
+      </li>
+      <li>
+        <span class="step">EducationForm (institution, degree, field, dates)</span>
+        <span class="desc">Eğitim formu: okul, derece, alan ve tarihler.</span>
+      </li>
+      <li>
+        <span class="step">SkillsForm (tag-style input, level)</span>
+        <span class="desc">Yetenek listesi. Tag tarzı (Enter'a basınca chip oluşur) input yapısı.</span>
+      </li>
+      <li>
+        <span class="step">ProjectsForm (name, description, url)</span>
+        <span class="desc">Proje formu: yaptığın projelerin adı, açıklaması ve linki.</span>
+      </li>
+      <li>
+        <span class="step">LanguagesForm (name, proficiency)</span>
+        <span class="desc">Dil bilgisi formu: dil ve seviye (A1, B2 veya başlangıç, akıcı vs.).</span>
+      </li>
+      <li>
+        <span class="step">Sidebar'dan form'lar arası geçiş</span>
+        <span class="desc">Sol menüden tıklayınca o form ana alanda açılsın.</span>
+      </li>
+      <li>
+        <span class="step">PhotoUpload component (PersonalInfoForm içinde)</span>
+        <span class="desc">Profil fotoğrafı yükleme alanı: dosya seç butonu, sürükle-bırak desteği, yüklenen fotoğrafın küçük önizlemesi. Kabul edilen formatlar: JPG, PNG, WebP. Max boyut kontrolü.</span>
+      </li>
+      <li>
+        <span class="step">SocialLinksInput (PersonalInfoForm içinde)</span>
+        <span class="desc">LinkedIn, GitHub, Website ve diğer profil linkleri. "Yeni link ekle" butonu ile dinamik alan ekleme. Her satırda platform seçici (dropdown) + URL input'u.</span>
+      </li>
+      <li>
+        <span class="step">CertificatesForm (name, issuer, date, url)</span>
+        <span class="desc">Sertifika ve kurs formu: sertifika adı, veren kurum, tarih ve doğrulama linki.</span>
+      </li>
+      <li>
+        <span class="step">VolunteerForm (organization, role, dates, summary)</span>
+        <span class="desc">Gönüllülük formu: kuruluş, rol, tarihler ve yapılan işin kısa açıklaması.</span>
+      </li>
+      <li>
+        <span class="step">PublicationsForm (name, publisher, date, url)</span>
+        <span class="desc">Yayın formu: makale/yazı adı, yayıncı, tarih ve erişim linki.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-title">PHASE 3 — State Management + Live Preview</span>
+      <span class="badge medium">Orta</span>
+    </div>
+    <div class="description">
+      Projenin sihirli noktası. Zustand ile tüm CV verisini global bir "kasada" tutuyoruz. Form'a yazdığın anda sağ taraftaki preview'da CV'nin nasıl göründüğünü görüyorsun. Sayfayı kapatsan da veri kaybolmuyor.
+    </div>
+    <p class="goal">Hedef: Form'a yazınca preview'da anında görünmesi.</p>
+    <ul>
+      <li>
+        <span class="step">Zustand kurulumu: <code>npm install zustand</code></span>
+        <span class="desc">Modern state management kütüphanesi. Redux'tan çok daha basit.</span>
+      </li>
+      <li>
+        <span class="step"><code>resumeStore.ts</code> oluştur (state + actions)</span>
+        <span class="desc">CV verisini tutan ve değiştiren merkezi "kasa". Form bu kasaya yazar, preview bu kasadan okur.</span>
+      </li>
+      <li>
+        <span class="step">Persist middleware ile localStorage'a otomatik yazma</span>
+        <span class="desc">Zustand'ın persist eklentisi. Veri tarayıcıda otomatik kaydedilir, sayfa yenilense kaybolmaz.</span>
+      </li>
+      <li>
+        <span class="step">Tüm formları store'a bağla (onChange → action)</span>
+        <span class="desc">Form input'unu yazınca store'daki ilgili field güncellenir.</span>
+      </li>
+      <li>
+        <span class="step">ResumePreview component yaz</span>
+        <span class="desc">Store'u dinleyen ve CV önizlemesini gösteren component. Sürekli güncel kalır.</span>
+      </li>
+      <li>
+        <span class="step">Fotoğrafı store'da tut ve preview'da göster</span>
+        <span class="desc">Yüklenen fotoğrafı Base64 string olarak Zustand store'da sakla. localStorage'a persist edilir. Preview template'inde fotoğrafı göster (yuvarlak veya kare çerçeve).</span>
+      </li>
+      <li>
+        <span class="step"><code>sampleResume.ts</code> — örnek CV verisi + "Örnek CV ile Başla" butonu</span>
+        <span class="desc">Boş formla başlamak yerine hazır örnek veriyle dolu bir CV sunma seçeneği. Kullanıcı ilk açılışta "Boş Başla" veya "Örnek ile Başla" seçer. Formlarda nasıl doldurulacağını gösterir.</span>
+      </li>
+      <li>
+        <span class="step">İlk template: ClassicTemplate (HTML + Tailwind, A4 görünüm)</span>
+        <span class="desc">İlk CV tasarımı. A4 boyutunda, klasik düzenli, profesyonel görünüm.</span>
+      </li>
+      <li>
+        <span class="step">Builder sayfasında preview'ı sağ panele yerleştir</span>
+        <span class="desc">Sol formlar, sağda canlı CV. Yazdığın anda sağda değişiyor.</span>
+      </li>
+      <li>
+        <span class="step">Vitest + React Testing Library kurulumu</span>
+        <span class="desc">Test altyapısı: <code>vitest</code>, <code>@testing-library/react</code>, <code>@testing-library/jest-dom</code>. İlk test config'i.</span>
+      </li>
+      <li>
+        <span class="step">Store unit testleri (<code>resumeStore.test.ts</code>)</span>
+        <span class="desc"><code>updateBasics()</code> çağrınca state doğru değişiyor mu? Persist middleware localStorage'a yazıyor mu? Saf fonksiyon testi — en kolay giriş noktası.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-title">PHASE 4 — Form Validation</span>
+      <span class="badge medium">Orta</span>
+    </div>
+    <div class="description">
+      Form'ların "akıllı" olmasını sağlıyoruz. Boş alan, geçersiz email, yanlış telefon — bunları tespit edip uyarı veriyoruz. react-hook-form ve Zod kütüphaneleriyle.
+    </div>
+    <p class="goal">Hedef: Hata mesajları ve kontrollerle güvenli formlar.</p>
+    <ul>
+      <li>
+        <span class="step">Kur: <code>react-hook-form zod @hookform/resolvers</code></span>
+        <span class="desc">Form yönetimi (RHF) + schema validation (Zod) + ikisini birleştiren resolver.</span>
+      </li>
+      <li>
+        <span class="step"><code>schemas/</code> klasöründe Zod schema'ları yaz</span>
+        <span class="desc">Her formun validation kurallarını TypeScript'le tanımla. "İsim zorunlu, email format kontrolü" gibi.</span>
+      </li>
+      <li>
+        <span class="step">Tüm formları react-hook-form ile refactor et</span>
+        <span class="desc">Eski state-bazlı form'ları RHF'in <code>register</code> ve <code>handleSubmit</code> sistemine geçir.</span>
+      </li>
+      <li>
+        <span class="step">Required, email, phone validation</span>
+        <span class="desc">Boş alan kontrolü, geçerli email format kontrolü, telefon format kontrolü.</span>
+      </li>
+      <li>
+        <span class="step">Hata mesajları input altında göster</span>
+        <span class="desc">Yanlış girişte input'un hemen altında kırmızı bir hata mesajı çıksın.</span>
+      </li>
+      <li>
+        <span class="step">Zod schema testleri (<code>schemas/*.test.ts</code>)</span>
+        <span class="desc">Geçerli veri → parse başarılı mı? Boş isim → doğru hata mesajı mı? Geçersiz email → yakalanıyor mu? Pure function testi — input ver, output kontrol et.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-title">PHASE 5 — Dinamik Bölümler + Drag & Drop</span>
+      <span class="badge medium">Orta</span>
+    </div>
+    <div class="description">
+      Sabit alanlardan dinamik listelere geçiyoruz. Kullanıcı istediği kadar deneyim, eğitim, proje ekleyebilecek ve fareyle sürükleyerek sıralayabilecek.
+    </div>
+    <p class="goal">Hedef: İstediğin kadar item ekleme + sürükleyerek sıralama.</p>
+    <ul>
+      <li>
+        <span class="step"><code>useFieldArray</code> ile dinamik listeler (Experience, Education, vs.)</span>
+        <span class="desc">react-hook-form'un dinamik liste hook'u. Kaç tane item olacağını runtime'da belirler.</span>
+      </li>
+      <li>
+        <span class="step">Add / Remove butonları</span>
+        <span class="desc">"Yeni Deneyim Ekle" ve "Sil" butonları. Liste büyüyüp küçülebilsin.</span>
+      </li>
+      <li>
+        <span class="step">Kur: <code>@dnd-kit/core @dnd-kit/sortable</code></span>
+        <span class="desc">Modern, accessible drag & drop kütüphanesi. React 18 uyumlu.</span>
+      </li>
+      <li>
+        <span class="step">Drag & drop ile bölüm sıralama</span>
+        <span class="desc">Item'ları fareyle tutup yer değiştir. "En yeni iş üstte olsun" gibi.</span>
+      </li>
+      <li>
+        <span class="step">Sıralama değişiklikleri Zustand store'a yansısın</span>
+        <span class="desc">Yeni sıralama store'a kaydedilsin ki preview'da da güncel görünsün.</span>
+      </li>
+      <li>
+        <span class="step">Component testleri (React Testing Library)</span>
+        <span class="desc">Form renderlanıyor mu? "Ekle" butonuna basınca yeni item oluşuyor mu? "Sil" butonuna basınca item kalkıyor mu? Kullanıcı etkileşimlerini simüle eden testler.</span>
+      </li>
+      <li>
+        <span class="step">CustomSectionBuilder — kullanıcı tanımlı özel bölümler</span>
+        <span class="desc">"Özel Bölüm Ekle" butonu ile kullanıcı bölüm adını yazar (ör: "Hobiler", "Ödüller"), istediği kadar alan ekler. Phase 5'in dinamik liste altyapısını kullanır. Store'da <code>customSections</code> array'inde tutulur.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-title">PHASE 6 — Çoklu Template + Tema</span>
+      <span class="badge medium">Orta</span>
+    </div>
+    <div class="description">
+      Tek template'ten 3 farklı tasarıma çıkıyoruz: Classic, Modern, Creative. Kullanıcı bunlar arasında geçiş yapabilecek, ayrıca renk paleti ve font seçebilecek.
+    </div>
+    <p class="goal">Hedef: 3 template + renk/font customization.</p>
+    <ul>
+      <li>
+        <span class="step">ModernTemplate ve CreativeTemplate componentleri</span>
+        <span class="desc">2 yeni CV tasarımı: Modern (sade, minimalist) ve Creative (renkli, sıra dışı).</span>
+      </li>
+      <li>
+        <span class="step">TemplateSelector component (kullanıcı template seçer)</span>
+        <span class="desc">Template seçim arayüzü. Kullanıcı thumbnail'lara tıklayıp seçer.</span>
+      </li>
+      <li>
+        <span class="step">Store'da <code>templateId</code> field'ı</span>
+        <span class="desc">Hangi template'in seçili olduğunu store'da tut. Preview ona göre render etsin.</span>
+      </li>
+      <li>
+        <span class="step">ThemePicker: renk paleti, font, spacing</span>
+        <span class="desc">Tema customization paneli. Renk seç, font seç, satır aralığı ayarla.</span>
+      </li>
+      <li>
+        <span class="step">CSS variables ile dynamic theming</span>
+        <span class="desc">CSS variable'lar (<code>--primary-color</code>) ile renk değişikliği anında uygulansın.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-title">PHASE 7 — PDF Export + JSON Import/Export</span>
+      <span class="badge hard">Zor</span>
+    </div>
+    <div class="description">
+      Asıl iş geliyor. Kullanıcı CV'sini gerçek bir PDF dosyası olarak indirebilecek. Ayrıca veri JSON olarak yedeklenip başka bir cihazda geri yüklenebilecek.
+    </div>
+    <p class="goal">Hedef: PDF indirme + JSON yedek alma/geri yükleme.</p>
+    <ul>
+      <li>
+        <span class="step">Kur: <code>@react-pdf/renderer</code></span>
+        <span class="desc">PDF üretim kütüphanesi. Kendi component sistemi var (Document, Page, View, Text).</span>
+      </li>
+      <li>
+        <span class="step">PDFDocument component (Document, Page, View, Text)</span>
+        <span class="desc">PDF için ayrı bir component yaz. HTML değil, react-pdf'in özel etiketleri.</span>
+      </li>
+      <li>
+        <span class="step">Mevcut template'lerin PDF versiyonları</span>
+        <span class="desc">Her template için PDF karşılığını yaz. Görsel olarak önizlemeyle aynı olsun.</span>
+      </li>
+      <li>
+        <span class="step">PDFExportButton (BlobProvider veya PDFDownloadLink)</span>
+        <span class="desc">PDF indirme butonu. Tıklayınca dosya kullanıcının bilgisayarına iner.</span>
+      </li>
+      <li>
+        <span class="step">JSON Export: store → .json indirme</span>
+        <span class="desc">Tüm CV verisini JSON dosyası olarak indirme. Yedek almak için.</span>
+      </li>
+      <li>
+        <span class="step">JSON Import: file picker → parse → store'a yükle</span>
+        <span class="desc">JSON dosyasını yükleyip store'a aktarma. Başka cihazda devam edebilmek için.</span>
+      </li>
+      <li>
+        <span class="step">ATS uyumlu PDF çıktısı</span>
+        <span class="desc">ATS (Applicant Tracking System) sistemlerinin CV'yi doğru parse edebilmesi için: seçilebilir metin (görsel değil), basit ve düz yapı, standart bölüm başlıkları ("Experience", "Education"), tablo/grafik yerine düz metin akışı. PDF'in makine tarafından okunabilirliğini test et.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-title">PHASE 8 — Backend Setup</span>
+      <span class="badge hard">Zor</span>
+    </div>
+    <div class="description">
+      Frontend bitti, sunucu (backend) tarafına geçiyoruz. PostgreSQL veritabanını kuruyoruz, Express.js ile REST API yazıyoruz, Prisma ORM ile DB işlemlerini yönetiyoruz. Henüz frontend'e bağlanmadı — Postman ile test edeceğiz.
+    </div>
+    <p class="goal">Hedef: Çalışan bir REST API + PostgreSQL veritabanı.</p>
+    <ul>
+      <li>
+        <span class="step">PostgreSQL local kurulum (Windows installer veya Docker)</span>
+        <span class="desc">Bilgisayara veritabanı sistemi kur. pgAdmin ile yönetebilirsin.</span>
+      </li>
+      <li>
+        <span class="step"><code>server/</code> klasörü, Express + TypeScript setup</span>
+        <span class="desc">Backend projesini başlat. Frontend'den ayrı bir klasör.</span>
+      </li>
+      <li>
+        <span class="step"><code>tsconfig.json</code>, entry point <code>src/server.ts</code></span>
+        <span class="desc">TypeScript ayarları ve server'ın giriş dosyası. <code>npm run dev</code> bunu çalıştırır.</span>
+      </li>
+      <li>
+        <span class="step">Prisma init + <code>schema.prisma</code> ile Resume modeli</span>
+        <span class="desc">ORM kurulumu ve veritabanı modelinin tanımlanması. Resume tablosu nasıl olacak?</span>
+      </li>
+      <li>
+        <span class="step"><code>npx prisma migrate dev</code> ile DB'ye uygula</span>
+        <span class="desc">Tanımladığın schema'yı PostgreSQL'e gerçek tablo olarak oluşturur.</span>
+      </li>
+      <li>
+        <span class="step">Routes: <code>GET, POST, PUT, DELETE /api/resumes</code></span>
+        <span class="desc">CRUD endpoint'leri. CV oluştur, listele, güncelle, sil işlemleri.</span>
+      </li>
+      <li>
+        <span class="step">Controller + Service katmanları</span>
+        <span class="desc">İstek yönetimi (controller) ve iş mantığı (service) ayrı katmanlarda. Temiz mimari.</span>
+      </li>
+      <li>
+        <span class="step">Middleware: CORS, validation (Zod), error handler</span>
+        <span class="desc">CORS (frontend'in erişimi), Zod (gelen veriyi doğrula), error handler (hata yönetimi).</span>
+      </li>
+      <li>
+        <span class="step">Fotoğraf upload endpoint'i (Multer)</span>
+        <span class="desc"><code>POST /api/resumes/:id/photo</code> — Multer middleware ile dosya alımı, boyut/format kontrolü, diske veya cloud storage'a kayıt. Dosya URL'ini DB'ye yaz.</span>
+      </li>
+      <li>
+        <span class="step">Postman / Thunder Client ile tüm endpoint'leri test et</span>
+        <span class="desc">API'yi manuel test et. CV oluştur, listele, güncelle, sil — hepsi çalışmalı.</span>
+      </li>
+      <li>
+        <span class="step">Supertest kurulumu + API testleri (<code>*.test.ts</code>)</span>
+        <span class="desc"><code>POST /api/resumes</code> → 201 + doğru body? <code>GET</code> → liste geliyor mu? Geçersiz veri → 400 + hata mesajı? Manuel Postman testlerini otomatik koda çevir.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-title">PHASE 9 — Frontend ↔ Backend Entegrasyon</span>
+      <span class="badge hard">Zor</span>
+    </div>
+    <div class="description">
+      Frontend ve backend ayrı çalışıyordu, şimdi onları birbirine bağlıyoruz. Otomatik kayıt, multi-resume, dashboard. Login olmadığı için anonim UUID sistemi kullanıyoruz.
+    </div>
+    <p class="goal">Hedef: Otomatik kayıt + multi-resume desteği.</p>
+    <ul>
+      <li>
+        <span class="step">Frontend'de Axios kurulumu + base URL</span>
+        <span class="desc">HTTP client kütüphanesi. Tüm istekler için ortak base URL ve interceptor.</span>
+      </li>
+      <li>
+        <span class="step"><code>lib/api/resumes.ts</code> API client layer</span>
+        <span class="desc">API çağrılarını tek bir dosyada topla. Componentler bu fonksiyonları çağırsın.</span>
+      </li>
+      <li>
+        <span class="step"><code>userStore.ts</code> — anonymous UUID üret ve sakla</span>
+        <span class="desc">İlk girişte tarayıcıya anonim UUID ata. localStorage'da kalıcı tutulur.</span>
+      </li>
+      <li>
+        <span class="step">Tüm isteklere <code>X-Owner-Uuid</code> header ekle</span>
+        <span class="desc">Her API isteğinin header'ında UUID gönder. Backend kimi aradığını anlasın.</span>
+      </li>
+      <li>
+        <span class="step">Backend'de bu header'ı oku, <code>ownerUuid</code> olarak kullan</span>
+        <span class="desc">Backend gelen UUID'yi okur ve sadece o kullanıcıya ait CV'leri döner.</span>
+      </li>
+      <li>
+        <span class="step"><code>useAutoSave</code> hook (2sn debounced)</span>
+        <span class="desc">Otomatik kayıt. Kullanıcı 2 saniye yazmazsa veri otomatik backend'e gider.</span>
+      </li>
+      <li>
+        <span class="step">Loading / "Saved" indicator</span>
+        <span class="desc">Sağ üstte "Kaydediliyor..." veya "Kaydedildi" yazısı. Kullanıcıya feedback.</span>
+      </li>
+      <li>
+        <span class="step">Fotoğraf upload'ı backend'e bağla</span>
+        <span class="desc">Base64 yerine gerçek dosya upload'ına geç. Frontend'den <code>FormData</code> ile gönder, backend URL dönsün, store'da URL tutulsun.</span>
+      </li>
+      <li>
+        <span class="step">Loading skeleton'ları (Dashboard + Builder)</span>
+        <span class="desc">API'den veri gelene kadar içerik yerine gri placeholder şekiller göster. Dashboard'da CV kartları için skeleton, Builder'da form verisi yüklenirken skeleton. Profesyonel UX ve algılanan hızı artırır.</span>
+      </li>
+      <li>
+        <span class="step">Dashboard sayfası — kullanıcının tüm CV'leri</span>
+        <span class="desc">Kullanıcının tüm CV'lerinin listelendiği sayfa. Card view, edit, delete butonları.</span>
+      </li>
+      <li>
+        <span class="step">Multi-resume desteği</span>
+        <span class="desc">Kullanıcı birden fazla CV oluşturup aralarında geçiş yapabilsin.</span>
+      </li>
+      <li>
+        <span class="step">Integration testleri (frontend ↔ backend)</span>
+        <span class="desc">Form doldur → API'ye gidiyor mu? Dashboard'da CV listesi doğru geliyor mu? Auto-save çalışıyor mu? Uçtan uca akış testleri.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-title">PHASE 10 — Public Share + Deployment</span>
+      <span class="badge hard">Zor</span>
+    </div>
+    <div class="description">
+      Son aşama. CV'yi link ile paylaşma özelliği ve siteyi internete deploy etme. Bu phase bittiğinde gerçek bir web uygulaman olacak — birine link gönderebileceksin.
+    </div>
+    <p class="goal">Hedef: Paylaşılabilir link + canlı deployment.</p>
+    <ul>
+      <li>
+        <span class="step">Backend: <code>POST /api/resumes/:id/share</code> — shareSlug üret</span>
+        <span class="desc">Paylaşım için unique bir slug üret (örn: "abc123"). DB'ye kaydet.</span>
+      </li>
+      <li>
+        <span class="step">Public endpoint: <code>GET /api/share/:slug</code> (UUID gerektirmez)</span>
+        <span class="desc">Public erişim noktası. Kimse UUID olmadan erişebilir.</span>
+      </li>
+      <li>
+        <span class="step">Frontend SharedResume sayfası (read-only görünüm)</span>
+        <span class="desc">Sadece okunabilir paylaşım sayfası. Edit yok, sadece görüntüleme + PDF indir.</span>
+      </li>
+      <li>
+        <span class="step">Share butonu + link kopyalama UI</span>
+        <span class="desc">"Paylaş" butonuna basınca link gözüksün ve "Kopyala" butonu olsun.</span>
+      </li>
+      <li>
+        <span class="step">SEO meta tags, 404 page, error boundary</span>
+        <span class="desc">SEO için meta tag'ler, bulunamayan sayfa için 404, hatalar için error boundary.</span>
+      </li>
+      <li>
+        <span class="step">Production build (frontend + backend)</span>
+        <span class="desc">Üretim için optimize edilmiş build. <code>npm run build</code> ile.</span>
+      </li>
+      <li>
+        <span class="step">Frontend deploy: Vercel veya Netlify</span>
+        <span class="desc">Frontend'i internete yükle. Ücretsiz, otomatik deploy, CDN.</span>
+      </li>
+      <li>
+        <span class="step">Backend deploy: Railway veya Render</span>
+        <span class="desc">Backend'i (Express server) cloud'a yükle. Ücretsiz tier'ları yeterli.</span>
+      </li>
+      <li>
+        <span class="step">DB hosting: Neon, Supabase veya Railway PostgreSQL</span>
+        <span class="desc">Veritabanını cloud'a taşı. Local PostgreSQL artık gerek yok.</span>
+      </li>
+      <li>
+        <span class="step">Environment variables ve custom domain (opsiyonel)</span>
+        <span class="desc">Production için .env değişkenleri ve istersen kendi domain'ini bağla.</span>
+      </li>
+    </ul>
+  </div>
+
+  <footer>
+    <p>Her phase sonunda commit at, manuel test et, bir sonrakine geç.</p>
+    <p>Phase 0–7 tamamen frontend &nbsp;|&nbsp; Phase 8'den itibaren backend devreye girer.</p>
+  </footer>
+
+</div>
+</body>
+</html>

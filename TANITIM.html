@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV Builder — Proje Tanıtımı</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface-2: #1c2128;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --accent-2: #a371f7;
+    --green: #3fb950;
+    --orange: #ffa657;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 40px 20px;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 60px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .tagline {
+    color: var(--muted);
+    font-size: 1.2rem;
+  }
+  .nav-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 10px 20px;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+  }
+  .nav-link:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  section {
+    margin-bottom: 50px;
+  }
+  h2 {
+    font-size: 1.8rem;
+    color: var(--accent);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--surface-2);
+  }
+  h3 {
+    font-size: 1.2rem;
+    color: var(--text);
+    margin: 20px 0 10px 0;
+  }
+  p {
+    color: var(--text);
+    margin-bottom: 15px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 25px 30px;
+    margin-bottom: 20px;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+  }
+  .feature-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: border-color 0.2s;
+  }
+  .feature-item:hover { border-color: var(--accent); }
+  .feature-icon {
+    color: var(--green);
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  .feature-text {
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+  .stack-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .stack-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 25px;
+  }
+  .stack-section h3 {
+    color: var(--accent);
+    margin-top: 0;
+  }
+  .stack-list {
+    list-style: none;
+    padding: 0;
+  }
+  .stack-list li {
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border);
+    color: var(--text);
+  }
+  .stack-list li:last-child { border-bottom: none; }
+  .stack-list strong { color: var(--orange); }
+  .architecture-wrapper {
+    display: flex;
+    gap: 18px;
+    align-items: stretch;
+  }
+  .architecture {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    font-family: "SF Mono", Monaco, Consolas, monospace;
+    font-size: 0.72rem;
+    color: var(--text);
+    white-space: pre;
+    line-height: 1.4;
+    flex-shrink: 0;
+  }
+  .architecture-legend {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .legend-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+  .legend-group h4 {
+    color: var(--accent);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .legend-group ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .legend-group li {
+    font-size: 0.82rem;
+    padding: 5px 0;
+    color: var(--text);
+    line-height: 1.45;
+  }
+  .legend-group strong {
+    color: var(--orange);
+  }
+  @media (max-width: 768px) {
+    .architecture-wrapper { flex-direction: column; }
+    .architecture { font-size: 0.65rem; padding: 14px; overflow-x: auto; }
+  }
+  .decision {
+    background: rgba(88, 166, 255, 0.05);
+    border-left: 4px solid var(--accent);
+    padding: 18px 22px;
+    margin-bottom: 18px;
+    border-radius: 0 8px 8px 0;
+  }
+  .decision h3 {
+    color: var(--accent);
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+  .decision p {
+    color: var(--text);
+    margin-bottom: 0;
+  }
+  .data-flow {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 25px 30px;
+  }
+  .data-flow ol {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+  }
+  .data-flow ol li {
+    counter-increment: step;
+    padding: 12px 0 12px 50px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-flow ol li:last-child { border-bottom: none; }
+  .data-flow ol li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 12px;
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  code {
+    background: rgba(110, 118, 129, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Monaco, Consolas, monospace;
+    font-size: 0.9em;
+    color: var(--orange);
+  }
+  footer {
+    text-align: center;
+    margin-top: 60px;
+    padding-top: 30px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+  }
+  @media (max-width: 600px) {
+    .stack-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>CV Builder</h1>
+    <p class="tagline">Modern, hızlı ve özgür bir özgeçmiş oluşturma platformu</p>
+    <a href="PLAN.html" class="nav-link">→ Yapım Aşamaları</a>
+  </header>
+
+  <section>
+    <h2>Proje Nedir?</h2>
+    <div class="card">
+      <p>
+        Kullanıcıların form doldurarak profesyonel CV (özgeçmiş) hazırlayabileceği,
+        canlı önizleme ile sonucu anında görebileceği, farklı template'ler arasından seçim
+        yapıp <strong>PDF olarak indirebileceği</strong> bir web uygulaması.
+      </p>
+      <p>
+        Kayıt olmaya gerek yok, hassas bilgiler tarayıcıda kalıyor. İsteyen kullanıcı CV'sini
+        public bir link ile paylaşabiliyor. Birden fazla CV oluşturup yönetebiliyor.
+      </p>
+      <p>
+        Klasik resume builder sitelerinden farkı: <strong>gizlilik öncelikli</strong>,
+        <strong>hızlı</strong> ve <strong>tamamen ücretsiz</strong>.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Hedefler</h2>
+    <div class="card">
+      <h3>Kullanıcı için</h3>
+      <p>5 dakikada profesyonel görünümlü, ATS uyumlu bir CV. Login derdi yok, ödeme yok, reklam yok.</p>
+
+      <h3>Geliştirici (sen) için</h3>
+      <p>
+        Modern frontend (React + TypeScript + Tailwind + Zustand) ve backend (Express + Prisma + PostgreSQL)
+        teknolojilerini gerçek bir projede uçtan uca öğrenmek. Sonunda portfolio'ya koyabileceğin,
+        gerçek kullanıcılara gösterebileceğin bir ürün.
+      </p>
+
+      <h3>Ürün için</h3>
+      <p>
+        OpenResume, Reactive Resume gibi açık kaynak projelere benzer kalitede,
+        modern tasarımlı ve fonksiyonel bir CV builder.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Özellikler</h2>
+    <div class="features-grid">
+      <div class="feature-item"><span class="feature-icon">✓</span><span class="feature-text">Çoklu template (3-5 farklı tasarım)</span></div>
+      <div class="feature-item"><span class="feature-icon">✓</span><span class="feature-text">Canlı preview (yan panel)</span></div>
+      <div class="feature-item"><span class="feature-icon">✓</span><span class="feature-text">Form wizard / adım adım editor</span></div>
+      <div class="feature-item"><span class="feature-icon">✓</span><span class="feature-text">Drag & drop ile bölüm sıralama</span></div>
+      <div class="feature-item"><span class="feature-icon">✓</span><span class="feature-text">Tema customization (renk, font)</span></div>
+      <div class="feature-item"><span class="feature-icon">✓</span><span class="feature-text">PDF export</span></div>
+      <div class="feature-item"><span class="feature-icon">✓</span><span class="feature-text">JSON import / export (yedek)</span></div>
+      <div class="feature-item"><span class="feature-icon">✓</span><span class="feature-text">Çoklu CV yönetimi</span></div>
+      <div class="feature-item"><span class="feature-icon">✓</span><span class="feature-text">Public share link</span></div>
+      <div class="feature-item"><span class="feature-icon">✓</span><span class="feature-text">Otomatik kaydetme (auto-save)</span></div>
+      <div class="feature-item"><span class="feature-icon">✓</span><span class="feature-text">Mobil uyumlu (responsive)</span></div>
+      <div class="feature-item"><span class="feature-icon">✓</span><span class="feature-text">Dark mode</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tech Stack</h2>
+    <p>Modern, popüler ve öğrenmesi keyifli teknolojilerle inşa ediliyor.</p>
+    <div class="stack-grid">
+      <div class="stack-section">
+        <h3>Frontend</h3>
+        <ul class="stack-list">
+          <li><strong>React 18</strong> — UI library</li>
+          <li><strong>Vite</strong> — build tool, dev server</li>
+          <li><strong>TypeScript</strong> — tip güvenliği</li>
+          <li><strong>Tailwind CSS</strong> — styling</li>
+          <li><strong>shadcn/ui</strong> — hazır componentler</li>
+          <li><strong>Zustand</strong> — state management</li>
+          <li><strong>react-hook-form + Zod</strong> — form validation</li>
+          <li><strong>React Router</strong> — sayfa geçişleri</li>
+          <li><strong>@react-pdf/renderer</strong> — PDF üretimi</li>
+          <li><strong>@dnd-kit</strong> — drag & drop</li>
+          <li><strong>Axios</strong> — HTTP istekleri</li>
+        </ul>
+      </div>
+      <div class="stack-section">
+        <h3>Backend</h3>
+        <ul class="stack-list">
+          <li><strong>Node.js</strong> — runtime</li>
+          <li><strong>Express.js</strong> — web framework</li>
+          <li><strong>TypeScript</strong> — tip güvenliği</li>
+          <li><strong>Prisma ORM</strong> — veritabanı işlemleri</li>
+          <li><strong>PostgreSQL</strong> — veritabanı</li>
+          <li><strong>Zod</strong> — request validation</li>
+          <li><strong>Helmet, CORS, Morgan</strong> — middleware</li>
+          <li><strong>dotenv</strong> — environment variables</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Mimari</h2>
+    <p>3 katmanlı klasik web mimarisi: Frontend (tarayıcı), Backend (sunucu), Database (veritabanı).</p>
+    <div class="architecture-wrapper">
+    <div class="architecture">┌─────────────────────────────────────────────────┐
+│                  TARAYICI                       │
+│                                                 │
+│   React + Vite + TypeScript                     │
+│   ┌────────┐   ┌─────────┐   ┌────────────┐     │
+│   │ Forms  │──▶│ Zustand │──▶│  Preview   │     │
+│   └────────┘   │  Store  │   │ Component  │     │
+│                └────┬────┘   └────────────┘     │
+│                     │                           │
+│           ┌─────────┼─────────┐                 │
+│           ▼         ▼         ▼                 │
+│      localStorage  Axios   react-pdf            │
+│                     │                           │
+└─────────────────────┼───────────────────────────┘
+                      │ HTTP/JSON
+                      ▼
+┌─────────────────────────────────────────────────┐
+│                  SUNUCU                         │
+│                                                 │
+│   Node.js + Express + TypeScript                │
+│   ┌────────┐   ┌────────────┐   ┌──────────┐    │
+│   │ Routes │──▶│Controllers │──▶│ Services │    │
+│   └────────┘   └────────────┘   └─────┬────┘    │
+│                                       │         │
+│                                       ▼         │
+│                                  ┌────────┐     │
+│                                  │ Prisma │     │
+│                                  └────┬───┘     │
+└───────────────────────────────────────┼─────────┘
+                                        ▼
+                            ┌──────────────────┐
+                            │   PostgreSQL     │
+                            │  ┌────────────┐  │
+                            │  │  resumes   │  │
+                            │  │ (id, data) │  │
+                            │  └────────────┘  │
+                            └──────────────────┘</div>
+    <div class="architecture-legend">
+      <div class="legend-group">
+        <h4>Tarayıcı (Frontend)</h4>
+        <ul>
+          <li><strong>Forms:</strong> Kullanıcının CV bilgilerini girdiği input ekranları.</li>
+          <li><strong>Zustand Store:</strong> Tüm CV verisini tutan global "kasa" — formlar buraya yazar, preview buradan okur.</li>
+          <li><strong>Preview Component:</strong> Store'u dinler, veri değişince anında CV önizlemesini yeniden çizer.</li>
+          <li><strong>localStorage:</strong> Veriyi tarayıcıda kalıcı saklar — sayfayı kapatsan da kaybolmaz.</li>
+          <li><strong>Axios:</strong> Backend'e HTTP istekleri gönderen kütüphane (Phase 9'dan sonra devreye girer).</li>
+          <li><strong>react-pdf:</strong> CV verisinden gerçek PDF dosyası üretir, kullanıcıya indirtir.</li>
+        </ul>
+      </div>
+      <div class="legend-group">
+        <h4>Sunucu (Backend)</h4>
+        <ul>
+          <li><strong>Routes:</strong> Gelen URL'leri (örn: /api/resumes) ilgili fonksiyonlara yönlendirir.</li>
+          <li><strong>Controllers:</strong> HTTP istek/yanıt yönetimi — gelen veriyi alır, yanıtı hazırlar.</li>
+          <li><strong>Services:</strong> İş mantığı (business logic) burada — asıl işlemler bu katmanda yapılır.</li>
+          <li><strong>Prisma:</strong> JavaScript kodunu SQL sorgularına çeviren ORM — DB ile konuşma çevirmeni.</li>
+        </ul>
+      </div>
+      <div class="legend-group">
+        <h4>Veritabanı</h4>
+        <ul>
+          <li><strong>PostgreSQL:</strong> Güçlü, ilişkisel veritabanı sistemi.</li>
+          <li><strong>resumes tablosu:</strong> Tüm CV verilerinin JSON formatında saklandığı tek tablo.</li>
+        </ul>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Veri Akışı</h2>
+    <div class="data-flow">
+      <ol>
+        <li>Kullanıcı bir form alanına yazı yazar (örn: ad soyad, iş deneyimi).</li>
+        <li><strong>react-hook-form</strong> girilen veriyi Zod schema ile valide eder. Hata varsa kullanıcıya gösterir.</li>
+        <li>Veri geçerliyse <strong>Zustand store</strong>'a kaydedilir.</li>
+        <li><strong>Preview component</strong> store'u dinler, anında yeniden render olur — kullanıcı CV'nin halini canlı görür.</li>
+        <li>Aynı anda <strong>localStorage</strong>'a yazılır (offline backup).</li>
+        <li>Backend devreye girince (Phase 9), 2 saniye debounced olarak <strong>API'ye sync</strong> edilir.</li>
+        <li>Kullanıcı "PDF İndir" derse <strong>@react-pdf/renderer</strong> veriyi alır, .pdf üretir, dosya inilir.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <h2>Önemli Kararlar</h2>
+
+    <div class="decision">
+      <h3>Login YOK</h3>
+      <p>
+        Kullanıcı kaydı/girişi eklemiyoruz. Bunun yerine her tarayıcıya bir <strong>anonim UUID</strong>
+        atanıyor (localStorage'da). Backend bu UUID üzerinden CV'leri sahipleniyor.
+        Sebep: gizlilik öncelikli, hızlı erişim ve auth karmaşıklığından kaçınma.
+      </p>
+    </div>
+
+    <div class="decision">
+      <h3>JSON Resume standardı</h3>
+      <p>
+        Veri modeli için topluluk standardı olan <code>jsonresume.org</code> şemasını baz alıyoruz.
+        Bu sayede başka tool'larla import/export uyumluluğu sağlıyoruz.
+      </p>
+    </div>
+
+    <div class="decision">
+      <h3>Önce frontend, sonra backend</h3>
+      <p>
+        Phase 0-7 tamamen frontend. Backend Phase 8'de geliyor. Bu yaklaşımla frontend'i
+        sağlam temellerle kuruyoruz, sonra entegrasyonu çok daha rahat yapıyoruz.
+        Veri şimdilik localStorage'da, backend gelince oraya senkronlanacak.
+      </p>
+    </div>
+
+    <div class="decision">
+      <h3>PostgreSQL local + JSONB</h3>
+      <p>
+        Geliştirme aşamasında local PostgreSQL kullanıyoruz, deploy aşamasında cloud (Neon, Supabase)
+        kullanacağız. Resume verisini JSONB sütununda tutuyoruz — esnek, schema değişikliği gerektirmiyor.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Bu proje öğrenme + portfolio amaçlıdır.</p>
+    <p>Hedef: bittiğinde gerçek kullanıcılara gösterebileceğin, canlı bir web uygulaması.</p>
+  </footer>
+
+</div>
+</body>
+</html>
