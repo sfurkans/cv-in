@@ -9,8 +9,16 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useResumeStore } from '@/store/resumeStore'
 
 export default function PublicationsForm() {
+  const publication = useResumeStore(
+    (state) => state.resume.publications[0]
+  )
+  const updatePublicationItem = useResumeStore(
+    (state) => state.updatePublicationItem
+  )
+
   return (
     <Card>
       <CardHeader>
@@ -28,17 +36,33 @@ export default function PublicationsForm() {
           <Input
             id="pub-name"
             placeholder="React 19'da Yenilikler"
+            value={publication?.name ?? ''}
+            onChange={(e) => updatePublicationItem({ name: e.target.value })}
           />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="pub-publisher">Yayıncı</Label>
-            <Input id="pub-publisher" placeholder="Medium / Dev.to" />
+            <Input
+              id="pub-publisher"
+              placeholder="Medium / Dev.to"
+              value={publication?.publisher ?? ''}
+              onChange={(e) =>
+                updatePublicationItem({ publisher: e.target.value })
+              }
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="pub-date">Tarih</Label>
-            <Input id="pub-date" type="month" />
+            <Input
+              id="pub-date"
+              type="month"
+              value={publication?.date ?? ''}
+              onChange={(e) =>
+                updatePublicationItem({ date: e.target.value })
+              }
+            />
           </div>
         </div>
 
@@ -51,6 +75,8 @@ export default function PublicationsForm() {
               type="url"
               placeholder="https://medium.com/@kullanici/yazi"
               className="pl-9"
+              value={publication?.url ?? ''}
+              onChange={(e) => updatePublicationItem({ url: e.target.value })}
             />
           </div>
         </div>

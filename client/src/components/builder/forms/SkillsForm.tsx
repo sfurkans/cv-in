@@ -1,4 +1,5 @@
 import { Plus, Sparkles, X } from 'lucide-react'
+import { useState, type KeyboardEvent } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -11,15 +12,7 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-
-const sampleSkills = [
-  'React',
-  'TypeScript',
-  'Node.js',
-  'PostgreSQL',
-  'Tailwind CSS',
-  'Git',
-]
+import { useResumeStore } from '@/store/resumeStore'
 
 const sampleProficiencies: Array<{ name: string; level: number }> = [
   { name: 'Frontend Development', level: 5 },
@@ -43,6 +36,29 @@ function ProficiencyDots({ level }: { level: number }) {
 }
 
 export default function SkillsForm() {
+  const keywords = useResumeStore(
+    (state) => state.resume.skills[0]?.keywords ?? []
+  )
+  const addSkillKeyword = useResumeStore((state) => state.addSkillKeyword)
+  const removeSkillKeywordAt = useResumeStore(
+    (state) => state.removeSkillKeywordAt
+  )
+
+  const [draft, setDraft] = useState('')
+
+  const handleAdd = () => {
+    if (!draft.trim()) return
+    addSkillKeyword(draft)
+    setDraft('')
+  }
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleAdd()
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -58,38 +74,56 @@ export default function SkillsForm() {
         {/* Tag-style chip alanı */}
         <div className="space-y-3">
           <Label>Etiketler</Label>
-          <div className="flex flex-wrap gap-2 rounded-lg border bg-muted/30 p-3 min-h-16">
-            {sampleSkills.map((skill) => (
-              <Badge
-                key={skill}
-                variant="secondary"
-                className="h-7 gap-1.5 px-3 text-sm"
-              >
-                {skill}
-                <button
-                  type="button"
-                  className="rounded-full hover:bg-foreground/10"
-                  aria-label={`${skill} kaldır`}
+          <div className="flex min-h-16 flex-wrap gap-2 rounded-lg border bg-muted/30 p-3">
+            {keywords.length === 0 ? (
+              <p className="self-center text-xs text-muted-foreground">
+                Henüz yetenek eklenmedi. Aşağıdaki kutuya yazıp Enter'a bas.
+              </p>
+            ) : (
+              keywords.map((keyword, index) => (
+                <Badge
+                  key={`${keyword}-${index}`}
+                  variant="secondary"
+                  className="h-7 gap-1.5 px-3 text-sm"
                 >
-                  <X className="h-3 w-3" />
-                </button>
-              </Badge>
-            ))}
+                  {keyword}
+                  <button
+                    type="button"
+                    className="rounded-full hover:bg-foreground/10"
+                    aria-label={`${keyword} kaldır`}
+                    onClick={() => removeSkillKeywordAt(index)}
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))
+            )}
           </div>
 
           <div className="flex gap-2">
-            <Input placeholder="Yeni yetenek ekle (ör: Docker)" />
-            <Button type="button" variant="outline" className="shrink-0">
+            <Input
+              placeholder="Yeni yetenek ekle (ör: Docker)"
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              className="shrink-0"
+              onClick={handleAdd}
+            >
               <Plus className="h-4 w-4" />
               Ekle
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            Enter'a basarak hızlıca ekleyebilirsin (yakında aktif olacak).
+            Enter'a basarak hızlıca ekleyebilirsin. Aynı yetenek iki kez
+            eklenmez.
           </p>
         </div>
 
-        {/* Proficiency listesi */}
+        {/* Proficiency listesi — Phase 5'te dinamik olacak */}
         <div className="space-y-3">
           <Label>Uzmanlık Seviyeleri</Label>
           <div className="space-y-2 rounded-lg border bg-muted/30 p-3">
@@ -103,6 +137,9 @@ export default function SkillsForm() {
               </div>
             ))}
           </div>
+          <p className="text-xs text-muted-foreground">
+            Seviye girişleri Phase 5'te dinamik olarak düzenlenebilecek.
+          </p>
         </div>
       </CardContent>
     </Card>

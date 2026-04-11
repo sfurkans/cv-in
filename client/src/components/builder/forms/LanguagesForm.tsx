@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useResumeStore } from '@/store/resumeStore'
 
 const proficiencyLevels = [
   { value: 'a1', label: 'A1 — Başlangıç' },
@@ -21,6 +22,11 @@ const proficiencyLevels = [
 ]
 
 export default function LanguagesForm() {
+  const language = useResumeStore((state) => state.resume.languages[0])
+  const updateLanguageItem = useResumeStore(
+    (state) => state.updateLanguageItem
+  )
+
   return (
     <Card>
       <CardHeader>
@@ -36,14 +42,22 @@ export default function LanguagesForm() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="lang-name">Dil</Label>
-            <Input id="lang-name" placeholder="İngilizce" />
+            <Input
+              id="lang-name"
+              placeholder="İngilizce"
+              value={language?.name ?? ''}
+              onChange={(e) => updateLanguageItem({ name: e.target.value })}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="lang-proficiency">Seviye</Label>
             <select
               id="lang-proficiency"
               className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-base outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm"
-              defaultValue=""
+              value={language?.proficiency ?? ''}
+              onChange={(e) =>
+                updateLanguageItem({ proficiency: e.target.value })
+              }
             >
               <option value="" disabled>
                 Seviye seç

@@ -9,8 +9,16 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useResumeStore } from '@/store/resumeStore'
 
 export default function CertificatesForm() {
+  const certificate = useResumeStore(
+    (state) => state.resume.certificates[0]
+  )
+  const updateCertificateItem = useResumeStore(
+    (state) => state.updateCertificateItem
+  )
+
   return (
     <Card>
       <CardHeader>
@@ -28,17 +36,33 @@ export default function CertificatesForm() {
           <Input
             id="cert-name"
             placeholder="AWS Certified Solutions Architect"
+            value={certificate?.name ?? ''}
+            onChange={(e) => updateCertificateItem({ name: e.target.value })}
           />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="cert-issuer">Veren Kurum</Label>
-            <Input id="cert-issuer" placeholder="Amazon Web Services" />
+            <Input
+              id="cert-issuer"
+              placeholder="Amazon Web Services"
+              value={certificate?.issuer ?? ''}
+              onChange={(e) =>
+                updateCertificateItem({ issuer: e.target.value })
+              }
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="cert-date">Tarih</Label>
-            <Input id="cert-date" type="month" />
+            <Input
+              id="cert-date"
+              type="month"
+              value={certificate?.date ?? ''}
+              onChange={(e) =>
+                updateCertificateItem({ date: e.target.value })
+              }
+            />
           </div>
         </div>
 
@@ -51,6 +75,10 @@ export default function CertificatesForm() {
               type="url"
               placeholder="https://credly.com/badges/..."
               className="pl-9"
+              value={certificate?.url ?? ''}
+              onChange={(e) =>
+                updateCertificateItem({ url: e.target.value })
+              }
             />
           </div>
         </div>
