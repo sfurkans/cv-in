@@ -1,9 +1,17 @@
+import { AlertCircle, CheckCircle2 } from 'lucide-react'
+
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { useResumeValidation } from '@/hooks/useResumeValidation'
+import {
+  getInvalidSectionCount,
+  getTotalErrorCount,
+} from '@/lib/validateResume'
+
 import CertificatesForm from './forms/CertificatesForm'
 import EducationForm from './forms/EducationForm'
 import ExperienceForm from './forms/ExperienceForm'
@@ -74,10 +82,39 @@ function renderSection(activeSection: string) {
   }
 }
 
+function ValidationSummary() {
+  const validation = useResumeValidation()
+  const totalErrors = getTotalErrorCount(validation)
+  const invalidSections = getInvalidSectionCount(validation)
+
+  if (totalErrors === 0) {
+    return (
+      <div className="mb-4 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
+        <CheckCircle2 className="h-4 w-4 shrink-0" />
+        <span>Tüm bilgiler geçerli — CV'n yayına hazır.</span>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mb-4 flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+      <AlertCircle className="h-4 w-4 shrink-0" />
+      <span>
+        <strong>{invalidSections}</strong> bölümde toplam{' '}
+        <strong>{totalErrors}</strong> eksik ya da hatalı alan var. Kenar
+        menüdeki kırmızı rozetleri kontrol et.
+      </span>
+    </div>
+  )
+}
+
 export default function FormPanel({ activeSection }: FormPanelProps) {
   return (
     <div className="flex-1 overflow-y-auto p-6">
-      <div className="mx-auto max-w-3xl">{renderSection(activeSection)}</div>
+      <div className="mx-auto max-w-3xl">
+        <ValidationSummary />
+        {renderSection(activeSection)}
+      </div>
     </div>
   )
 }
