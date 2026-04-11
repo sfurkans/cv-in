@@ -349,6 +349,349 @@ describe('resumeStore', () => {
     })
   })
 
+  // ============================================================================
+  // Phase 5: dinamik liste actions
+  // ============================================================================
+
+  describe('Phase 5 — Work dinamik CRUD', () => {
+    it('addWork yeni id döner ve listeye ekler', () => {
+      const id = useResumeStore
+        .getState()
+        .addWork({ company: 'ABC', position: 'Dev' })
+
+      expect(id).toBeTruthy()
+      const work = useResumeStore.getState().resume.work
+      expect(work).toHaveLength(1)
+      expect(work[0].id).toBe(id)
+      expect(work[0].company).toBe('ABC')
+    })
+
+    it('addWork defaults olmadan çağrılabilir', () => {
+      const id = useResumeStore.getState().addWork()
+
+      const work = useResumeStore.getState().resume.work
+      expect(work).toHaveLength(1)
+      expect(work[0].id).toBe(id)
+      expect(work[0].company).toBe('')
+    })
+
+    it('addWork birden fazla item ekleyebilir', () => {
+      const id1 = useResumeStore.getState().addWork({ company: 'ABC' })
+      const id2 = useResumeStore.getState().addWork({ company: 'XYZ' })
+
+      expect(id1).not.toBe(id2)
+      expect(useResumeStore.getState().resume.work).toHaveLength(2)
+    })
+
+    it('updateWorkAt belirli item i günceller, diğerlerini etkilemez', () => {
+      const id1 = useResumeStore.getState().addWork({ company: 'ABC' })
+      const id2 = useResumeStore.getState().addWork({ company: 'XYZ' })
+
+      useResumeStore.getState().updateWorkAt(id1, { position: 'Senior' })
+
+      const work = useResumeStore.getState().resume.work
+      expect(work.find((w) => w.id === id1)?.position).toBe('Senior')
+      expect(work.find((w) => w.id === id2)?.position).toBe('')
+    })
+
+    it('removeWork belirli item i siler', () => {
+      const id1 = useResumeStore.getState().addWork({ company: 'ABC' })
+      const id2 = useResumeStore.getState().addWork({ company: 'XYZ' })
+
+      useResumeStore.getState().removeWork(id1)
+
+      const work = useResumeStore.getState().resume.work
+      expect(work).toHaveLength(1)
+      expect(work[0].id).toBe(id2)
+    })
+
+    it('reorderWork verilen sıraya göre düzenler', () => {
+      const id1 = useResumeStore.getState().addWork({ company: 'A' })
+      const id2 = useResumeStore.getState().addWork({ company: 'B' })
+      const id3 = useResumeStore.getState().addWork({ company: 'C' })
+
+      useResumeStore.getState().reorderWork([id3, id1, id2])
+
+      const work = useResumeStore.getState().resume.work
+      expect(work.map((w) => w.company)).toEqual(['C', 'A', 'B'])
+    })
+
+    it('reorderWork bilinmeyen id leri atlar', () => {
+      const id1 = useResumeStore.getState().addWork({ company: 'A' })
+
+      useResumeStore.getState().reorderWork([id1, 'unknown-id'])
+
+      expect(useResumeStore.getState().resume.work).toHaveLength(1)
+    })
+  })
+
+  describe('Phase 5 — Education dinamik CRUD', () => {
+    it('add/update/remove/reorder tüm döngü çalışır', () => {
+      const id1 = useResumeStore
+        .getState()
+        .addEducation({ institution: 'İTÜ' })
+      const id2 = useResumeStore
+        .getState()
+        .addEducation({ institution: 'Boğaziçi' })
+
+      useResumeStore.getState().updateEducationAt(id1, { degree: 'Lisans' })
+      useResumeStore.getState().reorderEducation([id2, id1])
+
+      const education = useResumeStore.getState().resume.education
+      expect(education).toHaveLength(2)
+      expect(education[0].id).toBe(id2)
+      expect(education[1].degree).toBe('Lisans')
+
+      useResumeStore.getState().removeEducation(id2)
+      expect(useResumeStore.getState().resume.education).toHaveLength(1)
+    })
+  })
+
+  describe('Phase 5 — Skills dinamik CRUD + keyword actions', () => {
+    it('addSkill yeni skill ekler, defaults uygulanır', () => {
+      const id = useResumeStore.getState().addSkill({ name: 'Frontend' })
+
+      const skill = useResumeStore.getState().resume.skills[0]
+      expect(skill.id).toBe(id)
+      expect(skill.name).toBe('Frontend')
+      expect(skill.keywords).toEqual([])
+    })
+
+    it('addKeywordToSkillAt sadece hedef skill e ekler', () => {
+      const id1 = useResumeStore.getState().addSkill({ name: 'Frontend' })
+      const id2 = useResumeStore.getState().addSkill({ name: 'Backend' })
+
+      useResumeStore.getState().addKeywordToSkillAt(id1, 'React')
+      useResumeStore.getState().addKeywordToSkillAt(id2, 'Node.js')
+
+      const skills = useResumeStore.getState().resume.skills
+      expect(skills.find((s) => s.id === id1)?.keywords).toEqual(['React'])
+      expect(skills.find((s) => s.id === id2)?.keywords).toEqual(['Node.js'])
+    })
+
+    it('addKeywordToSkillAt duplicate keyword u engeller', () => {
+      const id = useResumeStore.getState().addSkill({ name: 'Frontend' })
+
+      useResumeStore.getState().addKeywordToSkillAt(id, 'React')
+      useResumeStore.getState().addKeywordToSkillAt(id, 'React')
+
+      expect(
+        useResumeStore.getState().resume.skills[0].keywords
+      ).toEqual(['React'])
+    })
+
+    it('removeKeywordFromSkillAt belirli indexi siler', () => {
+      const id = useResumeStore.getState().addSkill({ name: 'Frontend' })
+      useResumeStore.getState().addKeywordToSkillAt(id, 'React')
+      useResumeStore.getState().addKeywordToSkillAt(id, 'Vue')
+      useResumeStore.getState().addKeywordToSkillAt(id, 'Angular')
+
+      useResumeStore.getState().removeKeywordFromSkillAt(id, 1)
+
+      expect(
+        useResumeStore.getState().resume.skills[0].keywords
+      ).toEqual(['React', 'Angular'])
+    })
+
+    it('removeSkill tüm skill i siler', () => {
+      const id1 = useResumeStore.getState().addSkill({ name: 'Frontend' })
+      useResumeStore.getState().addSkill({ name: 'Backend' })
+
+      useResumeStore.getState().removeSkill(id1)
+
+      const skills = useResumeStore.getState().resume.skills
+      expect(skills).toHaveLength(1)
+      expect(skills[0].name).toBe('Backend')
+    })
+  })
+
+  describe('Phase 5 — Diğer section ler (project / language / certificate / volunteer / publication)', () => {
+    it('addProject + removeProject çalışır', () => {
+      const id = useResumeStore
+        .getState()
+        .addProject({ name: 'CV Builder' })
+      expect(useResumeStore.getState().resume.projects).toHaveLength(1)
+      useResumeStore.getState().removeProject(id)
+      expect(useResumeStore.getState().resume.projects).toHaveLength(0)
+    })
+
+    it('addLanguage + updateLanguageAt çalışır', () => {
+      const id = useResumeStore
+        .getState()
+        .addLanguage({ name: 'İngilizce' })
+      useResumeStore.getState().updateLanguageAt(id, { proficiency: 'c1' })
+
+      const lang = useResumeStore.getState().resume.languages[0]
+      expect(lang.name).toBe('İngilizce')
+      expect(lang.proficiency).toBe('c1')
+    })
+
+    it('addCertificate + reorderCertificates çalışır', () => {
+      const id1 = useResumeStore.getState().addCertificate({ name: 'AWS' })
+      const id2 = useResumeStore.getState().addCertificate({ name: 'GCP' })
+      useResumeStore.getState().reorderCertificates([id2, id1])
+      expect(
+        useResumeStore.getState().resume.certificates.map((c) => c.name)
+      ).toEqual(['GCP', 'AWS'])
+    })
+
+    it('addVolunteer çalışır', () => {
+      const id = useResumeStore
+        .getState()
+        .addVolunteer({ organization: 'LÖSEV', role: 'Koordinatör' })
+      expect(
+        useResumeStore.getState().resume.volunteer[0].id
+      ).toBe(id)
+    })
+
+    it('addPublication + removePublication çalışır', () => {
+      const id = useResumeStore
+        .getState()
+        .addPublication({ name: 'React 19' })
+      expect(useResumeStore.getState().resume.publications).toHaveLength(1)
+      useResumeStore.getState().removePublication(id)
+      expect(useResumeStore.getState().resume.publications).toHaveLength(0)
+    })
+  })
+
+  describe('Phase 5 — CustomSection CRUD', () => {
+    it('addCustomSection yeni id döner ve listeye ekler', () => {
+      const id = useResumeStore
+        .getState()
+        .addCustomSection({ title: 'Hobiler' })
+
+      expect(id).toBeTruthy()
+      const sections = useResumeStore.getState().resume.customSections
+      expect(sections).toHaveLength(1)
+      expect(sections[0].title).toBe('Hobiler')
+      expect(sections[0].fields).toEqual([])
+    })
+
+    it('updateCustomSectionAt title güncelleyebilir', () => {
+      const id = useResumeStore.getState().addCustomSection({ title: 'Eski' })
+      useResumeStore.getState().updateCustomSectionAt(id, { title: 'Yeni' })
+
+      expect(
+        useResumeStore.getState().resume.customSections[0].title
+      ).toBe('Yeni')
+    })
+
+    it('removeCustomSection belirli bölümü siler', () => {
+      const id1 = useResumeStore.getState().addCustomSection({ title: 'A' })
+      const id2 = useResumeStore.getState().addCustomSection({ title: 'B' })
+
+      useResumeStore.getState().removeCustomSection(id1)
+
+      const sections = useResumeStore.getState().resume.customSections
+      expect(sections).toHaveLength(1)
+      expect(sections[0].id).toBe(id2)
+    })
+
+    it('reorderCustomSections verilen sıraya göre düzenler', () => {
+      const id1 = useResumeStore.getState().addCustomSection({ title: 'A' })
+      const id2 = useResumeStore.getState().addCustomSection({ title: 'B' })
+      const id3 = useResumeStore.getState().addCustomSection({ title: 'C' })
+
+      useResumeStore.getState().reorderCustomSections([id3, id1, id2])
+
+      const titles = useResumeStore
+        .getState()
+        .resume.customSections.map((s) => s.title)
+      expect(titles).toEqual(['C', 'A', 'B'])
+    })
+  })
+
+  describe('Phase 5 — CustomField CRUD', () => {
+    it('addCustomFieldTo bölüme field ekler', () => {
+      const sectionId = useResumeStore
+        .getState()
+        .addCustomSection({ title: 'Hobiler' })
+      const fieldId = useResumeStore
+        .getState()
+        .addCustomFieldTo(sectionId, { label: 'Spor', value: 'Koşu' })
+
+      const section = useResumeStore.getState().resume.customSections[0]
+      expect(section.fields).toHaveLength(1)
+      expect(section.fields[0].id).toBe(fieldId)
+      expect(section.fields[0].label).toBe('Spor')
+      expect(section.fields[0].value).toBe('Koşu')
+    })
+
+    it('addCustomFieldTo sadece hedef bölüme ekler', () => {
+      const sid1 = useResumeStore
+        .getState()
+        .addCustomSection({ title: 'Hobiler' })
+      const sid2 = useResumeStore
+        .getState()
+        .addCustomSection({ title: 'Ödüller' })
+
+      useResumeStore.getState().addCustomFieldTo(sid1, { label: 'Spor' })
+      useResumeStore.getState().addCustomFieldTo(sid2, { label: 'Ödül' })
+
+      const sections = useResumeStore.getState().resume.customSections
+      expect(sections.find((s) => s.id === sid1)?.fields[0].label).toBe('Spor')
+      expect(sections.find((s) => s.id === sid2)?.fields[0].label).toBe('Ödül')
+    })
+
+    it('updateCustomFieldAt belirli field i günceller', () => {
+      const sectionId = useResumeStore
+        .getState()
+        .addCustomSection({ title: 'Hobiler' })
+      const fieldId = useResumeStore
+        .getState()
+        .addCustomFieldTo(sectionId, { label: 'Spor', value: '' })
+
+      useResumeStore
+        .getState()
+        .updateCustomFieldAt(sectionId, fieldId, { value: 'Koşu' })
+
+      const field = useResumeStore.getState().resume.customSections[0]
+        .fields[0]
+      expect(field.value).toBe('Koşu')
+      expect(field.label).toBe('Spor')
+    })
+
+    it('removeCustomFieldFrom belirli field i siler', () => {
+      const sectionId = useResumeStore
+        .getState()
+        .addCustomSection({ title: 'Hobiler' })
+      const fid1 = useResumeStore
+        .getState()
+        .addCustomFieldTo(sectionId, { label: 'A' })
+      useResumeStore.getState().addCustomFieldTo(sectionId, { label: 'B' })
+
+      useResumeStore.getState().removeCustomFieldFrom(sectionId, fid1)
+
+      const section = useResumeStore.getState().resume.customSections[0]
+      expect(section.fields).toHaveLength(1)
+      expect(section.fields[0].label).toBe('B')
+    })
+
+    it('reorderCustomFieldsIn field leri yeniden sıralar', () => {
+      const sectionId = useResumeStore
+        .getState()
+        .addCustomSection({ title: 'Hobiler' })
+      const fid1 = useResumeStore
+        .getState()
+        .addCustomFieldTo(sectionId, { label: 'A' })
+      const fid2 = useResumeStore
+        .getState()
+        .addCustomFieldTo(sectionId, { label: 'B' })
+      const fid3 = useResumeStore
+        .getState()
+        .addCustomFieldTo(sectionId, { label: 'C' })
+
+      useResumeStore
+        .getState()
+        .reorderCustomFieldsIn(sectionId, [fid3, fid1, fid2])
+
+      const labels = useResumeStore
+        .getState()
+        .resume.customSections[0].fields.map((f) => f.label)
+      expect(labels).toEqual(['C', 'A', 'B'])
+    })
+  })
+
   describe('persist middleware', () => {
     it('state i localStorage a cv-builder:resume key i ile yazar', () => {
       useResumeStore.getState().updateBasics({ name: 'Furkan' })

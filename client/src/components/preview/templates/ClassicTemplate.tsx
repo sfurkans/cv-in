@@ -40,9 +40,18 @@ export default function ClassicTemplate({ resume }: ClassicTemplateProps) {
     certificates,
     volunteer,
     publications,
+    customSections,
   } = resume
 
-  const skillKeywords = skills[0]?.keywords ?? []
+  const SKILL_LEVEL_LABELS: Record<string, string> = {
+    beginner: 'Başlangıç',
+    basic: 'Temel',
+    intermediate: 'Orta',
+    advanced: 'İleri',
+    expert: 'Uzman',
+  }
+
+  const visibleSkills = skills.filter((s) => s.keywords.length > 0)
 
   return (
     <div className="aspect-[210/297] w-full overflow-hidden bg-white p-8 font-sans text-[10px] leading-snug text-gray-900 shadow-sm">
@@ -149,17 +158,37 @@ export default function ClassicTemplate({ resume }: ClassicTemplateProps) {
       )}
 
       {/* Skills */}
-      {skillKeywords.length > 0 && (
+      {visibleSkills.length > 0 && (
         <section className="mb-4">
           <SectionHeading>Yetenekler</SectionHeading>
-          <div className="flex flex-wrap gap-1.5">
-            {skillKeywords.map((keyword, i) => (
-              <span
-                key={`${keyword}-${i}`}
-                className="rounded-sm border border-gray-300 bg-gray-50 px-1.5 py-0.5 text-[9px] text-gray-700"
-              >
-                {keyword}
-              </span>
+          <div className="space-y-2">
+            {visibleSkills.map((skill) => (
+              <div key={skill.id}>
+                {(skill.name || skill.level) && (
+                  <div className="mb-1 flex items-baseline gap-2">
+                    {skill.name && (
+                      <span className="text-[10px] font-semibold text-gray-900">
+                        {skill.name}
+                      </span>
+                    )}
+                    {skill.level && SKILL_LEVEL_LABELS[skill.level] && (
+                      <span className="text-[9px] text-gray-500">
+                        · {SKILL_LEVEL_LABELS[skill.level]}
+                      </span>
+                    )}
+                  </div>
+                )}
+                <div className="flex flex-wrap gap-1.5">
+                  {skill.keywords.map((keyword, i) => (
+                    <span
+                      key={`${skill.id}-${keyword}-${i}`}
+                      className="rounded-sm border border-gray-300 bg-gray-50 px-1.5 py-0.5 text-[9px] text-gray-700"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </section>
@@ -300,6 +329,36 @@ export default function ClassicTemplate({ resume }: ClassicTemplateProps) {
           </div>
         </section>
       )}
+
+      {/* Custom sections */}
+      {customSections.length > 0 &&
+        customSections.map(
+          (section) =>
+            section.title && (
+              <section key={section.id} className="mb-4">
+                <SectionHeading>{section.title}</SectionHeading>
+                {section.fields.length > 0 && (
+                  <div className="space-y-1">
+                    {section.fields.map((field) => (
+                      <div
+                        key={field.id}
+                        className="grid grid-cols-[auto_1fr] gap-2"
+                      >
+                        {field.label && (
+                          <span className="font-semibold text-gray-900">
+                            {field.label}:
+                          </span>
+                        )}
+                        {field.value && (
+                          <span className="text-gray-700">{field.value}</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+            )
+        )}
     </div>
   )
 }

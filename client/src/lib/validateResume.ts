@@ -3,6 +3,7 @@ import type { z } from 'zod'
 import {
   basicsTextSchema,
   certificateSchema,
+  customSectionSchema,
   educationSchema,
   languageSchema,
   projectSchema,
@@ -56,45 +57,45 @@ function runSchema<T>(
   }
 }
 
-// Phase 4: section boşsa (store'da item yoksa) "dokunulmamış" kabul edilir
-// ve geçerli sayılır. Sadece basics/personal her zaman validate edilir çünkü
-// initialResume'da default olarak boş basics objesi var ve name zorunlu.
+// Phase 5: her section artık çoklu item tutabiliyor. Bu helper array'deki
+// her item'ı validate eder, toplam hata sayısı ve birleşik error listesi
+// döndürür. Array boşsa "dokunulmamış" kabul edilir (valid).
+function runSchemaOnArray<T>(
+  schema: z.ZodType<T>,
+  items: unknown[]
+): SectionValidationResult {
+  if (items.length === 0) return validResult()
+
+  let totalErrors = 0
+  const allErrors: string[] = []
+
+  for (const item of items) {
+    const result = schema.safeParse(item)
+    if (!result.success) {
+      totalErrors += result.error.issues.length
+      allErrors.push(...result.error.issues.map((issue) => issue.message))
+    }
+  }
+
+  return {
+    isValid: totalErrors === 0,
+    errorCount: totalErrors,
+    errors: allErrors,
+  }
+}
+
 export function validateResume(resume: Resume): ResumeValidationResult {
   return {
     personal: runSchema(basicsTextSchema, resume.basics),
-    experience:
-      resume.work.length === 0
-        ? validResult()
-        : runSchema(workSchema, resume.work[0]),
-    education:
-      resume.education.length === 0
-        ? validResult()
-        : runSchema(educationSchema, resume.education[0]),
-    skills:
-      resume.skills.length === 0
-        ? validResult()
-        : runSchema(skillSchema, resume.skills[0]),
-    projects:
-      resume.projects.length === 0
-        ? validResult()
-        : runSchema(projectSchema, resume.projects[0]),
-    languages:
-      resume.languages.length === 0
-        ? validResult()
-        : runSchema(languageSchema, resume.languages[0]),
-    certificates:
-      resume.certificates.length === 0
-        ? validResult()
-        : runSchema(certificateSchema, resume.certificates[0]),
-    volunteer:
-      resume.volunteer.length === 0
-        ? validResult()
-        : runSchema(volunteerSchema, resume.volunteer[0]),
-    publications:
-      resume.publications.length === 0
-        ? validResult()
-        : runSchema(publicationSchema, resume.publications[0]),
-    custom: validResult(),
+    experience: runSchemaOnArray(workSchema, resume.work),
+    education: runSchemaOnArray(educationSchema, resume.education),
+    skills: runSchemaOnArray(skillSchema, resume.skills),
+    projects: runSchemaOnArray(projectSchema, resume.projects),
+    languages: runSchemaOnArray(languageSchema, resume.languages),
+    certificates: runSchemaOnArray(certificateSchema, resume.certificates),
+    volunteer: runSchemaOnArray(volunteerSchema, resume.volunteer),
+    publications: runSchemaOnArray(publicationSchema, resume.publications),
+    custom: runSchemaOnArray(customSectionSchema, resume.customSections),
   }
 }
 

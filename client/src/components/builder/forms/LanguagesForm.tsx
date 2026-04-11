@@ -1,8 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Languages as LanguagesIcon } from 'lucide-react'
+import { Languages as LanguagesIcon, Plus, Trash2 } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -17,6 +18,10 @@ import {
   type LanguageFormValues,
 } from '@/schemas/languageSchema'
 import { useResumeStore } from '@/store/resumeStore'
+import type { Language } from '@/types/resume'
+
+import SortableItem from '../dnd/SortableItem'
+import SortableList from '../dnd/SortableList'
 
 const SYNC_DEBOUNCE_MS = 300
 
@@ -30,11 +35,15 @@ const proficiencyLevels = [
   { value: 'native', label: 'Anadil' },
 ]
 
-export default function LanguagesForm() {
-  const language = useResumeStore((state) => state.resume.languages[0])
-  const updateLanguageItem = useResumeStore(
-    (state) => state.updateLanguageItem
-  )
+function LanguageItemCard({
+  language,
+  index,
+}: {
+  language: Language
+  index: number
+}) {
+  const updateLanguageAt = useResumeStore((s) => s.updateLanguageAt)
+  const removeLanguage = useResumeStore((s) => s.removeLanguage)
 
   const {
     register,
@@ -44,41 +53,51 @@ export default function LanguagesForm() {
     resolver: zodResolver(languageSchema),
     mode: 'onChange',
     defaultValues: {
-      name: language?.name ?? '',
-      proficiency: language?.proficiency ?? '',
+      name: language.name,
+      proficiency: language.proficiency,
     },
   })
 
   const watched = watch()
   useEffect(() => {
     const timer = setTimeout(() => {
-      updateLanguageItem({
+      updateLanguageAt(language.id, {
         name: watched.name,
         proficiency: watched.proficiency,
       })
     }, SYNC_DEBOUNCE_MS)
     return () => clearTimeout(timer)
-  }, [watched.name, watched.proficiency, updateLanguageItem])
+  }, [watched.name, watched.proficiency, updateLanguageAt, language.id])
+
+  const headerTitle = language.name || `Dil #${index + 1}`
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <LanguagesIcon className="h-5 w-5 text-primary" />
-          Diller
-        </CardTitle>
-        <CardDescription>
-          Konuştuğun dilleri ve yeterlilik seviyelerini ekle.
-        </CardDescription>
+      <CardHeader className="border-b">
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            {headerTitle}
+          </CardTitle>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-destructive"
+            onClick={() => removeLanguage(language.id)}
+            aria-label="Dili kaldır"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 pt-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="lang-name">
+            <Label htmlFor={`lang-name-${language.id}`}>
               Dil <span className="text-destructive">*</span>
             </Label>
             <Input
-              id="lang-name"
+              id={`lang-name-${language.id}`}
               placeholder="İngilizce"
               aria-invalid={!!errors.name}
               {...register('name')}
@@ -88,9 +107,9 @@ export default function LanguagesForm() {
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="lang-proficiency">Seviye</Label>
+            <Label htmlFor={`lang-proficiency-${language.id}`}>Seviye</Label>
             <select
-              id="lang-proficiency"
+              id={`lang-proficiency-${language.id}`}
               className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-base outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm"
               aria-invalid={!!errors.proficiency}
               {...register('proficiency')}
@@ -111,5 +130,66 @@ export default function LanguagesForm() {
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+export default function LanguagesForm() {
+  const languages = useResumeStore((s) => s.resume.languages)
+  const addLanguage = useResumeStore((s) => s.addLanguage)
+  const reorderLanguages = useResumeStore((s) => s.reorderLanguages)
+
+  return (
+    <div className="space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <LanguagesIcon className="h-5 w-5 text-primary" />
+            Diller
+          </CardTitle>
+          <CardDescription>
+            Konuştuğun dilleri ve yeterlilik seviyelerini ekle.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+
+      {languages.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center gap-3 py-8 text-center">
+            <LanguagesIcon className="h-10 w-10 text-muted-foreground/40" />
+            <p className="text-sm text-muted-foreground">
+              Henüz dil eklenmedi.
+            </p>
+            <Button type="button" onClick={() => addLanguage()}>
+              <Plus className="h-4 w-4" />
+              İlk Dilini Ekle
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <SortableList
+            ids={languages.map((l) => l.id)}
+            onReorder={reorderLanguages}
+          >
+            <div className="space-y-4">
+              {languages.map((item, index) => (
+                <SortableItem key={item.id} id={item.id}>
+                  <LanguageItemCard language={item} index={index} />
+                </SortableItem>
+              ))}
+            </div>
+          </SortableList>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={() => addLanguage()}
+          >
+            <Plus className="h-4 w-4" />
+            Yeni Dil Ekle
+          </Button>
+        </>
+      )}
+    </div>
   )
 }

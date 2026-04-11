@@ -13,6 +13,7 @@ import {
 } from '@/lib/validateResume'
 
 import CertificatesForm from './forms/CertificatesForm'
+import CustomSectionsForm from './forms/CustomSectionsForm'
 import EducationForm from './forms/EducationForm'
 import ExperienceForm from './forms/ExperienceForm'
 import LanguagesForm from './forms/LanguagesForm'
@@ -76,7 +77,7 @@ function renderSection(activeSection: string) {
     case 'publications':
       return <PublicationsForm />
     case 'custom':
-      return <Placeholder section={activeSection} />
+      return <CustomSectionsForm />
     default:
       return <Placeholder section={activeSection} />
   }

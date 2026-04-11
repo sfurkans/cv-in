@@ -26,3 +26,9 @@ export {
   publicationSchema,
   type PublicationFormValues,
 } from './publicationSchema'
+export {
+  customFieldSchema,
+  customSectionSchema,
+  type CustomFieldFormValues,
+  type CustomSectionFormValues,
+} from './customSectionSchema'

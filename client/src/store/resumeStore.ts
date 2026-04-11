@@ -4,6 +4,8 @@ import { persist } from 'zustand/middleware'
 import type {
   Basics,
   Certificate,
+  CustomField,
+  CustomSection,
   Education,
   Language,
   Profile,
@@ -14,6 +16,10 @@ import type {
   Volunteer,
   Work,
 } from '@/types/resume'
+
+// ============================================================================
+// Defaults
+// ============================================================================
 
 const emptyBasics: Basics = {
   name: '',
@@ -83,6 +89,16 @@ const emptyPublication: Omit<Publication, 'id'> = {
   url: '',
 }
 
+const emptyCustomSection: Omit<CustomSection, 'id'> = {
+  title: '',
+  fields: [],
+}
+
+const emptyCustomField: Omit<CustomField, 'id'> = {
+  label: '',
+  value: '',
+}
+
 export const initialResume: Resume = {
   basics: emptyBasics,
   work: [],
@@ -96,6 +112,10 @@ export const initialResume: Resume = {
   customSections: [],
 }
 
+// ============================================================================
+// Helpers
+// ============================================================================
+
 function generateId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID()
@@ -103,10 +123,9 @@ function generateId(): string {
   return `id-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 }
 
-// Phase 3: formlar tek item mantığıyla çalışıyor. Bu helper ilk item'ı
-// upsert eder — yoksa defaults + id ile yeni item oluşturur, varsa partial ile
-// günceller. Phase 5'te dinamik listeye geçince aynı array üzerinde indexed
-// update kullanılacak.
+// Eski Phase 3-4 pattern: tek item upsert. Phase 5'te dinamik liste
+// actions (addXxx/updateXxxAt/removeXxx) eklendi, ama form refactor'ları
+// bitene kadar bu helper uyumluluk için tutuluyor.
 function upsertFirstItem<T extends { id: string }>(
   items: T[],
   partial: Partial<Omit<T, 'id'>>,
@@ -119,6 +138,50 @@ function upsertFirstItem<T extends { id: string }>(
   return [{ ...first, ...partial }, ...rest]
 }
 
+function appendItem<T extends { id: string }>(
+  items: T[],
+  defaults: Omit<T, 'id'>,
+  partial?: Partial<Omit<T, 'id'>>
+): { items: T[]; id: string } {
+  const id = generateId()
+  const newItem = { ...defaults, ...partial, id } as T
+  return { items: [...items, newItem], id }
+}
+
+function updateItemById<T extends { id: string }>(
+  items: T[],
+  id: string,
+  partial: Partial<Omit<T, 'id'>>
+): T[] {
+  return items.map((item) =>
+    item.id === id ? { ...item, ...partial } : item
+  )
+}
+
+function removeItemById<T extends { id: string }>(
+  items: T[],
+  id: string
+): T[] {
+  return items.filter((item) => item.id !== id)
+}
+
+function reorderItemsByIds<T extends { id: string }>(
+  items: T[],
+  ids: string[]
+): T[] {
+  const map = new Map(items.map((item) => [item.id, item]))
+  const ordered: T[] = []
+  for (const id of ids) {
+    const item = map.get(id)
+    if (item) ordered.push(item)
+  }
+  return ordered
+}
+
+// ============================================================================
+// State interface
+// ============================================================================
+
 interface ResumeState {
   resume: Resume
 
@@ -129,8 +192,9 @@ interface ResumeState {
 
   // Bulk
   loadResume: (resume: Resume) => void
+  resetResume: () => void
 
-  // Section item updaters (tek item upsert)
+  // ----- Deprecated (Phase 3-4 uyumluluğu, form refactor sonrası silinecek)
   updateWorkItem: (partial: Partial<Omit<Work, 'id'>>) => void
   updateEducationItem: (partial: Partial<Omit<Education, 'id'>>) => void
   updateProjectItem: (partial: Partial<Omit<Project, 'id'>>) => void
@@ -138,21 +202,113 @@ interface ResumeState {
   updateCertificateItem: (partial: Partial<Omit<Certificate, 'id'>>) => void
   updateVolunteerItem: (partial: Partial<Omit<Volunteer, 'id'>>) => void
   updatePublicationItem: (partial: Partial<Omit<Publication, 'id'>>) => void
-
-  // Skills (chip/keyword bazlı — skills[0].keywords üzerinde çalışır)
   addSkillKeyword: (keyword: string) => void
   removeSkillKeywordAt: (index: number) => void
 
-  // Reset
-  resetResume: () => void
+  // ----- Phase 5: dinamik liste actions (CRUD + reorder)
+  // Work
+  addWork: (defaults?: Partial<Omit<Work, 'id'>>) => string
+  updateWorkAt: (id: string, partial: Partial<Omit<Work, 'id'>>) => void
+  removeWork: (id: string) => void
+  reorderWork: (ids: string[]) => void
+
+  // Education
+  addEducation: (defaults?: Partial<Omit<Education, 'id'>>) => string
+  updateEducationAt: (
+    id: string,
+    partial: Partial<Omit<Education, 'id'>>
+  ) => void
+  removeEducation: (id: string) => void
+  reorderEducation: (ids: string[]) => void
+
+  // Skill
+  addSkill: (defaults?: Partial<Omit<Skill, 'id'>>) => string
+  updateSkillAt: (id: string, partial: Partial<Omit<Skill, 'id'>>) => void
+  removeSkill: (id: string) => void
+  reorderSkills: (ids: string[]) => void
+  addKeywordToSkillAt: (skillId: string, keyword: string) => void
+  removeKeywordFromSkillAt: (skillId: string, index: number) => void
+
+  // Project
+  addProject: (defaults?: Partial<Omit<Project, 'id'>>) => string
+  updateProjectAt: (
+    id: string,
+    partial: Partial<Omit<Project, 'id'>>
+  ) => void
+  removeProject: (id: string) => void
+  reorderProjects: (ids: string[]) => void
+
+  // Language
+  addLanguage: (defaults?: Partial<Omit<Language, 'id'>>) => string
+  updateLanguageAt: (
+    id: string,
+    partial: Partial<Omit<Language, 'id'>>
+  ) => void
+  removeLanguage: (id: string) => void
+  reorderLanguages: (ids: string[]) => void
+
+  // Certificate
+  addCertificate: (defaults?: Partial<Omit<Certificate, 'id'>>) => string
+  updateCertificateAt: (
+    id: string,
+    partial: Partial<Omit<Certificate, 'id'>>
+  ) => void
+  removeCertificate: (id: string) => void
+  reorderCertificates: (ids: string[]) => void
+
+  // Volunteer
+  addVolunteer: (defaults?: Partial<Omit<Volunteer, 'id'>>) => string
+  updateVolunteerAt: (
+    id: string,
+    partial: Partial<Omit<Volunteer, 'id'>>
+  ) => void
+  removeVolunteer: (id: string) => void
+  reorderVolunteer: (ids: string[]) => void
+
+  // Publication
+  addPublication: (defaults?: Partial<Omit<Publication, 'id'>>) => string
+  updatePublicationAt: (
+    id: string,
+    partial: Partial<Omit<Publication, 'id'>>
+  ) => void
+  removePublication: (id: string) => void
+  reorderPublications: (ids: string[]) => void
+
+  // CustomSection (Phase 5 — kullanıcı tanımlı bölümler)
+  addCustomSection: (
+    defaults?: Partial<Omit<CustomSection, 'id'>>
+  ) => string
+  updateCustomSectionAt: (
+    id: string,
+    partial: Partial<Omit<CustomSection, 'id' | 'fields'>>
+  ) => void
+  removeCustomSection: (id: string) => void
+  reorderCustomSections: (ids: string[]) => void
+
+  // CustomField (section içinde)
+  addCustomFieldTo: (
+    sectionId: string,
+    defaults?: Partial<Omit<CustomField, 'id'>>
+  ) => string
+  updateCustomFieldAt: (
+    sectionId: string,
+    fieldId: string,
+    partial: Partial<Omit<CustomField, 'id'>>
+  ) => void
+  removeCustomFieldFrom: (sectionId: string, fieldId: string) => void
+  reorderCustomFieldsIn: (sectionId: string, fieldIds: string[]) => void
 }
+
+// ============================================================================
+// Store
+// ============================================================================
 
 export const useResumeStore = create<ResumeState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       resume: initialResume,
 
-      // Basics
+      // ---- Basics
       updateBasics: (partial) =>
         set((state) => ({
           resume: {
@@ -177,10 +333,11 @@ export const useResumeStore = create<ResumeState>()(
           },
         })),
 
-      // Bulk
+      // ---- Bulk
       loadResume: (resume) => set({ resume }),
+      resetResume: () => set({ resume: initialResume }),
 
-      // Section item updaters
+      // ---- Deprecated upsert-first actions (Phase 3-4 geriye dönük)
       updateWorkItem: (partial) =>
         set((state) => ({
           resume: {
@@ -261,7 +418,6 @@ export const useResumeStore = create<ResumeState>()(
           },
         })),
 
-      // Skills
       addSkillKeyword: (keyword) => {
         const trimmed = keyword.trim()
         if (!trimmed) return
@@ -273,14 +429,10 @@ export const useResumeStore = create<ResumeState>()(
               id: generateId(),
               keywords: [trimmed],
             }
-            return {
-              resume: { ...state.resume, skills: [newSkill] },
-            }
+            return { resume: { ...state.resume, skills: [newSkill] } }
           }
           const [first, ...rest] = skills
-          if (first.keywords.includes(trimmed)) {
-            return state
-          }
+          if (first.keywords.includes(trimmed)) return state
           return {
             resume: {
               ...state.resume,
@@ -307,8 +459,415 @@ export const useResumeStore = create<ResumeState>()(
           }
         }),
 
-      // Reset
-      resetResume: () => set({ resume: initialResume }),
+      // ---- Phase 5: Work dinamik CRUD
+      addWork: (defaults) => {
+        const { items, id } = appendItem(
+          get().resume.work,
+          emptyWork,
+          defaults
+        )
+        set((state) => ({
+          resume: { ...state.resume, work: items },
+        }))
+        return id
+      },
+      updateWorkAt: (id, partial) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            work: updateItemById(state.resume.work, id, partial),
+          },
+        })),
+      removeWork: (id) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            work: removeItemById(state.resume.work, id),
+          },
+        })),
+      reorderWork: (ids) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            work: reorderItemsByIds(state.resume.work, ids),
+          },
+        })),
+
+      // ---- Education
+      addEducation: (defaults) => {
+        const { items, id } = appendItem(
+          get().resume.education,
+          emptyEducation,
+          defaults
+        )
+        set((state) => ({
+          resume: { ...state.resume, education: items },
+        }))
+        return id
+      },
+      updateEducationAt: (id, partial) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            education: updateItemById(state.resume.education, id, partial),
+          },
+        })),
+      removeEducation: (id) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            education: removeItemById(state.resume.education, id),
+          },
+        })),
+      reorderEducation: (ids) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            education: reorderItemsByIds(state.resume.education, ids),
+          },
+        })),
+
+      // ---- Skill
+      addSkill: (defaults) => {
+        const { items, id } = appendItem(
+          get().resume.skills,
+          emptySkill,
+          defaults
+        )
+        set((state) => ({
+          resume: { ...state.resume, skills: items },
+        }))
+        return id
+      },
+      updateSkillAt: (id, partial) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            skills: updateItemById(state.resume.skills, id, partial),
+          },
+        })),
+      removeSkill: (id) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            skills: removeItemById(state.resume.skills, id),
+          },
+        })),
+      reorderSkills: (ids) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            skills: reorderItemsByIds(state.resume.skills, ids),
+          },
+        })),
+      addKeywordToSkillAt: (skillId, keyword) => {
+        const trimmed = keyword.trim()
+        if (!trimmed) return
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            skills: state.resume.skills.map((skill) => {
+              if (skill.id !== skillId) return skill
+              if (skill.keywords.includes(trimmed)) return skill
+              return { ...skill, keywords: [...skill.keywords, trimmed] }
+            }),
+          },
+        }))
+      },
+      removeKeywordFromSkillAt: (skillId, index) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            skills: state.resume.skills.map((skill) => {
+              if (skill.id !== skillId) return skill
+              return {
+                ...skill,
+                keywords: skill.keywords.filter((_, i) => i !== index),
+              }
+            }),
+          },
+        })),
+
+      // ---- Project
+      addProject: (defaults) => {
+        const { items, id } = appendItem(
+          get().resume.projects,
+          emptyProject,
+          defaults
+        )
+        set((state) => ({
+          resume: { ...state.resume, projects: items },
+        }))
+        return id
+      },
+      updateProjectAt: (id, partial) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            projects: updateItemById(state.resume.projects, id, partial),
+          },
+        })),
+      removeProject: (id) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            projects: removeItemById(state.resume.projects, id),
+          },
+        })),
+      reorderProjects: (ids) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            projects: reorderItemsByIds(state.resume.projects, ids),
+          },
+        })),
+
+      // ---- Language
+      addLanguage: (defaults) => {
+        const { items, id } = appendItem(
+          get().resume.languages,
+          emptyLanguage,
+          defaults
+        )
+        set((state) => ({
+          resume: { ...state.resume, languages: items },
+        }))
+        return id
+      },
+      updateLanguageAt: (id, partial) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            languages: updateItemById(state.resume.languages, id, partial),
+          },
+        })),
+      removeLanguage: (id) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            languages: removeItemById(state.resume.languages, id),
+          },
+        })),
+      reorderLanguages: (ids) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            languages: reorderItemsByIds(state.resume.languages, ids),
+          },
+        })),
+
+      // ---- Certificate
+      addCertificate: (defaults) => {
+        const { items, id } = appendItem(
+          get().resume.certificates,
+          emptyCertificate,
+          defaults
+        )
+        set((state) => ({
+          resume: { ...state.resume, certificates: items },
+        }))
+        return id
+      },
+      updateCertificateAt: (id, partial) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            certificates: updateItemById(
+              state.resume.certificates,
+              id,
+              partial
+            ),
+          },
+        })),
+      removeCertificate: (id) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            certificates: removeItemById(state.resume.certificates, id),
+          },
+        })),
+      reorderCertificates: (ids) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            certificates: reorderItemsByIds(state.resume.certificates, ids),
+          },
+        })),
+
+      // ---- Volunteer
+      addVolunteer: (defaults) => {
+        const { items, id } = appendItem(
+          get().resume.volunteer,
+          emptyVolunteer,
+          defaults
+        )
+        set((state) => ({
+          resume: { ...state.resume, volunteer: items },
+        }))
+        return id
+      },
+      updateVolunteerAt: (id, partial) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            volunteer: updateItemById(state.resume.volunteer, id, partial),
+          },
+        })),
+      removeVolunteer: (id) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            volunteer: removeItemById(state.resume.volunteer, id),
+          },
+        })),
+      reorderVolunteer: (ids) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            volunteer: reorderItemsByIds(state.resume.volunteer, ids),
+          },
+        })),
+
+      // ---- Publication
+      addPublication: (defaults) => {
+        const { items, id } = appendItem(
+          get().resume.publications,
+          emptyPublication,
+          defaults
+        )
+        set((state) => ({
+          resume: { ...state.resume, publications: items },
+        }))
+        return id
+      },
+      updatePublicationAt: (id, partial) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            publications: updateItemById(
+              state.resume.publications,
+              id,
+              partial
+            ),
+          },
+        })),
+      removePublication: (id) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            publications: removeItemById(state.resume.publications, id),
+          },
+        })),
+      reorderPublications: (ids) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            publications: reorderItemsByIds(state.resume.publications, ids),
+          },
+        })),
+
+      // ---- CustomSection
+      addCustomSection: (defaults) => {
+        const { items, id } = appendItem(
+          get().resume.customSections,
+          emptyCustomSection,
+          defaults
+        )
+        set((state) => ({
+          resume: { ...state.resume, customSections: items },
+        }))
+        return id
+      },
+      updateCustomSectionAt: (id, partial) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            customSections: updateItemById(
+              state.resume.customSections,
+              id,
+              partial
+            ),
+          },
+        })),
+      removeCustomSection: (id) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            customSections: removeItemById(state.resume.customSections, id),
+          },
+        })),
+      reorderCustomSections: (ids) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            customSections: reorderItemsByIds(
+              state.resume.customSections,
+              ids
+            ),
+          },
+        })),
+
+      // ---- CustomField (section içinde)
+      addCustomFieldTo: (sectionId, defaults) => {
+        const fieldId = generateId()
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            customSections: state.resume.customSections.map((section) => {
+              if (section.id !== sectionId) return section
+              return {
+                ...section,
+                fields: [
+                  ...section.fields,
+                  { ...emptyCustomField, ...defaults, id: fieldId },
+                ],
+              }
+            }),
+          },
+        }))
+        return fieldId
+      },
+      updateCustomFieldAt: (sectionId, fieldId, partial) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            customSections: state.resume.customSections.map((section) => {
+              if (section.id !== sectionId) return section
+              return {
+                ...section,
+                fields: section.fields.map((field) =>
+                  field.id === fieldId ? { ...field, ...partial } : field
+                ),
+              }
+            }),
+          },
+        })),
+      removeCustomFieldFrom: (sectionId, fieldId) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            customSections: state.resume.customSections.map((section) => {
+              if (section.id !== sectionId) return section
+              return {
+                ...section,
+                fields: section.fields.filter((f) => f.id !== fieldId),
+              }
+            }),
+          },
+        })),
+      reorderCustomFieldsIn: (sectionId, fieldIds) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            customSections: state.resume.customSections.map((section) => {
+              if (section.id !== sectionId) return section
+              return {
+                ...section,
+                fields: reorderItemsByIds(section.fields, fieldIds),
+              }
+            }),
+          },
+        })),
     }),
     {
       name: 'cv-builder:resume',

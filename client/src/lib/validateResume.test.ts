@@ -135,6 +135,146 @@ describe('validateResume', () => {
     })
   })
 
+  describe('custom sections', () => {
+    it('boş customSections array i valid sayılır', () => {
+      const resume = makeResume({
+        basics: { ...initialResume.basics, name: 'Furkan' },
+      })
+      const result = validateResume(resume)
+      expect(result.custom.isValid).toBe(true)
+    })
+
+    it('geçerli customSection ile valid', () => {
+      const resume = makeResume({
+        basics: { ...initialResume.basics, name: 'Furkan' },
+        customSections: [
+          {
+            id: 'cs1',
+            title: 'Hobiler',
+            fields: [{ id: 'f1', label: 'Spor', value: 'Koşu' }],
+          },
+        ],
+      })
+      const result = validateResume(resume)
+      expect(result.custom.isValid).toBe(true)
+    })
+
+    it('boş title customSection hata verir', () => {
+      const resume = makeResume({
+        basics: { ...initialResume.basics, name: 'Furkan' },
+        customSections: [
+          {
+            id: 'cs1',
+            title: '',
+            fields: [],
+          },
+        ],
+      })
+      const result = validateResume(resume)
+      expect(result.custom.isValid).toBe(false)
+    })
+  })
+
+  describe('Phase 5 — çoklu item validation', () => {
+    it('work array de birden fazla geçerli item → experience valid', () => {
+      const resume = makeResume({
+        basics: { ...initialResume.basics, name: 'Furkan' },
+        work: [
+          {
+            id: 'w1',
+            company: 'ABC',
+            position: 'Developer',
+            startDate: '2023-01',
+            endDate: '',
+            summary: '',
+            highlights: [],
+          },
+          {
+            id: 'w2',
+            company: 'XYZ',
+            position: 'Senior',
+            startDate: '2020-01',
+            endDate: '2022-12',
+            summary: '',
+            highlights: [],
+          },
+        ],
+      })
+      const result = validateResume(resume)
+      expect(result.experience.isValid).toBe(true)
+    })
+
+    it('work array de 1 geçerli + 1 hatalı → experience errorCount hata sayısı kadar', () => {
+      const resume = makeResume({
+        basics: { ...initialResume.basics, name: 'Furkan' },
+        work: [
+          {
+            id: 'w1',
+            company: 'ABC',
+            position: 'Developer',
+            startDate: '',
+            endDate: '',
+            summary: '',
+            highlights: [],
+          },
+          {
+            id: 'w2',
+            company: '',
+            position: '',
+            startDate: '',
+            endDate: '',
+            summary: '',
+            highlights: [],
+          },
+        ],
+      })
+      const result = validateResume(resume)
+      expect(result.experience.isValid).toBe(false)
+      expect(result.experience.errorCount).toBeGreaterThanOrEqual(2)
+    })
+
+    it('work array de birden fazla hatalı item → toplam hata sayısı', () => {
+      const resume = makeResume({
+        basics: { ...initialResume.basics, name: 'Furkan' },
+        work: [
+          {
+            id: 'w1',
+            company: '',
+            position: '',
+            startDate: '',
+            endDate: '',
+            summary: '',
+            highlights: [],
+          },
+          {
+            id: 'w2',
+            company: '',
+            position: '',
+            startDate: '',
+            endDate: '',
+            summary: '',
+            highlights: [],
+          },
+        ],
+      })
+      const result = validateResume(resume)
+      expect(result.experience.errorCount).toBe(4)
+    })
+
+    it('languages array de 3 geçerli item → languages valid', () => {
+      const resume = makeResume({
+        basics: { ...initialResume.basics, name: 'Furkan' },
+        languages: [
+          { id: 'l1', name: 'İngilizce', proficiency: 'c1' },
+          { id: 'l2', name: 'Almanca', proficiency: 'b1' },
+          { id: 'l3', name: 'Fransızca', proficiency: 'a2' },
+        ],
+      })
+      const result = validateResume(resume)
+      expect(result.languages.isValid).toBe(true)
+    })
+  })
+
   describe('getInvalidSectionCount', () => {
     it('geçersiz bölümlerin sayısını döner', () => {
       const resume = makeResume({

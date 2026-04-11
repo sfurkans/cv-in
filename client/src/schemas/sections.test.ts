@@ -1,4 +1,8 @@
 import { certificateSchema } from './certificateSchema'
+import {
+  customFieldSchema,
+  customSectionSchema,
+} from './customSectionSchema'
 import { educationSchema } from './educationSchema'
 import { languageSchema } from './languageSchema'
 import { projectSchema } from './projectSchema'
@@ -240,5 +244,66 @@ describe('publicationSchema', () => {
     expect(
       publicationSchema.safeParse({ ...valid, url: '' }).success
     ).toBe(true)
+  })
+})
+
+describe('customFieldSchema', () => {
+  const valid = { label: 'Hobi', value: 'Koşu' }
+
+  it('geçerli veri ile parse eder', () => {
+    expect(customFieldSchema.safeParse(valid).success).toBe(true)
+  })
+
+  it('boş label için hata verir', () => {
+    expect(
+      customFieldSchema.safeParse({ ...valid, label: '' }).success
+    ).toBe(false)
+  })
+
+  it('boş value a izin verir', () => {
+    expect(
+      customFieldSchema.safeParse({ ...valid, value: '' }).success
+    ).toBe(true)
+  })
+
+  it('500 karakterden uzun value için hata verir', () => {
+    expect(
+      customFieldSchema.safeParse({ ...valid, value: 'a'.repeat(501) }).success
+    ).toBe(false)
+  })
+})
+
+describe('customSectionSchema', () => {
+  const valid = {
+    title: 'Hobiler',
+    fields: [
+      { label: 'Spor', value: 'Koşu' },
+      { label: 'Müzik', value: 'Piyano' },
+    ],
+  }
+
+  it('geçerli bölüm ile parse eder', () => {
+    expect(customSectionSchema.safeParse(valid).success).toBe(true)
+  })
+
+  it('boş title için hata verir', () => {
+    expect(
+      customSectionSchema.safeParse({ ...valid, title: '' }).success
+    ).toBe(false)
+  })
+
+  it('boş fields array ine izin verir', () => {
+    expect(
+      customSectionSchema.safeParse({ ...valid, fields: [] }).success
+    ).toBe(true)
+  })
+
+  it('field içinde hatalı label varsa hata verir', () => {
+    expect(
+      customSectionSchema.safeParse({
+        ...valid,
+        fields: [{ label: '', value: 'x' }],
+      }).success
+    ).toBe(false)
   })
 })

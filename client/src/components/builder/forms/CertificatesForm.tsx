@@ -1,8 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Award, Link as LinkIcon } from 'lucide-react'
+import { Award, Link as LinkIcon, Plus, Trash2 } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -17,16 +18,24 @@ import {
   type CertificateFormValues,
 } from '@/schemas/certificateSchema'
 import { useResumeStore } from '@/store/resumeStore'
+import type { Certificate } from '@/types/resume'
+
+import SortableItem from '../dnd/SortableItem'
+import SortableList from '../dnd/SortableList'
 
 const SYNC_DEBOUNCE_MS = 300
 
-export default function CertificatesForm() {
-  const certificate = useResumeStore(
-    (state) => state.resume.certificates[0]
+function CertificateItemCard({
+  certificate,
+  index,
+}: {
+  certificate: Certificate
+  index: number
+}) {
+  const updateCertificateAt = useResumeStore(
+    (s) => s.updateCertificateAt
   )
-  const updateCertificateItem = useResumeStore(
-    (state) => state.updateCertificateItem
-  )
+  const removeCertificate = useResumeStore((s) => s.removeCertificate)
 
   const {
     register,
@@ -36,17 +45,17 @@ export default function CertificatesForm() {
     resolver: zodResolver(certificateSchema),
     mode: 'onChange',
     defaultValues: {
-      name: certificate?.name ?? '',
-      issuer: certificate?.issuer ?? '',
-      date: certificate?.date ?? '',
-      url: certificate?.url ?? '',
+      name: certificate.name,
+      issuer: certificate.issuer,
+      date: certificate.date,
+      url: certificate.url,
     },
   })
 
   const watched = watch()
   useEffect(() => {
     const timer = setTimeout(() => {
-      updateCertificateItem({
+      updateCertificateAt(certificate.id, {
         name: watched.name,
         issuer: watched.issuer,
         date: watched.date,
@@ -59,27 +68,38 @@ export default function CertificatesForm() {
     watched.issuer,
     watched.date,
     watched.url,
-    updateCertificateItem,
+    updateCertificateAt,
+    certificate.id,
   ])
+
+  const headerTitle = certificate.name || `Sertifika #${index + 1}`
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Award className="h-5 w-5 text-primary" />
-          Sertifikalar
-        </CardTitle>
-        <CardDescription>
-          Aldığın sertifika ve kursları doğrulama linkleriyle ekle.
-        </CardDescription>
+      <CardHeader className="border-b">
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            {headerTitle}
+          </CardTitle>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-destructive"
+            onClick={() => removeCertificate(certificate.id)}
+            aria-label="Sertifikayı kaldır"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 pt-4">
         <div className="space-y-2">
-          <Label htmlFor="cert-name">
+          <Label htmlFor={`cert-name-${certificate.id}`}>
             Sertifika Adı <span className="text-destructive">*</span>
           </Label>
           <Input
-            id="cert-name"
+            id={`cert-name-${certificate.id}`}
             placeholder="AWS Certified Solutions Architect"
             aria-invalid={!!errors.name}
             {...register('name')}
@@ -91,11 +111,11 @@ export default function CertificatesForm() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="cert-issuer">
+            <Label htmlFor={`cert-issuer-${certificate.id}`}>
               Veren Kurum <span className="text-destructive">*</span>
             </Label>
             <Input
-              id="cert-issuer"
+              id={`cert-issuer-${certificate.id}`}
               placeholder="Amazon Web Services"
               aria-invalid={!!errors.issuer}
               {...register('issuer')}
@@ -107,9 +127,9 @@ export default function CertificatesForm() {
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="cert-date">Tarih</Label>
+            <Label htmlFor={`cert-date-${certificate.id}`}>Tarih</Label>
             <Input
-              id="cert-date"
+              id={`cert-date-${certificate.id}`}
               type="month"
               aria-invalid={!!errors.date}
               {...register('date')}
@@ -121,11 +141,11 @@ export default function CertificatesForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="cert-url">Doğrulama Linki</Label>
+          <Label htmlFor={`cert-url-${certificate.id}`}>Doğrulama Linki</Label>
           <div className="relative">
             <LinkIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              id="cert-url"
+              id={`cert-url-${certificate.id}`}
               type="url"
               placeholder="https://credly.com/badges/..."
               className="pl-9"
@@ -139,5 +159,66 @@ export default function CertificatesForm() {
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+export default function CertificatesForm() {
+  const certificates = useResumeStore((s) => s.resume.certificates)
+  const addCertificate = useResumeStore((s) => s.addCertificate)
+  const reorderCertificates = useResumeStore((s) => s.reorderCertificates)
+
+  return (
+    <div className="space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Award className="h-5 w-5 text-primary" />
+            Sertifikalar
+          </CardTitle>
+          <CardDescription>
+            Aldığın sertifika ve kursları doğrulama linkleriyle ekle.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+
+      {certificates.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center gap-3 py-8 text-center">
+            <Award className="h-10 w-10 text-muted-foreground/40" />
+            <p className="text-sm text-muted-foreground">
+              Henüz sertifika eklenmedi.
+            </p>
+            <Button type="button" onClick={() => addCertificate()}>
+              <Plus className="h-4 w-4" />
+              İlk Sertifikanı Ekle
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <SortableList
+            ids={certificates.map((c) => c.id)}
+            onReorder={reorderCertificates}
+          >
+            <div className="space-y-4">
+              {certificates.map((item, index) => (
+                <SortableItem key={item.id} id={item.id}>
+                  <CertificateItemCard certificate={item} index={index} />
+                </SortableItem>
+              ))}
+            </div>
+          </SortableList>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={() => addCertificate()}
+          >
+            <Plus className="h-4 w-4" />
+            Yeni Sertifika Ekle
+          </Button>
+        </>
+      )}
+    </div>
   )
 }
