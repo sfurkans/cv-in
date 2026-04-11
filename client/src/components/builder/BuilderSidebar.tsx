@@ -1,17 +1,22 @@
 import { useResumeValidation } from '@/hooks/useResumeValidation'
 import type { SectionKey } from '@/lib/validateResume'
 
-const sections: Array<{ id: SectionKey; label: string }> = [
-  { id: 'personal', label: 'Kişisel Bilgiler' },
-  { id: 'experience', label: 'Deneyim' },
-  { id: 'education', label: 'Eğitim' },
-  { id: 'skills', label: 'Yetenekler' },
-  { id: 'projects', label: 'Projeler' },
-  { id: 'languages', label: 'Diller' },
-  { id: 'certificates', label: 'Sertifikalar' },
-  { id: 'volunteer', label: 'Gönüllülük' },
-  { id: 'publications', label: 'Yayınlar' },
-  { id: 'custom', label: 'Özel Bölümler' },
+type ContentSection = { id: SectionKey; label: string; kind: 'content' }
+type DesignSection = { id: 'design'; label: string; kind: 'design' }
+type SidebarSection = ContentSection | DesignSection
+
+const sections: SidebarSection[] = [
+  { id: 'personal', label: 'Kişisel Bilgiler', kind: 'content' },
+  { id: 'experience', label: 'Deneyim', kind: 'content' },
+  { id: 'education', label: 'Eğitim', kind: 'content' },
+  { id: 'skills', label: 'Yetenekler', kind: 'content' },
+  { id: 'projects', label: 'Projeler', kind: 'content' },
+  { id: 'languages', label: 'Diller', kind: 'content' },
+  { id: 'certificates', label: 'Sertifikalar', kind: 'content' },
+  { id: 'volunteer', label: 'Gönüllülük', kind: 'content' },
+  { id: 'publications', label: 'Yayınlar', kind: 'content' },
+  { id: 'custom', label: 'Özel Bölümler', kind: 'content' },
+  { id: 'design', label: 'Tasarım', kind: 'design' },
 ]
 
 interface BuilderSidebarProps {
@@ -29,9 +34,14 @@ export default function BuilderSidebar({
     <aside className="w-56 shrink-0 border-r bg-muted/30 p-4">
       <nav className="flex flex-col gap-1">
         {sections.map((section) => {
-          const sectionValidation = validation[section.id]
-          const hasErrors = sectionValidation.errorCount > 0
           const isActive = activeSection === section.id
+          const hasErrors =
+            section.kind === 'content' &&
+            validation[section.id].errorCount > 0
+          const errorCount =
+            section.kind === 'content'
+              ? validation[section.id].errorCount
+              : 0
 
           return (
             <button
@@ -51,9 +61,9 @@ export default function BuilderSidebar({
                       ? 'bg-primary-foreground text-primary'
                       : 'bg-destructive text-destructive-foreground'
                   }`}
-                  aria-label={`${sectionValidation.errorCount} hata`}
+                  aria-label={`${errorCount} hata`}
                 >
-                  {sectionValidation.errorCount}
+                  {errorCount}
                 </span>
               )}
             </button>

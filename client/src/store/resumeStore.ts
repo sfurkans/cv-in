@@ -13,6 +13,8 @@ import type {
   Publication,
   Resume,
   Skill,
+  TemplateId,
+  Theme,
   Volunteer,
   Work,
 } from '@/types/resume'
@@ -99,6 +101,13 @@ const emptyCustomField: Omit<CustomField, 'id'> = {
   value: '',
 }
 
+export const defaultTheme: Theme = {
+  primaryColor: '#1f2937',
+  textColor: '#111827',
+  fontFamily: 'sans',
+  spacing: 'normal',
+}
+
 export const initialResume: Resume = {
   basics: emptyBasics,
   work: [],
@@ -110,6 +119,8 @@ export const initialResume: Resume = {
   volunteer: [],
   publications: [],
   customSections: [],
+  templateId: 'classic',
+  theme: defaultTheme,
 }
 
 // ============================================================================
@@ -189,6 +200,11 @@ interface ResumeState {
   updateBasics: (partial: Partial<Basics>) => void
   updatePhoto: (base64: string) => void
   setProfiles: (profiles: Profile[]) => void
+
+  // Template & Theme (Phase 6)
+  setTemplateId: (id: TemplateId) => void
+  updateTheme: (partial: Partial<Theme>) => void
+  resetTheme: () => void
 
   // Bulk
   loadResume: (resume: Resume) => void
@@ -331,6 +347,25 @@ export const useResumeStore = create<ResumeState>()(
             ...state.resume,
             basics: { ...state.resume.basics, profiles },
           },
+        })),
+
+      // ---- Template & Theme (Phase 6)
+      setTemplateId: (id) =>
+        set((state) => ({
+          resume: { ...state.resume, templateId: id },
+        })),
+
+      updateTheme: (partial) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            theme: { ...state.resume.theme, ...partial },
+          },
+        })),
+
+      resetTheme: () =>
+        set((state) => ({
+          resume: { ...state.resume, theme: defaultTheme },
         })),
 
       // ---- Bulk
@@ -871,7 +906,17 @@ export const useResumeStore = create<ResumeState>()(
     }),
     {
       name: 'cv-builder:resume',
-      version: 1,
+      version: 2,
+      // v1 → v2: templateId ve theme alanları eklendi
+      migrate: (persistedState, version) => {
+        const state = persistedState as { resume?: Partial<Resume> } | null
+        if (!state?.resume) return persistedState
+        if (version < 2) {
+          state.resume.templateId ??= 'classic'
+          state.resume.theme ??= defaultTheme
+        }
+        return state
+      },
     }
   )
 )

@@ -1,6 +1,6 @@
 import type { Profile } from '@/types/resume'
 
-import { initialResume, useResumeStore } from './resumeStore'
+import { defaultTheme, initialResume, useResumeStore } from './resumeStore'
 
 describe('resumeStore', () => {
   beforeEach(() => {
@@ -704,7 +704,7 @@ describe('resumeStore', () => {
         version: number
       }
       expect(parsed.state.resume.basics.name).toBe('Furkan')
-      expect(parsed.version).toBe(1)
+      expect(parsed.version).toBe(2)
     })
 
     it('birden fazla güncelleme sonrası son state i yansıtır', () => {
@@ -722,6 +722,80 @@ describe('resumeStore', () => {
       expect(parsed.state.resume.basics.photo).toBe(
         'data:image/png;base64,xyz'
       )
+    })
+  })
+
+  describe('Phase 6 — Template & Theme', () => {
+    it('initialResume varsayılan olarak classic template ve defaultTheme ile gelir', () => {
+      const { resume } = useResumeStore.getState()
+      expect(resume.templateId).toBe('classic')
+      expect(resume.theme).toEqual(defaultTheme)
+    })
+
+    it('setTemplateId templateId i değiştirir', () => {
+      useResumeStore.getState().setTemplateId('modern')
+      expect(useResumeStore.getState().resume.templateId).toBe('modern')
+
+      useResumeStore.getState().setTemplateId('creative')
+      expect(useResumeStore.getState().resume.templateId).toBe('creative')
+    })
+
+    it('setTemplateId resume nun diğer alanlarını etkilemez', () => {
+      useResumeStore.getState().updateBasics({ name: 'Furkan' })
+      useResumeStore.getState().setTemplateId('modern')
+      expect(useResumeStore.getState().resume.basics.name).toBe('Furkan')
+    })
+
+    it('updateTheme tek alanı günceller, diğerleri korunur', () => {
+      useResumeStore.getState().updateTheme({ primaryColor: '#ff0000' })
+      const theme = useResumeStore.getState().resume.theme
+      expect(theme.primaryColor).toBe('#ff0000')
+      expect(theme.textColor).toBe(defaultTheme.textColor)
+      expect(theme.fontFamily).toBe(defaultTheme.fontFamily)
+      expect(theme.spacing).toBe(defaultTheme.spacing)
+    })
+
+    it('updateTheme birden fazla alanı aynı anda günceller', () => {
+      useResumeStore.getState().updateTheme({
+        primaryColor: '#abcdef',
+        fontFamily: 'serif',
+        spacing: 'compact',
+      })
+      const theme = useResumeStore.getState().resume.theme
+      expect(theme.primaryColor).toBe('#abcdef')
+      expect(theme.fontFamily).toBe('serif')
+      expect(theme.spacing).toBe('compact')
+    })
+
+    it('resetTheme theme i defaultTheme a döndürür', () => {
+      useResumeStore.getState().updateTheme({
+        primaryColor: '#ff0000',
+        fontFamily: 'mono',
+      })
+      useResumeStore.getState().resetTheme()
+      expect(useResumeStore.getState().resume.theme).toEqual(defaultTheme)
+    })
+
+    it('resetResume templateId ve theme i de defaultlara döndürür', () => {
+      useResumeStore.getState().setTemplateId('creative')
+      useResumeStore.getState().updateTheme({ primaryColor: '#ff0000' })
+      useResumeStore.getState().resetResume()
+
+      const { resume } = useResumeStore.getState()
+      expect(resume.templateId).toBe('classic')
+      expect(resume.theme).toEqual(defaultTheme)
+    })
+
+    it('persist template ve theme i de localStorage a yazar', () => {
+      useResumeStore.getState().setTemplateId('modern')
+      useResumeStore.getState().updateTheme({ primaryColor: '#0066cc' })
+
+      const raw = localStorage.getItem('cv-builder:resume')
+      const parsed = JSON.parse(raw!) as {
+        state: { resume: typeof initialResume }
+      }
+      expect(parsed.state.resume.templateId).toBe('modern')
+      expect(parsed.state.resume.theme.primaryColor).toBe('#0066cc')
     })
   })
 })

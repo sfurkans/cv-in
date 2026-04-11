@@ -92,6 +92,19 @@ export interface CustomSection {
   fields: CustomField[]
 }
 
+export type TemplateId = 'classic' | 'modern' | 'creative'
+
+export type FontFamily = 'sans' | 'serif' | 'mono'
+
+export type Spacing = 'compact' | 'normal' | 'relaxed'
+
+export interface Theme {
+  primaryColor: string
+  textColor: string
+  fontFamily: FontFamily
+  spacing: Spacing
+}
+
 export interface Resume {
   basics: Basics
   work: Work[]
@@ -103,4 +116,6 @@ export interface Resume {
   volunteer: Volunteer[]
   publications: Publication[]
   customSections: CustomSection[]
+  templateId: TemplateId
+  theme: Theme
 }

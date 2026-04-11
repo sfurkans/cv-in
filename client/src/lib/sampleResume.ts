@@ -118,4 +118,11 @@ export const sampleResume: Resume = {
   volunteer: [],
   publications: [],
   customSections: [],
+  templateId: 'classic',
+  theme: {
+    primaryColor: '#1f2937',
+    textColor: '#111827',
+    fontFamily: 'sans',
+    spacing: 'normal',
+  },
 }

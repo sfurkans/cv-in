@@ -12,6 +12,7 @@ import {
   getTotalErrorCount,
 } from '@/lib/validateResume'
 
+import DesignPanel from './design/DesignPanel'
 import CertificatesForm from './forms/CertificatesForm'
 import CustomSectionsForm from './forms/CustomSectionsForm'
 import EducationForm from './forms/EducationForm'
@@ -38,6 +39,7 @@ const sectionTitles: Record<string, string> = {
   volunteer: 'Gönüllülük',
   publications: 'Yayınlar',
   custom: 'Özel Bölümler',
+  design: 'Tasarım',
 }
 
 function Placeholder({ section }: { section: string }) {
@@ -78,6 +80,8 @@ function renderSection(activeSection: string) {
       return <PublicationsForm />
     case 'custom':
       return <CustomSectionsForm />
+    case 'design':
+      return <DesignPanel />
     default:
       return <Placeholder section={activeSection} />
   }
