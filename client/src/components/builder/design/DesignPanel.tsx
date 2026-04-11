@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
+import JsonImportExport from './JsonImportExport'
 import TemplateSelector from './TemplateSelector'
 import ThemePicker from './ThemePicker'
 
@@ -28,6 +29,7 @@ export default function DesignPanel() {
 
       <TemplateSelector />
       <ThemePicker />
+      <JsonImportExport />
     </div>
   )
 }
