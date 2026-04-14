@@ -1,0 +1,25 @@
+// CV Builder — Prisma schema
+// docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Resume {
+  id         String   @id @default(cuid())
+  ownerUuid  String
+  templateId String   @default("classic")
+  theme      Json?
+  content    Json
+  photoUrl   String?
+  shareSlug  String?  @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([ownerUuid])
+}
