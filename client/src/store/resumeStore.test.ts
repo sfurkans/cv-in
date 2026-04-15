@@ -704,7 +704,7 @@ describe('resumeStore', () => {
         version: number
       }
       expect(parsed.state.resume.basics.name).toBe('Furkan')
-      expect(parsed.version).toBe(2)
+      expect(parsed.version).toBe(3)
     })
 
     it('birden fazla güncelleme sonrası son state i yansıtır', () => {

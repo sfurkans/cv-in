@@ -193,8 +193,20 @@ function reorderItemsByIds<T extends { id: string }>(
 // State interface
 // ============================================================================
 
+export type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error'
+
 interface ResumeState {
   resume: Resume
+
+  // Remote sync state (Phase 9a)
+  remoteId: string | null
+  syncStatus: SyncStatus
+  lastSyncedAt: string | null
+  lastSyncError: string | null
+
+  setRemoteId: (id: string | null) => void
+  setSyncStatus: (status: SyncStatus, error?: string | null) => void
+  markSynced: (remoteId: string, updatedAt: string) => void
 
   // Basics
   updateBasics: (partial: Partial<Basics>) => void
@@ -323,6 +335,23 @@ export const useResumeStore = create<ResumeState>()(
   persist(
     (set, get) => ({
       resume: initialResume,
+
+      // ---- Remote sync (Phase 9a)
+      remoteId: null,
+      syncStatus: 'idle',
+      lastSyncedAt: null,
+      lastSyncError: null,
+
+      setRemoteId: (id) => set({ remoteId: id }),
+      setSyncStatus: (status, error = null) =>
+        set({ syncStatus: status, lastSyncError: error }),
+      markSynced: (remoteId, updatedAt) =>
+        set({
+          remoteId,
+          syncStatus: 'saved',
+          lastSyncedAt: updatedAt,
+          lastSyncError: null,
+        }),
 
       // ---- Basics
       updateBasics: (partial) =>
@@ -906,14 +935,28 @@ export const useResumeStore = create<ResumeState>()(
     }),
     {
       name: 'cv-builder:resume',
-      version: 2,
-      // v1 → v2: templateId ve theme alanları eklendi
+      version: 3,
+      partialize: (state) => ({
+        resume: state.resume,
+        remoteId: state.remoteId,
+        lastSyncedAt: state.lastSyncedAt,
+      }),
+      // v1 → v2: templateId + theme eklendi.
+      // v2 → v3: remoteId + lastSyncedAt eklendi (Phase 9a backend sync).
       migrate: (persistedState, version) => {
-        const state = persistedState as { resume?: Partial<Resume> } | null
+        const state = persistedState as {
+          resume?: Partial<Resume>
+          remoteId?: string | null
+          lastSyncedAt?: string | null
+        } | null
         if (!state?.resume) return persistedState
         if (version < 2) {
           state.resume.templateId ??= 'classic'
           state.resume.theme ??= defaultTheme
+        }
+        if (version < 3) {
+          state.remoteId ??= null
+          state.lastSyncedAt ??= null
         }
         return state
       },

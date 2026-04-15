@@ -3,8 +3,10 @@ import BuilderSidebar from '@/components/builder/BuilderSidebar'
 import FormPanel from '@/components/builder/FormPanel'
 import PreviewPanel from '@/components/builder/PreviewPanel'
 import { Button } from '@/components/ui/button'
+import { useAutosave } from '@/hooks/useAutosave'
 
 export default function Builder() {
+  useAutosave()
   const [activeSection, setActiveSection] = useState('personal')
   const [showSidebar, setShowSidebar] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
