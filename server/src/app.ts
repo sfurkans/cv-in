@@ -11,7 +11,23 @@ export function createApp() {
   const app = express();
 
   const allowedOrigins = env.CORS_ORIGIN.split(",").map((o) => o.trim());
-  app.use(cors({ origin: allowedOrigins, credentials: true }));
+  app.use(
+    cors({
+      origin: (origin, cb) => {
+        if (!origin) return cb(null, true);
+        // Dev'de herhangi bir localhost portundan izin ver (Vite port değişkenliği için)
+        if (
+          env.NODE_ENV === "development" &&
+          /^https?:\/\/localhost:\d+$/.test(origin)
+        ) {
+          return cb(null, true);
+        }
+        if (allowedOrigins.includes(origin)) return cb(null, true);
+        cb(new Error(`CORS engellendi: ${origin}`));
+      },
+      credentials: true,
+    })
+  );
   app.use(express.json({ limit: "5mb" }));
   if (env.NODE_ENV !== "test") {
     app.use(morgan("dev"));

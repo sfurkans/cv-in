@@ -7,6 +7,7 @@ import {
   View,
 } from '@react-pdf/renderer'
 
+import { resolvePhotoUrl } from '@/lib/photoUrl'
 import type { FontFamily, Resume, Spacing } from '@/types/resume'
 
 import './fonts'
@@ -264,7 +265,9 @@ export default function PDFClassicTemplate({
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
-          {basics.photo && <Image src={basics.photo} style={styles.photo} />}
+          {basics.photo && (
+            <Image src={resolvePhotoUrl(basics.photo)} style={styles.photo} />
+          )}
           <View style={styles.headerInfo}>
             <Text style={styles.name}>
               {basics.name || 'Adınız Soyadınız'}

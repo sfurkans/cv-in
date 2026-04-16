@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 
+import { resolvePhotoUrl } from '@/lib/photoUrl'
 import type { FontFamily, Resume, Spacing } from '@/types/resume'
 
 interface ModernTemplateProps {
@@ -110,7 +111,7 @@ export default function ModernTemplate({ resume }: ModernTemplateProps) {
         <div className="flex items-start gap-4">
           {basics.photo && (
             <img
-              src={basics.photo}
+              src={resolvePhotoUrl(basics.photo)}
               alt={basics.name}
               className="h-16 w-16 shrink-0 rounded-md object-cover"
             />

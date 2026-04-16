@@ -1,27 +1,16 @@
 import type { Resume, TemplateId, Theme } from '@/types/resume'
 
 import { apiClient } from '../apiClient'
+import {
+  resumeFullResponseSchema,
+  resumeListResponseSchema,
+  type ValidatedResumeFull,
+  type ValidatedResumeSummary,
+} from './schemas'
 
-export interface ResumeSummary {
-  id: string
-  templateId: string
-  photoUrl: string | null
-  shareSlug: string | null
-  createdAt: string
-  updatedAt: string
-}
+export type ResumeSummary = ValidatedResumeSummary
 
-interface ApiResumeFull {
-  id: string
-  ownerUuid?: string
-  templateId: string
-  theme: Theme | null
-  content: ResumeContentPayload
-  photoUrl: string | null
-  shareSlug: string | null
-  createdAt: string
-  updatedAt: string
-}
+type ApiResumeFull = ValidatedResumeFull
 
 type ResumeContentPayload = Pick<
   Resume,
@@ -98,32 +87,30 @@ function fromApi(api: ApiResumeFull): RemoteResume {
 }
 
 export async function listResumes(): Promise<ResumeSummary[]> {
-  const res = await apiClient.get<{ data: ResumeSummary[] }>('/resumes')
-  return res.data.data
+  const res = await apiClient.get('/resumes')
+  const parsed = resumeListResponseSchema.parse(res.data)
+  return parsed.data
 }
 
 export async function getResume(id: string): Promise<RemoteResume> {
-  const res = await apiClient.get<{ data: ApiResumeFull }>(`/resumes/${id}`)
-  return fromApi(res.data.data)
+  const res = await apiClient.get(`/resumes/${id}`)
+  const parsed = resumeFullResponseSchema.parse(res.data)
+  return fromApi(parsed.data)
 }
 
 export async function createResume(resume: Resume): Promise<RemoteResume> {
-  const res = await apiClient.post<{ data: ApiResumeFull }>(
-    '/resumes',
-    toBody(resume)
-  )
-  return fromApi(res.data.data)
+  const res = await apiClient.post('/resumes', toBody(resume))
+  const parsed = resumeFullResponseSchema.parse(res.data)
+  return fromApi(parsed.data)
 }
 
 export async function updateResume(
   id: string,
   resume: Resume
 ): Promise<RemoteResume> {
-  const res = await apiClient.put<{ data: ApiResumeFull }>(
-    `/resumes/${id}`,
-    toBody(resume)
-  )
-  return fromApi(res.data.data)
+  const res = await apiClient.put(`/resumes/${id}`, toBody(resume))
+  const parsed = resumeFullResponseSchema.parse(res.data)
+  return fromApi(parsed.data)
 }
 
 export async function deleteResume(id: string): Promise<void> {
@@ -136,10 +123,9 @@ export async function uploadResumePhoto(
 ): Promise<RemoteResume> {
   const formData = new FormData()
   formData.append('photo', file)
-  const res = await apiClient.post<{ data: ApiResumeFull }>(
-    `/resumes/${id}/photo`,
-    formData,
-    { headers: { 'Content-Type': 'multipart/form-data' } }
-  )
-  return fromApi(res.data.data)
+  const res = await apiClient.post(`/resumes/${id}/photo`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  const parsed = resumeFullResponseSchema.parse(res.data)
+  return fromApi(parsed.data)
 }

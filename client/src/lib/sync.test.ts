@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { initialResume, useResumeStore } from '@/store/resumeStore'
 import type { Resume } from '@/types/resume'
@@ -167,5 +167,94 @@ describe('saveResume', () => {
     // Ama mock her iki senaryoda da "first done, sonra ikinci trigger" yapıyor.
     // İlk geldi → remoteId=first-id, ikinci updateResume'ı çağıracak.
     expect(mockUpdate).toHaveBeenCalledOnce()
+  })
+})
+
+// ── Offline fallback testleri ─────────────────────────────────────
+
+describe('saveResume — offline fallback', () => {
+  const mockCreate = vi.mocked(resumesApi.createResume)
+  const originalOnLine = Object.getOwnPropertyDescriptor(navigator, 'onLine')
+
+  function setOnline(value: boolean) {
+    Object.defineProperty(navigator, 'onLine', {
+      value,
+      writable: true,
+      configurable: true,
+    })
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    resetSyncStateForTests()
+    setOnline(true)
+    useResumeStore.setState({
+      resume: {
+        ...initialResume,
+        basics: { ...initialResume.basics, name: 'Test' },
+      },
+      remoteId: null,
+      syncStatus: 'idle',
+      lastSyncedAt: null,
+      lastSyncError: null,
+    })
+  })
+
+  afterEach(() => {
+    // Restore original navigator.onLine
+    if (originalOnLine) {
+      Object.defineProperty(navigator, 'onLine', originalOnLine)
+    } else {
+      setOnline(true)
+    }
+  })
+
+  it('offline iken API çağrısı yapmaz ve syncStatus idle kalır', async () => {
+    setOnline(false)
+
+    await saveResume()
+
+    expect(mockCreate).not.toHaveBeenCalled()
+    expect(useResumeStore.getState().syncStatus).toBe('idle')
+  })
+
+  it('offline iken kaydetme sonrası online olunca otomatik sync tetiklenir', async () => {
+    setOnline(false)
+    await saveResume()
+    expect(mockCreate).not.toHaveBeenCalled()
+
+    // Online'a dön
+    mockCreate.mockResolvedValue({
+      remoteId: 'synced-id',
+      resume: useResumeStore.getState().resume,
+      photoUrl: null,
+      updatedAt: '2026-04-16T10:00:00Z',
+    })
+    setOnline(true)
+    window.dispatchEvent(new Event('online'))
+
+    // Event listener async saveResume tetikler
+    await vi.waitFor(() => {
+      expect(mockCreate).toHaveBeenCalledOnce()
+    })
+    expect(useResumeStore.getState().syncStatus).toBe('saved')
+    expect(useResumeStore.getState().remoteId).toBe('synced-id')
+  })
+
+  it('API hata verip offline durumuna duserse error toast gostermez', async () => {
+    setOnline(true)
+    // İstek sırasında ağ kopacak
+    mockCreate.mockImplementation(async () => {
+      setOnline(false)
+      const err = new Error('Network Error')
+      ;(err as any).isAxiosError = true
+      ;(err as any).response = undefined
+      throw err
+    })
+
+    await saveResume()
+
+    // Offline fallback: error değil, idle olmalı
+    expect(useResumeStore.getState().syncStatus).toBe('idle')
   })
 })

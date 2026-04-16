@@ -14,6 +14,8 @@ export const resumeService = {
       select: {
         id: true,
         templateId: true,
+        theme: true,
+        content: true,
         photoUrl: true,
         shareSlug: true,
         createdAt: true,

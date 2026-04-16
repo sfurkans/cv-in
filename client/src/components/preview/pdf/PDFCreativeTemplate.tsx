@@ -7,6 +7,7 @@ import {
   View,
 } from '@react-pdf/renderer'
 
+import { resolvePhotoUrl } from '@/lib/photoUrl'
 import type { FontFamily, Resume, Spacing } from '@/types/resume'
 
 import './fonts'
@@ -267,7 +268,9 @@ export default function PDFCreativeTemplate({
       <Page size="A4" style={styles.page}>
         {/* Sidebar */}
         <View style={styles.sidebar}>
-          {basics.photo && <Image src={basics.photo} style={styles.photo} />}
+          {basics.photo && (
+            <Image src={resolvePhotoUrl(basics.photo)} style={styles.photo} />
+          )}
 
           <Text style={styles.sidebarName}>
             {basics.name || 'Adınız Soyadınız'}

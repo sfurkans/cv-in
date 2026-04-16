@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 
+import { resolvePhotoUrl } from '@/lib/photoUrl'
 import type { FontFamily, Resume, Spacing } from '@/types/resume'
 
 interface ClassicTemplateProps {
@@ -97,7 +98,7 @@ export default function ClassicTemplate({ resume }: ClassicTemplateProps) {
       >
         {basics.photo && (
           <img
-            src={basics.photo}
+            src={resolvePhotoUrl(basics.photo)}
             alt={basics.name}
             className="h-20 w-20 shrink-0 rounded-full border border-gray-200 object-cover"
           />

@@ -13,6 +13,7 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/builder" element={<Builder />} />
+          <Route path="/builder/:id" element={<Builder />} />
           <Route path="/templates" element={<Templates />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="*" element={<NotFound />} />

@@ -1,8 +1,13 @@
-import { Trash2, Upload, UserCircle2 } from 'lucide-react'
+import { Loader2, Trash2, Upload, UserCircle2 } from 'lucide-react'
 import { useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import { uploadResumePhoto } from '@/lib/api/resumes'
+import { normalizeError } from '@/lib/apiClient'
+import { resolvePhotoUrl } from '@/lib/photoUrl'
+import { saveResume } from '@/lib/sync'
+import { toast } from '@/lib/toast'
 import { useResumeStore } from '@/store/resumeStore'
 
 const ACCEPTED_FORMATS = ['image/jpeg', 'image/png', 'image/webp']
@@ -15,8 +20,9 @@ export default function PhotoUpload() {
   const inputRef = useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
 
-  const handleFile = (file: File) => {
+  const handleFile = async (file: File) => {
     setError(null)
 
     if (!ACCEPTED_FORMATS.includes(file.type)) {
@@ -28,19 +34,35 @@ export default function PhotoUpload() {
       return
     }
 
-    const reader = new FileReader()
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        updatePhoto(reader.result)
+    setIsUploading(true)
+    try {
+      // CV henüz backend'de yoksa önce kaydet
+      let remoteId = useResumeStore.getState().remoteId
+      if (!remoteId) {
+        await saveResume()
+        remoteId = useResumeStore.getState().remoteId
+        if (!remoteId) {
+          throw new Error('CV kaydedilemedi, fotoğraf yüklenemiyor')
+        }
       }
+
+      const result = await uploadResumePhoto(remoteId, file)
+      if (result.photoUrl) {
+        updatePhoto(result.photoUrl)
+        toast.success('Fotoğraf yüklendi')
+      }
+    } catch (err) {
+      const message = normalizeError(err).message
+      setError(message)
+      toast.error('Fotoğraf yüklenemedi: ' + message)
+    } finally {
+      setIsUploading(false)
     }
-    reader.onerror = () => setError('Dosya okunamadı.')
-    reader.readAsDataURL(file)
   }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) handleFile(file)
+    if (file) void handleFile(file)
     e.target.value = ''
   }
 
@@ -48,7 +70,7 @@ export default function PhotoUpload() {
     e.preventDefault()
     setIsDragging(false)
     const file = e.dataTransfer.files?.[0]
-    if (file) handleFile(file)
+    if (file) void handleFile(file)
   }
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -83,7 +105,7 @@ export default function PhotoUpload() {
         <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border bg-background">
           {photo ? (
             <img
-              src={photo}
+              src={resolvePhotoUrl(photo)}
               alt="Profil önizleme"
               className="h-full w-full object-cover"
             />
@@ -100,11 +122,21 @@ export default function PhotoUpload() {
               variant="outline"
               size="sm"
               onClick={() => inputRef.current?.click()}
+              disabled={isUploading}
             >
-              <Upload className="h-4 w-4" />
-              Dosya Seç
+              {isUploading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Yükleniyor...
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4" />
+                  Dosya Seç
+                </>
+              )}
             </Button>
-            {photo && (
+            {photo && !isUploading && (
               <Button
                 type="button"
                 variant="ghost"
