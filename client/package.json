@@ -22,7 +22,7 @@
     "@fontsource/noto-sans-mono": "^5.2.10",
     "@fontsource/noto-serif": "^5.2.9",
     "@hookform/resolvers": "^5.2.2",
-    "@react-pdf/renderer": "^4.4.1",
+    "@react-pdf/renderer": "^4.5.1",
     "@tailwindcss/vite": "^4.2.2",
     "axios": "^1.15.0",
     "class-variance-authority": "^0.7.1",
