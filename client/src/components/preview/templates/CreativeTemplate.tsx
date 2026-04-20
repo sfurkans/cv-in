@@ -1,7 +1,14 @@
-import type { CSSProperties } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
+import { Fragment } from 'react'
 
 import { resolvePhotoUrl } from '@/lib/photoUrl'
-import type { FontFamily, Resume, Spacing } from '@/types/resume'
+import {
+  DEFAULT_SECTION_ORDER,
+  type FontFamily,
+  type Resume,
+  type SectionId,
+  type Spacing,
+} from '@/types/resume'
 
 interface CreativeTemplateProps {
   resume: Resume
@@ -73,8 +80,16 @@ export default function CreativeTemplate({ resume }: CreativeTemplateProps) {
     volunteer,
     publications,
     customSections,
+    sectionOrder,
     theme,
   } = resume
+  const order: SectionId[] =
+    sectionOrder && sectionOrder.length > 0 ? sectionOrder : DEFAULT_SECTION_ORDER
+  // Creative'de skills/languages sol sidebar'da sabit, main alanda sıralama
+  // bunlar hariç tutulur
+  const mainOrder = order.filter(
+    (id) => id !== 'skills' && id !== 'languages'
+  )
 
   const SKILL_LEVEL_LABELS: Record<string, string> = {
     beginner: 'Başlangıç',
@@ -88,6 +103,16 @@ export default function CreativeTemplate({ resume }: CreativeTemplateProps) {
 
   const fontClass = FONT_CLASS[theme.fontFamily]
   const spacing = SPACING_CONFIG[theme.spacing]
+
+  const mainRenderers: Partial<Record<SectionId, () => ReactNode>> = {
+    experience: renderExperience,
+    education: renderEducation,
+    projects: renderProjects,
+    certificates: renderCertificates,
+    volunteer: renderVolunteer,
+    publications: renderPublications,
+    custom: renderCustom,
+  }
 
   return (
     <div
@@ -206,241 +231,261 @@ export default function CreativeTemplate({ resume }: CreativeTemplateProps) {
           </section>
         )}
 
-        {/* Experience */}
-        {work.length > 0 && (
-          <section className={spacing.sectionGap}>
-            <MainHeading>Deneyim</MainHeading>
-            <div className="space-y-3">
-              {work.map((item) => (
-                <div key={item.id}>
-                  <div className="flex items-baseline justify-between gap-2">
-                    <h3
-                      className="font-semibold"
-                      style={{ color: 'var(--text-color)' }}
-                    >
-                      {item.position || 'Pozisyon'}
-                      {item.company && (
-                        <span className="font-normal text-gray-600">
-                          {' — '}
-                          {item.company}
-                        </span>
-                      )}
-                    </h3>
-                    <span className="shrink-0 text-[9px] text-gray-500">
-                      {formatDateRange(item.startDate, item.endDate)}
-                    </span>
-                  </div>
-                  {item.summary && (
-                    <p className="mt-0.5 text-gray-700">{item.summary}</p>
-                  )}
-                  {item.highlights.some((h) => h.trim()) && (
-                    <ul className="mt-1 list-disc space-y-0.5 pl-4 text-gray-700">
-                      {item.highlights
-                        .filter((h) => h.trim())
-                        .map((highlight, i) => (
-                          <li key={i}>{highlight}</li>
-                        ))}
-                    </ul>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Education */}
-        {education.length > 0 && (
-          <section className={spacing.sectionGap}>
-            <MainHeading>Eğitim</MainHeading>
-            <div className="space-y-2">
-              {education.map((item) => (
-                <div key={item.id}>
-                  <div className="flex items-baseline justify-between gap-2">
-                    <h3
-                      className="font-semibold"
-                      style={{ color: 'var(--text-color)' }}
-                    >
-                      {item.institution || 'Okul'}
-                    </h3>
-                    <span className="shrink-0 text-[9px] text-gray-500">
-                      {formatDateRange(item.startDate, item.endDate)}
-                    </span>
-                  </div>
-                  {(item.degree || item.field) && (
-                    <p className="text-gray-700">
-                      {[item.degree, item.field].filter(Boolean).join(' — ')}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Projects */}
-        {projects.length > 0 && (
-          <section className={spacing.sectionGap}>
-            <MainHeading>Projeler</MainHeading>
-            <div className="space-y-2">
-              {projects.map((item) => (
-                <div key={item.id}>
-                  <div className="flex items-baseline justify-between gap-2">
-                    <h3
-                      className="font-semibold"
-                      style={{ color: 'var(--text-color)' }}
-                    >
-                      {item.name || 'Proje'}
-                    </h3>
-                    <span className="shrink-0 text-[9px] text-gray-500">
-                      {formatDateRange(item.startDate, item.endDate)}
-                    </span>
-                  </div>
-                  {item.description && (
-                    <p className="mt-0.5 text-gray-700">{item.description}</p>
-                  )}
-                  {item.url && (
-                    <p className="mt-0.5 text-[9px] text-gray-500">
-                      {item.url}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Certificates */}
-        {certificates.length > 0 && (
-          <section className={spacing.sectionGap}>
-            <MainHeading>Sertifikalar</MainHeading>
-            <div className="space-y-1.5">
-              {certificates.map((item) => (
-                <div key={item.id}>
-                  <div className="flex items-baseline justify-between gap-2">
-                    <h3
-                      className="font-semibold"
-                      style={{ color: 'var(--text-color)' }}
-                    >
-                      {item.name}
-                      {item.issuer && (
-                        <span className="font-normal text-gray-600">
-                          {' — '}
-                          {item.issuer}
-                        </span>
-                      )}
-                    </h3>
-                    <span className="shrink-0 text-[9px] text-gray-500">
-                      {formatMonth(item.date)}
-                    </span>
-                  </div>
-                  {item.url && (
-                    <p className="text-[9px] text-gray-500">{item.url}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Volunteer */}
-        {volunteer.length > 0 && (
-          <section className={spacing.sectionGap}>
-            <MainHeading>Gönüllülük</MainHeading>
-            <div className="space-y-2">
-              {volunteer.map((item) => (
-                <div key={item.id}>
-                  <div className="flex items-baseline justify-between gap-2">
-                    <h3
-                      className="font-semibold"
-                      style={{ color: 'var(--text-color)' }}
-                    >
-                      {item.role || 'Rol'}
-                      {item.organization && (
-                        <span className="font-normal text-gray-600">
-                          {' — '}
-                          {item.organization}
-                        </span>
-                      )}
-                    </h3>
-                    <span className="shrink-0 text-[9px] text-gray-500">
-                      {formatDateRange(item.startDate, item.endDate)}
-                    </span>
-                  </div>
-                  {item.summary && (
-                    <p className="mt-0.5 text-gray-700">{item.summary}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Publications */}
-        {publications.length > 0 && (
-          <section className={spacing.sectionGap}>
-            <MainHeading>Yayınlar</MainHeading>
-            <div className="space-y-1.5">
-              {publications.map((item) => (
-                <div key={item.id}>
-                  <div className="flex items-baseline justify-between gap-2">
-                    <h3
-                      className="font-semibold"
-                      style={{ color: 'var(--text-color)' }}
-                    >
-                      {item.name}
-                      {item.publisher && (
-                        <span className="font-normal text-gray-600">
-                          {' — '}
-                          {item.publisher}
-                        </span>
-                      )}
-                    </h3>
-                    <span className="shrink-0 text-[9px] text-gray-500">
-                      {formatMonth(item.date)}
-                    </span>
-                  </div>
-                  {item.url && (
-                    <p className="text-[9px] text-gray-500">{item.url}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Custom sections */}
-        {customSections.length > 0 &&
-          customSections.map(
-            (section) =>
-              section.title && (
-                <section key={section.id} className={spacing.sectionGap}>
-                  <MainHeading>{section.title}</MainHeading>
-                  {section.fields.length > 0 && (
-                    <div className="space-y-1">
-                      {section.fields.map((field) => (
-                        <div
-                          key={field.id}
-                          className="grid grid-cols-[auto_1fr] gap-2"
-                        >
-                          {field.label && (
-                            <span
-                              className="font-semibold"
-                              style={{ color: 'var(--text-color)' }}
-                            >
-                              {field.label}:
-                            </span>
-                          )}
-                          {field.value && (
-                            <span className="text-gray-700">{field.value}</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </section>
-              )
-          )}
+        {/* Sections — kullanıcı sırasına göre (skills/languages sidebar'da) */}
+        {mainOrder.map((id) => (
+          <Fragment key={id}>{mainRenderers[id]?.()}</Fragment>
+        ))}
       </main>
     </div>
   )
+
+  function renderExperience(): ReactNode {
+    if (work.length === 0) return null
+    return (
+      <section className={spacing.sectionGap}>
+        <MainHeading>Deneyim</MainHeading>
+        <div className="space-y-3">
+          {work.map((item) => (
+            <div key={item.id}>
+              <div className="flex items-baseline justify-between gap-2">
+                <h3
+                  className="font-semibold"
+                  style={{ color: 'var(--text-color)' }}
+                >
+                  {item.position || 'Pozisyon'}
+                  {item.company && (
+                    <span className="font-normal text-gray-600">
+                      {' — '}
+                      {item.company}
+                    </span>
+                  )}
+                </h3>
+                <span className="shrink-0 text-[9px] text-gray-500">
+                  {formatDateRange(item.startDate, item.endDate)}
+                </span>
+              </div>
+              {item.summary && (
+                <p className="mt-0.5 text-gray-700">{item.summary}</p>
+              )}
+              {item.highlights.some((h) => h.trim()) && (
+                <ul className="mt-1 list-disc space-y-0.5 pl-4 text-gray-700">
+                  {item.highlights
+                    .filter((h) => h.trim())
+                    .map((highlight, i) => (
+                      <li key={i}>{highlight}</li>
+                    ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  function renderEducation(): ReactNode {
+    if (education.length === 0) return null
+    return (
+      <section className={spacing.sectionGap}>
+        <MainHeading>Eğitim</MainHeading>
+        <div className="space-y-2">
+          {education.map((item) => (
+            <div key={item.id}>
+              <div className="flex items-baseline justify-between gap-2">
+                <h3
+                  className="font-semibold"
+                  style={{ color: 'var(--text-color)' }}
+                >
+                  {item.institution || 'Okul'}
+                </h3>
+                <span className="shrink-0 text-[9px] text-gray-500">
+                  {formatDateRange(item.startDate, item.endDate)}
+                </span>
+              </div>
+              {(item.degree || item.field) && (
+                <p className="text-gray-700">
+                  {[item.degree, item.field].filter(Boolean).join(' — ')}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  function renderProjects(): ReactNode {
+    if (projects.length === 0) return null
+    return (
+      <section className={spacing.sectionGap}>
+        <MainHeading>Projeler</MainHeading>
+        <div className="space-y-2">
+          {projects.map((item) => (
+            <div key={item.id}>
+              <div className="flex items-baseline justify-between gap-2">
+                <h3
+                  className="font-semibold"
+                  style={{ color: 'var(--text-color)' }}
+                >
+                  {item.name || 'Proje'}
+                </h3>
+                <span className="shrink-0 text-[9px] text-gray-500">
+                  {formatDateRange(item.startDate, item.endDate)}
+                </span>
+              </div>
+              {item.description && (
+                <p className="mt-0.5 text-gray-700">{item.description}</p>
+              )}
+              {item.url && (
+                <p className="mt-0.5 text-[9px] text-gray-500">{item.url}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  function renderCertificates(): ReactNode {
+    if (certificates.length === 0) return null
+    return (
+      <section className={spacing.sectionGap}>
+        <MainHeading>Sertifikalar</MainHeading>
+        <div className="space-y-1.5">
+          {certificates.map((item) => (
+            <div key={item.id}>
+              <div className="flex items-baseline justify-between gap-2">
+                <h3
+                  className="font-semibold"
+                  style={{ color: 'var(--text-color)' }}
+                >
+                  {item.name}
+                  {item.issuer && (
+                    <span className="font-normal text-gray-600">
+                      {' — '}
+                      {item.issuer}
+                    </span>
+                  )}
+                </h3>
+                <span className="shrink-0 text-[9px] text-gray-500">
+                  {formatMonth(item.date)}
+                </span>
+              </div>
+              {item.url && (
+                <p className="text-[9px] text-gray-500">{item.url}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  function renderVolunteer(): ReactNode {
+    if (volunteer.length === 0) return null
+    return (
+      <section className={spacing.sectionGap}>
+        <MainHeading>Gönüllülük</MainHeading>
+        <div className="space-y-2">
+          {volunteer.map((item) => (
+            <div key={item.id}>
+              <div className="flex items-baseline justify-between gap-2">
+                <h3
+                  className="font-semibold"
+                  style={{ color: 'var(--text-color)' }}
+                >
+                  {item.role || 'Rol'}
+                  {item.organization && (
+                    <span className="font-normal text-gray-600">
+                      {' — '}
+                      {item.organization}
+                    </span>
+                  )}
+                </h3>
+                <span className="shrink-0 text-[9px] text-gray-500">
+                  {formatDateRange(item.startDate, item.endDate)}
+                </span>
+              </div>
+              {item.summary && (
+                <p className="mt-0.5 text-gray-700">{item.summary}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  function renderPublications(): ReactNode {
+    if (publications.length === 0) return null
+    return (
+      <section className={spacing.sectionGap}>
+        <MainHeading>Yayınlar</MainHeading>
+        <div className="space-y-1.5">
+          {publications.map((item) => (
+            <div key={item.id}>
+              <div className="flex items-baseline justify-between gap-2">
+                <h3
+                  className="font-semibold"
+                  style={{ color: 'var(--text-color)' }}
+                >
+                  {item.name}
+                  {item.publisher && (
+                    <span className="font-normal text-gray-600">
+                      {' — '}
+                      {item.publisher}
+                    </span>
+                  )}
+                </h3>
+                <span className="shrink-0 text-[9px] text-gray-500">
+                  {formatMonth(item.date)}
+                </span>
+              </div>
+              {item.url && (
+                <p className="text-[9px] text-gray-500">{item.url}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  function renderCustom(): ReactNode {
+    if (customSections.length === 0) return null
+    return (
+      <>
+        {customSections.map(
+          (section) =>
+            section.title && (
+              <section key={section.id} className={spacing.sectionGap}>
+                <MainHeading>{section.title}</MainHeading>
+                {section.fields.length > 0 && (
+                  <div className="space-y-1">
+                    {section.fields.map((field) => (
+                      <div
+                        key={field.id}
+                        className="grid grid-cols-[auto_1fr] gap-2"
+                      >
+                        {field.label && (
+                          <span
+                            className="font-semibold"
+                            style={{ color: 'var(--text-color)' }}
+                          >
+                            {field.label}:
+                          </span>
+                        )}
+                        {field.value && (
+                          <span className="text-gray-700">{field.value}</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+            )
+        )}
+      </>
+    )
+  }
 }

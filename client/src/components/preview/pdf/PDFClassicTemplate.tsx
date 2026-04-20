@@ -7,9 +7,18 @@ import {
   View,
 } from '@react-pdf/renderer'
 
+import type { ReactNode } from 'react'
+import { Fragment } from 'react'
+
 import { resolvePhotoUrl } from '@/lib/photoUrl'
 import { trUpper } from '@/lib/trUpper'
-import type { FontFamily, Resume, Spacing } from '@/types/resume'
+import {
+  DEFAULT_SECTION_ORDER,
+  type FontFamily,
+  type Resume,
+  type SectionId,
+  type Spacing,
+} from '@/types/resume'
 
 import './fonts'
 
@@ -247,8 +256,11 @@ export default function PDFClassicTemplate({
     volunteer,
     publications,
     customSections,
+    sectionOrder,
     theme,
   } = resume
+  const order: SectionId[] =
+    sectionOrder && sectionOrder.length > 0 ? sectionOrder : DEFAULT_SECTION_ORDER
 
   const fontFamily = FONT_MAP[theme.fontFamily]
   const { pagePadding, sectionGap } = SPACING_MAP[theme.spacing]
@@ -261,6 +273,18 @@ export default function PDFClassicTemplate({
   )
 
   const visibleSkills = skills.filter((s) => s.keywords.length > 0)
+
+  const sectionRenderers: Record<SectionId, () => ReactNode> = {
+    experience: renderExperience,
+    education: renderEducation,
+    skills: renderSkills,
+    projects: renderProjects,
+    languages: renderLanguages,
+    certificates: renderCertificates,
+    volunteer: renderVolunteer,
+    publications: renderPublications,
+    custom: renderCustom,
+  }
 
   return (
     <Document>
@@ -302,219 +326,246 @@ export default function PDFClassicTemplate({
           </View>
         )}
 
-        {/* Experience */}
-        {work.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionHeading}>{trUpper('Deneyim')}</Text>
-            {work.map((item) => (
-              <View key={item.id} style={styles.itemBlock}>
-                <View style={styles.itemHeader}>
-                  <Text style={styles.itemTitle}>
-                    {item.position || 'Pozisyon'}
-                    {item.company && (
-                      <Text style={styles.itemTitleMuted}>
-                        {' — '}
-                        {item.company}
-                      </Text>
-                    )}
-                  </Text>
-                  <Text style={styles.itemDate}>
-                    {formatDateRange(item.startDate, item.endDate)}
-                  </Text>
-                </View>
-                {item.summary && (
-                  <Text style={styles.itemBody}>{item.summary}</Text>
-                )}
-                {item.highlights.some((h) => h.trim()) && (
-                  <View style={styles.bulletList}>
-                    {item.highlights
-                      .filter((h) => h.trim())
-                      .map((highlight, i) => (
-                        <Text key={i} style={styles.bullet}>
-                          • {highlight}
-                        </Text>
-                      ))}
-                  </View>
-                )}
-              </View>
-            ))}
-          </View>
-        )}
+        {/* Sections — kullanıcı sırasına göre */}
+        {order.map((id) => (
+          <Fragment key={id}>{sectionRenderers[id]?.()}</Fragment>
+        ))}
+      </Page>
+    </Document>
+  )
 
-        {/* Education */}
-        {education.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionHeading}>{trUpper('Eğitim')}</Text>
-            {education.map((item) => (
-              <View key={item.id} style={styles.itemBlock}>
-                <View style={styles.itemHeader}>
-                  <Text style={styles.itemTitle}>
-                    {item.institution || 'Okul'}
-                  </Text>
-                  <Text style={styles.itemDate}>
-                    {formatDateRange(item.startDate, item.endDate)}
-                  </Text>
-                </View>
-                {(item.degree || item.field) && (
-                  <Text style={styles.itemBody}>
-                    {[item.degree, item.field].filter(Boolean).join(' — ')}
+  function renderExperience(): ReactNode {
+    if (work.length === 0) return null
+    return (
+      <View style={styles.section}>
+        <Text style={styles.sectionHeading}>{trUpper('Deneyim')}</Text>
+        {work.map((item) => (
+          <View key={item.id} style={styles.itemBlock}>
+            <View style={styles.itemHeader}>
+              <Text style={styles.itemTitle}>
+                {item.position || 'Pozisyon'}
+                {item.company && (
+                  <Text style={styles.itemTitleMuted}>
+                    {' — '}
+                    {item.company}
                   </Text>
                 )}
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* Skills */}
-        {visibleSkills.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionHeading}>{trUpper('Yetenekler')}</Text>
-            {visibleSkills.map((skill) => (
-              <View key={skill.id} style={styles.skillsGroup}>
-                {(skill.name || skill.level) && (
-                  <Text style={styles.skillName}>
-                    {skill.name}
-                    {skill.level && SKILL_LEVEL_LABELS[skill.level] && (
-                      <Text style={styles.skillLevel}>
-                        {' · '}
-                        {SKILL_LEVEL_LABELS[skill.level]}
-                      </Text>
-                    )}
-                  </Text>
-                )}
-                <View style={styles.skillChipRow}>
-                  {skill.keywords.map((keyword, i) => (
-                    <Text
-                      key={`${skill.id}-${keyword}-${i}`}
-                      style={styles.skillChip}
-                    >
-                      {keyword}
+              </Text>
+              <Text style={styles.itemDate}>
+                {formatDateRange(item.startDate, item.endDate)}
+              </Text>
+            </View>
+            {item.summary && (
+              <Text style={styles.itemBody}>{item.summary}</Text>
+            )}
+            {item.highlights.some((h) => h.trim()) && (
+              <View style={styles.bulletList}>
+                {item.highlights
+                  .filter((h) => h.trim())
+                  .map((highlight, i) => (
+                    <Text key={i} style={styles.bullet}>
+                      • {highlight}
                     </Text>
                   ))}
-                </View>
               </View>
-            ))}
+            )}
           </View>
-        )}
+        ))}
+      </View>
+    )
+  }
 
-        {/* Projects */}
-        {projects.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionHeading}>{trUpper('Projeler')}</Text>
-            {projects.map((item) => (
-              <View key={item.id} style={styles.itemBlock}>
-                <View style={styles.itemHeader}>
-                  <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
-                  <Text style={styles.itemDate}>
-                    {formatDateRange(item.startDate, item.endDate)}
+  function renderEducation(): ReactNode {
+    if (education.length === 0) return null
+    return (
+      <View style={styles.section}>
+        <Text style={styles.sectionHeading}>{trUpper('Eğitim')}</Text>
+        {education.map((item) => (
+          <View key={item.id} style={styles.itemBlock}>
+            <View style={styles.itemHeader}>
+              <Text style={styles.itemTitle}>
+                {item.institution || 'Okul'}
+              </Text>
+              <Text style={styles.itemDate}>
+                {formatDateRange(item.startDate, item.endDate)}
+              </Text>
+            </View>
+            {(item.degree || item.field) && (
+              <Text style={styles.itemBody}>
+                {[item.degree, item.field].filter(Boolean).join(' — ')}
+              </Text>
+            )}
+          </View>
+        ))}
+      </View>
+    )
+  }
+
+  function renderSkills(): ReactNode {
+    if (visibleSkills.length === 0) return null
+    return (
+      <View style={styles.section}>
+        <Text style={styles.sectionHeading}>{trUpper('Yetenekler')}</Text>
+        {visibleSkills.map((skill) => (
+          <View key={skill.id} style={styles.skillsGroup}>
+            {(skill.name || skill.level) && (
+              <Text style={styles.skillName}>
+                {skill.name}
+                {skill.level && SKILL_LEVEL_LABELS[skill.level] && (
+                  <Text style={styles.skillLevel}>
+                    {' · '}
+                    {SKILL_LEVEL_LABELS[skill.level]}
                   </Text>
-                </View>
-                {item.description && (
-                  <Text style={styles.itemBody}>{item.description}</Text>
                 )}
-                {item.url && <Text style={styles.urlText}>{item.url}</Text>}
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* Languages */}
-        {languages.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionHeading}>{trUpper('Diller')}</Text>
-            <View style={styles.languageRow}>
-              {languages.map((item) => (
-                <Text key={item.id} style={styles.languageItem}>
-                  <Text style={styles.languageName}>{item.name}</Text>
-                  {item.proficiency && (
-                    <Text style={styles.languageLevel}>
-                      {' — '}
-                      {item.proficiency.toUpperCase()}
-                    </Text>
-                  )}
+              </Text>
+            )}
+            <View style={styles.skillChipRow}>
+              {skill.keywords.map((keyword, i) => (
+                <Text
+                  key={`${skill.id}-${keyword}-${i}`}
+                  style={styles.skillChip}
+                >
+                  {keyword}
                 </Text>
               ))}
             </View>
           </View>
-        )}
+        ))}
+      </View>
+    )
+  }
 
-        {/* Certificates */}
-        {certificates.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionHeading}>{trUpper('Sertifikalar')}</Text>
-            {certificates.map((item) => (
-              <View key={item.id} style={styles.itemBlock}>
-                <View style={styles.itemHeader}>
-                  <Text style={styles.itemTitle}>
-                    {item.name}
-                    {item.issuer && (
-                      <Text style={styles.itemTitleMuted}>
-                        {' — '}
-                        {item.issuer}
-                      </Text>
-                    )}
-                  </Text>
-                  <Text style={styles.itemDate}>{formatMonth(item.date)}</Text>
-                </View>
-                {item.url && <Text style={styles.urlText}>{item.url}</Text>}
-              </View>
-            ))}
+  function renderProjects(): ReactNode {
+    if (projects.length === 0) return null
+    return (
+      <View style={styles.section}>
+        <Text style={styles.sectionHeading}>{trUpper('Projeler')}</Text>
+        {projects.map((item) => (
+          <View key={item.id} style={styles.itemBlock}>
+            <View style={styles.itemHeader}>
+              <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
+              <Text style={styles.itemDate}>
+                {formatDateRange(item.startDate, item.endDate)}
+              </Text>
+            </View>
+            {item.description && (
+              <Text style={styles.itemBody}>{item.description}</Text>
+            )}
+            {item.url && <Text style={styles.urlText}>{item.url}</Text>}
           </View>
-        )}
+        ))}
+      </View>
+    )
+  }
 
-        {/* Volunteer */}
-        {volunteer.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionHeading}>{trUpper('Gönüllülük')}</Text>
-            {volunteer.map((item) => (
-              <View key={item.id} style={styles.itemBlock}>
-                <View style={styles.itemHeader}>
-                  <Text style={styles.itemTitle}>
-                    {item.role || 'Rol'}
-                    {item.organization && (
-                      <Text style={styles.itemTitleMuted}>
-                        {' — '}
-                        {item.organization}
-                      </Text>
-                    )}
+  function renderLanguages(): ReactNode {
+    if (languages.length === 0) return null
+    return (
+      <View style={styles.section}>
+        <Text style={styles.sectionHeading}>{trUpper('Diller')}</Text>
+        <View style={styles.languageRow}>
+          {languages.map((item) => (
+            <Text key={item.id} style={styles.languageItem}>
+              <Text style={styles.languageName}>{item.name}</Text>
+              {item.proficiency && (
+                <Text style={styles.languageLevel}>
+                  {' — '}
+                  {item.proficiency.toUpperCase()}
+                </Text>
+              )}
+            </Text>
+          ))}
+        </View>
+      </View>
+    )
+  }
+
+  function renderCertificates(): ReactNode {
+    if (certificates.length === 0) return null
+    return (
+      <View style={styles.section}>
+        <Text style={styles.sectionHeading}>{trUpper('Sertifikalar')}</Text>
+        {certificates.map((item) => (
+          <View key={item.id} style={styles.itemBlock}>
+            <View style={styles.itemHeader}>
+              <Text style={styles.itemTitle}>
+                {item.name}
+                {item.issuer && (
+                  <Text style={styles.itemTitleMuted}>
+                    {' — '}
+                    {item.issuer}
                   </Text>
-                  <Text style={styles.itemDate}>
-                    {formatDateRange(item.startDate, item.endDate)}
-                  </Text>
-                </View>
-                {item.summary && (
-                  <Text style={styles.itemBody}>{item.summary}</Text>
                 )}
-              </View>
-            ))}
+              </Text>
+              <Text style={styles.itemDate}>{formatMonth(item.date)}</Text>
+            </View>
+            {item.url && <Text style={styles.urlText}>{item.url}</Text>}
           </View>
-        )}
+        ))}
+      </View>
+    )
+  }
 
-        {/* Publications */}
-        {publications.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionHeading}>{trUpper('Yayınlar')}</Text>
-            {publications.map((item) => (
-              <View key={item.id} style={styles.itemBlock}>
-                <View style={styles.itemHeader}>
-                  <Text style={styles.itemTitle}>
-                    {item.name}
-                    {item.publisher && (
-                      <Text style={styles.itemTitleMuted}>
-                        {' — '}
-                        {item.publisher}
-                      </Text>
-                    )}
+  function renderVolunteer(): ReactNode {
+    if (volunteer.length === 0) return null
+    return (
+      <View style={styles.section}>
+        <Text style={styles.sectionHeading}>{trUpper('Gönüllülük')}</Text>
+        {volunteer.map((item) => (
+          <View key={item.id} style={styles.itemBlock}>
+            <View style={styles.itemHeader}>
+              <Text style={styles.itemTitle}>
+                {item.role || 'Rol'}
+                {item.organization && (
+                  <Text style={styles.itemTitleMuted}>
+                    {' — '}
+                    {item.organization}
                   </Text>
-                  <Text style={styles.itemDate}>{formatMonth(item.date)}</Text>
-                </View>
-                {item.url && <Text style={styles.urlText}>{item.url}</Text>}
-              </View>
-            ))}
+                )}
+              </Text>
+              <Text style={styles.itemDate}>
+                {formatDateRange(item.startDate, item.endDate)}
+              </Text>
+            </View>
+            {item.summary && (
+              <Text style={styles.itemBody}>{item.summary}</Text>
+            )}
           </View>
-        )}
+        ))}
+      </View>
+    )
+  }
 
-        {/* Custom sections */}
+  function renderPublications(): ReactNode {
+    if (publications.length === 0) return null
+    return (
+      <View style={styles.section}>
+        <Text style={styles.sectionHeading}>{trUpper('Yayınlar')}</Text>
+        {publications.map((item) => (
+          <View key={item.id} style={styles.itemBlock}>
+            <View style={styles.itemHeader}>
+              <Text style={styles.itemTitle}>
+                {item.name}
+                {item.publisher && (
+                  <Text style={styles.itemTitleMuted}>
+                    {' — '}
+                    {item.publisher}
+                  </Text>
+                )}
+              </Text>
+              <Text style={styles.itemDate}>{formatMonth(item.date)}</Text>
+            </View>
+            {item.url && <Text style={styles.urlText}>{item.url}</Text>}
+          </View>
+        ))}
+      </View>
+    )
+  }
+
+  function renderCustom(): ReactNode {
+    if (customSections.length === 0) return null
+    return (
+      <Fragment>
         {customSections.map(
           (section) =>
             section.title && (
@@ -535,7 +586,7 @@ export default function PDFClassicTemplate({
               </View>
             )
         )}
-      </Page>
-    </Document>
-  )
+      </Fragment>
+    )
+  }
 }

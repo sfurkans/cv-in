@@ -7,9 +7,18 @@ import {
   View,
 } from '@react-pdf/renderer'
 
+import type { ReactNode } from 'react'
+import { Fragment } from 'react'
+
 import { resolvePhotoUrl } from '@/lib/photoUrl'
 import { trUpper } from '@/lib/trUpper'
-import type { FontFamily, Resume, Spacing } from '@/types/resume'
+import {
+  DEFAULT_SECTION_ORDER,
+  type FontFamily,
+  type Resume,
+  type SectionId,
+  type Spacing,
+} from '@/types/resume'
 
 import './fonts'
 
@@ -248,8 +257,15 @@ export default function PDFCreativeTemplate({
     volunteer,
     publications,
     customSections,
+    sectionOrder,
     theme,
   } = resume
+  const order: SectionId[] =
+    sectionOrder && sectionOrder.length > 0 ? sectionOrder : DEFAULT_SECTION_ORDER
+  // Creative'de skills/languages sidebar'da sabit, main alanda bunlar hariç
+  const mainOrder = order.filter(
+    (id) => id !== 'skills' && id !== 'languages'
+  )
 
   const fontFamily = FONT_MAP[theme.fontFamily]
   const { sidePadding, mainPadding, sectionGap } = SPACING_MAP[theme.spacing]
@@ -263,6 +279,16 @@ export default function PDFCreativeTemplate({
   )
 
   const visibleSkills = skills.filter((s) => s.keywords.length > 0)
+
+  const mainRenderers: Partial<Record<SectionId, () => ReactNode>> = {
+    experience: renderExperience,
+    education: renderEducation,
+    projects: renderProjects,
+    certificates: renderCertificates,
+    volunteer: renderVolunteer,
+    publications: renderPublications,
+    custom: renderCustom,
+  }
 
   return (
     <Document>
@@ -367,197 +393,212 @@ export default function PDFCreativeTemplate({
             </View>
           )}
 
-          {/* Experience */}
-          {work.length > 0 && (
-            <View style={styles.mainSection}>
-              <Text style={styles.mainHeading}>{trUpper('Deneyim')}</Text>
-              {work.map((item) => (
-                <View key={item.id} style={styles.itemBlock}>
-                  <View style={styles.itemHeader}>
-                    <Text style={styles.itemTitle}>
-                      {item.position || 'Pozisyon'}
-                      {item.company && (
-                        <Text style={styles.itemTitleMuted}>
-                          {' — '}
-                          {item.company}
-                        </Text>
-                      )}
-                    </Text>
-                    <Text style={styles.itemDate}>
-                      {formatDateRange(item.startDate, item.endDate)}
-                    </Text>
-                  </View>
-                  {item.summary && (
-                    <Text style={styles.itemBody}>{item.summary}</Text>
-                  )}
-                  {item.highlights.some((h) => h.trim()) && (
-                    <View style={styles.bulletList}>
-                      {item.highlights
-                        .filter((h) => h.trim())
-                        .map((highlight, i) => (
-                          <Text key={i} style={styles.bullet}>
-                            • {highlight}
-                          </Text>
-                        ))}
-                    </View>
-                  )}
-                </View>
-              ))}
-            </View>
-          )}
-
-          {/* Education */}
-          {education.length > 0 && (
-            <View style={styles.mainSection}>
-              <Text style={styles.mainHeading}>{trUpper('Eğitim')}</Text>
-              {education.map((item) => (
-                <View key={item.id} style={styles.itemBlock}>
-                  <View style={styles.itemHeader}>
-                    <Text style={styles.itemTitle}>
-                      {item.institution || 'Okul'}
-                    </Text>
-                    <Text style={styles.itemDate}>
-                      {formatDateRange(item.startDate, item.endDate)}
-                    </Text>
-                  </View>
-                  {(item.degree || item.field) && (
-                    <Text style={styles.itemBody}>
-                      {[item.degree, item.field].filter(Boolean).join(' — ')}
-                    </Text>
-                  )}
-                </View>
-              ))}
-            </View>
-          )}
-
-          {/* Projects */}
-          {projects.length > 0 && (
-            <View style={styles.mainSection}>
-              <Text style={styles.mainHeading}>{trUpper('Projeler')}</Text>
-              {projects.map((item) => (
-                <View key={item.id} style={styles.itemBlock}>
-                  <View style={styles.itemHeader}>
-                    <Text style={styles.itemTitle}>
-                      {item.name || 'Proje'}
-                    </Text>
-                    <Text style={styles.itemDate}>
-                      {formatDateRange(item.startDate, item.endDate)}
-                    </Text>
-                  </View>
-                  {item.description && (
-                    <Text style={styles.itemBody}>{item.description}</Text>
-                  )}
-                  {item.url && <Text style={styles.urlText}>{item.url}</Text>}
-                </View>
-              ))}
-            </View>
-          )}
-
-          {/* Certificates */}
-          {certificates.length > 0 && (
-            <View style={styles.mainSection}>
-              <Text style={styles.mainHeading}>{trUpper('Sertifikalar')}</Text>
-              {certificates.map((item) => (
-                <View key={item.id} style={styles.itemBlock}>
-                  <View style={styles.itemHeader}>
-                    <Text style={styles.itemTitle}>
-                      {item.name}
-                      {item.issuer && (
-                        <Text style={styles.itemTitleMuted}>
-                          {' — '}
-                          {item.issuer}
-                        </Text>
-                      )}
-                    </Text>
-                    <Text style={styles.itemDate}>
-                      {formatMonth(item.date)}
-                    </Text>
-                  </View>
-                  {item.url && <Text style={styles.urlText}>{item.url}</Text>}
-                </View>
-              ))}
-            </View>
-          )}
-
-          {/* Volunteer */}
-          {volunteer.length > 0 && (
-            <View style={styles.mainSection}>
-              <Text style={styles.mainHeading}>{trUpper('Gönüllülük')}</Text>
-              {volunteer.map((item) => (
-                <View key={item.id} style={styles.itemBlock}>
-                  <View style={styles.itemHeader}>
-                    <Text style={styles.itemTitle}>
-                      {item.role || 'Rol'}
-                      {item.organization && (
-                        <Text style={styles.itemTitleMuted}>
-                          {' — '}
-                          {item.organization}
-                        </Text>
-                      )}
-                    </Text>
-                    <Text style={styles.itemDate}>
-                      {formatDateRange(item.startDate, item.endDate)}
-                    </Text>
-                  </View>
-                  {item.summary && (
-                    <Text style={styles.itemBody}>{item.summary}</Text>
-                  )}
-                </View>
-              ))}
-            </View>
-          )}
-
-          {/* Publications */}
-          {publications.length > 0 && (
-            <View style={styles.mainSection}>
-              <Text style={styles.mainHeading}>{trUpper('Yayınlar')}</Text>
-              {publications.map((item) => (
-                <View key={item.id} style={styles.itemBlock}>
-                  <View style={styles.itemHeader}>
-                    <Text style={styles.itemTitle}>
-                      {item.name}
-                      {item.publisher && (
-                        <Text style={styles.itemTitleMuted}>
-                          {' — '}
-                          {item.publisher}
-                        </Text>
-                      )}
-                    </Text>
-                    <Text style={styles.itemDate}>
-                      {formatMonth(item.date)}
-                    </Text>
-                  </View>
-                  {item.url && <Text style={styles.urlText}>{item.url}</Text>}
-                </View>
-              ))}
-            </View>
-          )}
-
-          {/* Custom sections */}
-          {customSections.map(
-            (section) =>
-              section.title && (
-                <View key={section.id} style={styles.mainSection}>
-                  <Text style={styles.mainHeading}>{trUpper(section.title)}</Text>
-                  {section.fields.map((field) => (
-                    <View key={field.id} style={styles.customFieldRow}>
-                      {field.label && (
-                        <Text style={styles.customFieldLabel}>
-                          {field.label}:
-                        </Text>
-                      )}
-                      {field.value && (
-                        <Text style={styles.customFieldValue}>
-                          {field.value}
-                        </Text>
-                      )}
-                    </View>
-                  ))}
-                </View>
-              )
-          )}
+          {/* Sections — kullanıcı sırasına göre (skills/languages sidebar'da) */}
+          {mainOrder.map((id) => (
+            <Fragment key={id}>{mainRenderers[id]?.()}</Fragment>
+          ))}
         </View>
       </Page>
     </Document>
   )
+
+  function renderExperience(): ReactNode {
+    if (work.length === 0) return null
+    return (
+      <View style={styles.mainSection}>
+        <Text style={styles.mainHeading}>{trUpper('Deneyim')}</Text>
+        {work.map((item) => (
+          <View key={item.id} style={styles.itemBlock}>
+            <View style={styles.itemHeader}>
+              <Text style={styles.itemTitle}>
+                {item.position || 'Pozisyon'}
+                {item.company && (
+                  <Text style={styles.itemTitleMuted}>
+                    {' — '}
+                    {item.company}
+                  </Text>
+                )}
+              </Text>
+              <Text style={styles.itemDate}>
+                {formatDateRange(item.startDate, item.endDate)}
+              </Text>
+            </View>
+            {item.summary && (
+              <Text style={styles.itemBody}>{item.summary}</Text>
+            )}
+            {item.highlights.some((h) => h.trim()) && (
+              <View style={styles.bulletList}>
+                {item.highlights
+                  .filter((h) => h.trim())
+                  .map((highlight, i) => (
+                    <Text key={i} style={styles.bullet}>
+                      • {highlight}
+                    </Text>
+                  ))}
+              </View>
+            )}
+          </View>
+        ))}
+      </View>
+    )
+  }
+
+  function renderEducation(): ReactNode {
+    if (education.length === 0) return null
+    return (
+      <View style={styles.mainSection}>
+        <Text style={styles.mainHeading}>{trUpper('Eğitim')}</Text>
+        {education.map((item) => (
+          <View key={item.id} style={styles.itemBlock}>
+            <View style={styles.itemHeader}>
+              <Text style={styles.itemTitle}>
+                {item.institution || 'Okul'}
+              </Text>
+              <Text style={styles.itemDate}>
+                {formatDateRange(item.startDate, item.endDate)}
+              </Text>
+            </View>
+            {(item.degree || item.field) && (
+              <Text style={styles.itemBody}>
+                {[item.degree, item.field].filter(Boolean).join(' — ')}
+              </Text>
+            )}
+          </View>
+        ))}
+      </View>
+    )
+  }
+
+  function renderProjects(): ReactNode {
+    if (projects.length === 0) return null
+    return (
+      <View style={styles.mainSection}>
+        <Text style={styles.mainHeading}>{trUpper('Projeler')}</Text>
+        {projects.map((item) => (
+          <View key={item.id} style={styles.itemBlock}>
+            <View style={styles.itemHeader}>
+              <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
+              <Text style={styles.itemDate}>
+                {formatDateRange(item.startDate, item.endDate)}
+              </Text>
+            </View>
+            {item.description && (
+              <Text style={styles.itemBody}>{item.description}</Text>
+            )}
+            {item.url && <Text style={styles.urlText}>{item.url}</Text>}
+          </View>
+        ))}
+      </View>
+    )
+  }
+
+  function renderCertificates(): ReactNode {
+    if (certificates.length === 0) return null
+    return (
+      <View style={styles.mainSection}>
+        <Text style={styles.mainHeading}>{trUpper('Sertifikalar')}</Text>
+        {certificates.map((item) => (
+          <View key={item.id} style={styles.itemBlock}>
+            <View style={styles.itemHeader}>
+              <Text style={styles.itemTitle}>
+                {item.name}
+                {item.issuer && (
+                  <Text style={styles.itemTitleMuted}>
+                    {' — '}
+                    {item.issuer}
+                  </Text>
+                )}
+              </Text>
+              <Text style={styles.itemDate}>{formatMonth(item.date)}</Text>
+            </View>
+            {item.url && <Text style={styles.urlText}>{item.url}</Text>}
+          </View>
+        ))}
+      </View>
+    )
+  }
+
+  function renderVolunteer(): ReactNode {
+    if (volunteer.length === 0) return null
+    return (
+      <View style={styles.mainSection}>
+        <Text style={styles.mainHeading}>{trUpper('Gönüllülük')}</Text>
+        {volunteer.map((item) => (
+          <View key={item.id} style={styles.itemBlock}>
+            <View style={styles.itemHeader}>
+              <Text style={styles.itemTitle}>
+                {item.role || 'Rol'}
+                {item.organization && (
+                  <Text style={styles.itemTitleMuted}>
+                    {' — '}
+                    {item.organization}
+                  </Text>
+                )}
+              </Text>
+              <Text style={styles.itemDate}>
+                {formatDateRange(item.startDate, item.endDate)}
+              </Text>
+            </View>
+            {item.summary && (
+              <Text style={styles.itemBody}>{item.summary}</Text>
+            )}
+          </View>
+        ))}
+      </View>
+    )
+  }
+
+  function renderPublications(): ReactNode {
+    if (publications.length === 0) return null
+    return (
+      <View style={styles.mainSection}>
+        <Text style={styles.mainHeading}>{trUpper('Yayınlar')}</Text>
+        {publications.map((item) => (
+          <View key={item.id} style={styles.itemBlock}>
+            <View style={styles.itemHeader}>
+              <Text style={styles.itemTitle}>
+                {item.name}
+                {item.publisher && (
+                  <Text style={styles.itemTitleMuted}>
+                    {' — '}
+                    {item.publisher}
+                  </Text>
+                )}
+              </Text>
+              <Text style={styles.itemDate}>{formatMonth(item.date)}</Text>
+            </View>
+            {item.url && <Text style={styles.urlText}>{item.url}</Text>}
+          </View>
+        ))}
+      </View>
+    )
+  }
+
+  function renderCustom(): ReactNode {
+    if (customSections.length === 0) return null
+    return (
+      <Fragment>
+        {customSections.map(
+          (section) =>
+            section.title && (
+              <View key={section.id} style={styles.mainSection}>
+                <Text style={styles.mainHeading}>{trUpper(section.title)}</Text>
+                {section.fields.map((field) => (
+                  <View key={field.id} style={styles.customFieldRow}>
+                    {field.label && (
+                      <Text style={styles.customFieldLabel}>
+                        {field.label}:
+                      </Text>
+                    )}
+                    {field.value && (
+                      <Text style={styles.customFieldValue}>{field.value}</Text>
+                    )}
+                  </View>
+                ))}
+              </View>
+            )
+        )}
+      </Fragment>
+    )
+  }
 }

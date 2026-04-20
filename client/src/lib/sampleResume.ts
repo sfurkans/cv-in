@@ -1,4 +1,4 @@
-import type { Resume } from '@/types/resume'
+import { DEFAULT_SECTION_ORDER, type Resume } from '@/types/resume'
 
 export const sampleResume: Resume = {
   basics: {
@@ -118,6 +118,7 @@ export const sampleResume: Resume = {
   volunteer: [],
   publications: [],
   customSections: [],
+  sectionOrder: [...DEFAULT_SECTION_ORDER],
   templateId: 'classic',
   theme: {
     primaryColor: '#1f2937',

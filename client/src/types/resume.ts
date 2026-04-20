@@ -94,6 +94,29 @@ export interface CustomSection {
 
 export type TemplateId = 'classic' | 'modern' | 'creative'
 
+export type SectionId =
+  | 'experience'
+  | 'education'
+  | 'skills'
+  | 'projects'
+  | 'languages'
+  | 'certificates'
+  | 'volunteer'
+  | 'publications'
+  | 'custom'
+
+export const DEFAULT_SECTION_ORDER: SectionId[] = [
+  'experience',
+  'education',
+  'skills',
+  'projects',
+  'languages',
+  'certificates',
+  'volunteer',
+  'publications',
+  'custom',
+]
+
 export type FontFamily = 'sans' | 'serif' | 'mono'
 
 export type Spacing = 'compact' | 'normal' | 'relaxed'
@@ -116,6 +139,7 @@ export interface Resume {
   volunteer: Volunteer[]
   publications: Publication[]
   customSections: CustomSection[]
+  sectionOrder: SectionId[]
   templateId: TemplateId
   theme: Theme
 }

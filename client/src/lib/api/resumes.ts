@@ -1,4 +1,9 @@
-import type { Resume, TemplateId, Theme } from '@/types/resume'
+import {
+  DEFAULT_SECTION_ORDER,
+  type Resume,
+  type TemplateId,
+  type Theme,
+} from '@/types/resume'
 
 import { apiClient } from '../apiClient'
 import {
@@ -24,6 +29,7 @@ type ResumeContentPayload = Pick<
   | 'volunteer'
   | 'publications'
   | 'customSections'
+  | 'sectionOrder'
 >
 
 export interface RemoteResume {
@@ -51,6 +57,7 @@ function toBody(resume: Resume): CreateUpdateBody {
     volunteer,
     publications,
     customSections,
+    sectionOrder,
     templateId,
     theme,
   } = resume
@@ -68,6 +75,7 @@ function toBody(resume: Resume): CreateUpdateBody {
       volunteer,
       publications,
       customSections,
+      sectionOrder,
     },
   }
 }
@@ -75,6 +83,7 @@ function toBody(resume: Resume): CreateUpdateBody {
 function fromApi(api: ApiResumeFull): RemoteResume {
   const resume: Resume = {
     ...api.content,
+    sectionOrder: api.content.sectionOrder ?? [...DEFAULT_SECTION_ORDER],
     templateId: api.templateId as TemplateId,
     theme: api.theme as Theme,
   }

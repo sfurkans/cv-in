@@ -1,22 +1,24 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import type {
-  Basics,
-  Certificate,
-  CustomField,
-  CustomSection,
-  Education,
-  Language,
-  Profile,
-  Project,
-  Publication,
-  Resume,
-  Skill,
-  TemplateId,
-  Theme,
-  Volunteer,
-  Work,
+import {
+  DEFAULT_SECTION_ORDER,
+  type Basics,
+  type Certificate,
+  type CustomField,
+  type CustomSection,
+  type Education,
+  type Language,
+  type Profile,
+  type Project,
+  type Publication,
+  type Resume,
+  type SectionId,
+  type Skill,
+  type TemplateId,
+  type Theme,
+  type Volunteer,
+  type Work,
 } from '@/types/resume'
 
 // ============================================================================
@@ -119,6 +121,7 @@ export const initialResume: Resume = {
   volunteer: [],
   publications: [],
   customSections: [],
+  sectionOrder: [...DEFAULT_SECTION_ORDER],
   templateId: 'classic',
   theme: defaultTheme,
 }
@@ -217,6 +220,9 @@ interface ResumeState {
   setTemplateId: (id: TemplateId) => void
   updateTheme: (partial: Partial<Theme>) => void
   resetTheme: () => void
+
+  // Section order
+  reorderSections: (ids: SectionId[]) => void
 
   // Bulk
   loadResume: (resume: Resume) => void
@@ -397,8 +403,36 @@ export const useResumeStore = create<ResumeState>()(
           resume: { ...state.resume, theme: defaultTheme },
         })),
 
+      reorderSections: (ids) =>
+        set((state) => {
+          const valid = new Set<SectionId>(DEFAULT_SECTION_ORDER)
+          const seen = new Set<SectionId>()
+          const normalized: SectionId[] = []
+          for (const id of ids) {
+            if (valid.has(id) && !seen.has(id)) {
+              seen.add(id)
+              normalized.push(id)
+            }
+          }
+          for (const id of DEFAULT_SECTION_ORDER) {
+            if (!seen.has(id)) normalized.push(id)
+          }
+          return {
+            resume: { ...state.resume, sectionOrder: normalized },
+          }
+        }),
+
       // ---- Bulk
-      loadResume: (resume) => set({ resume }),
+      loadResume: (resume) =>
+        set({
+          resume: {
+            ...resume,
+            sectionOrder:
+              resume.sectionOrder && resume.sectionOrder.length > 0
+                ? resume.sectionOrder
+                : [...DEFAULT_SECTION_ORDER],
+          },
+        }),
       resetResume: () => set({ resume: initialResume }),
 
       // ---- Deprecated upsert-first actions (Phase 3-4 geriye dönük)
@@ -935,7 +969,7 @@ export const useResumeStore = create<ResumeState>()(
     }),
     {
       name: 'cv-builder:resume',
-      version: 3,
+      version: 4,
       partialize: (state) => ({
         resume: state.resume,
         remoteId: state.remoteId,
@@ -943,6 +977,7 @@ export const useResumeStore = create<ResumeState>()(
       }),
       // v1 → v2: templateId + theme eklendi.
       // v2 → v3: remoteId + lastSyncedAt eklendi (Phase 9a backend sync).
+      // v3 → v4: sectionOrder eklendi (bölüm sıralama).
       migrate: (persistedState, version) => {
         const state = persistedState as {
           resume?: Partial<Resume>
@@ -957,6 +992,9 @@ export const useResumeStore = create<ResumeState>()(
         if (version < 3) {
           state.remoteId ??= null
           state.lastSyncedAt ??= null
+        }
+        if (version < 4) {
+          state.resume.sectionOrder ??= [...DEFAULT_SECTION_ORDER]
         }
         return state
       },

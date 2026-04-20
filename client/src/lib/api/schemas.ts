@@ -98,6 +98,18 @@ const customSectionSchema = z.object({
   fields: z.array(customFieldSchema),
 })
 
+const sectionIdSchema = z.enum([
+  'experience',
+  'education',
+  'skills',
+  'projects',
+  'languages',
+  'certificates',
+  'volunteer',
+  'publications',
+  'custom',
+])
+
 const resumeContentSchema = z.object({
   basics: basicsSchema,
   work: z.array(workSchema),
@@ -109,6 +121,7 @@ const resumeContentSchema = z.object({
   volunteer: z.array(volunteerSchema),
   publications: z.array(publicationSchema),
   customSections: z.array(customSectionSchema),
+  sectionOrder: z.array(sectionIdSchema).optional(),
 })
 
 const themeSchema = z.object({

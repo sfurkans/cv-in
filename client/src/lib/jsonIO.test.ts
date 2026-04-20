@@ -29,6 +29,7 @@ function makeMinimalResume(): Resume {
     volunteer: [],
     publications: [],
     customSections: [],
+    sectionOrder: [],
     templateId: 'classic',
     theme: {
       primaryColor: '#1f2937',
