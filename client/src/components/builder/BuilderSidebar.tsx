@@ -17,6 +17,7 @@ import {
 import type { ComponentType } from 'react'
 
 import { useResumeValidation } from '@/hooks/useResumeValidation'
+import { getAllCompletions } from '@/lib/sectionCompletion'
 import { cn } from '@/lib/utils'
 import type { SectionKey } from '@/lib/validateResume'
 import { useResumeStore } from '@/store/resumeStore'
@@ -72,6 +73,7 @@ interface SectionButtonProps {
   label: string
   isActive: boolean
   errorCount: number
+  completion?: number
   onClick: () => void
   dragHandle?: React.ReactNode
 }
@@ -81,19 +83,25 @@ function SectionButton({
   label,
   isActive,
   errorCount,
+  completion,
   onClick,
   dragHandle,
 }: SectionButtonProps) {
   const hasErrors = errorCount > 0
+  const showProgress = typeof completion === 'number'
   return (
     <div className="relative">
       {dragHandle}
       <button
         type="button"
         onClick={onClick}
+        aria-label={
+          showProgress ? `${label} — ${completion}% dolu` : label
+        }
         className={cn(
           'flex w-full items-center gap-2.5 rounded-md py-2 pr-2.5 text-left text-sm font-medium transition-colors',
           dragHandle ? 'pl-9' : 'pl-3',
+          showProgress ? 'pb-2.5' : 'pb-2',
           isActive
             ? 'bg-primary/10 text-primary shadow-[inset_2px_0_0_var(--color-primary)]'
             : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
@@ -115,6 +123,20 @@ function SectionButton({
           </span>
         )}
       </button>
+      {showProgress && (
+        <div
+          aria-hidden
+          className={cn(
+            'pointer-events-none absolute bottom-1 h-0.5 overflow-hidden rounded-full bg-muted/60',
+            dragHandle ? 'left-9 right-3' : 'left-3 right-3',
+          )}
+        >
+          <div
+            className="h-full rounded-full bg-brand-gradient transition-all duration-300"
+            style={{ width: `${completion}%` }}
+          />
+        </div>
+      )}
     </div>
   )
 }
@@ -123,6 +145,7 @@ interface DraggableSectionProps {
   id: SectionId
   isActive: boolean
   errorCount: number
+  completion: number
   onClick: () => void
 }
 
@@ -130,6 +153,7 @@ function DraggableSection({
   id,
   isActive,
   errorCount,
+  completion,
   onClick,
 }: DraggableSectionProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
@@ -146,6 +170,7 @@ function DraggableSection({
         label={SECTION_LABELS[id]}
         isActive={isActive}
         errorCount={errorCount}
+        completion={completion}
         onClick={onClick}
         dragHandle={
           <button
@@ -168,8 +193,10 @@ export default function BuilderSidebar({
   onSectionChange,
 }: BuilderSidebarProps) {
   const validation = useResumeValidation()
-  const sectionOrder = useResumeStore((state) => state.resume.sectionOrder)
+  const resume = useResumeStore((state) => state.resume)
+  const sectionOrder = resume.sectionOrder
   const reorderSections = useResumeStore((state) => state.reorderSections)
+  const completions = getAllCompletions(resume)
 
   return (
     <aside className="flex h-full w-72 max-w-[85vw] shrink-0 flex-col overflow-y-auto border-r border-border/60 bg-background p-4 lg:w-60">
@@ -182,6 +209,7 @@ export default function BuilderSidebar({
           label="Kişisel Bilgiler"
           isActive={activeSection === 'personal'}
           errorCount={validation.personal.errorCount}
+          completion={completions.personal}
           onClick={() => onSectionChange('personal')}
         />
 
@@ -197,6 +225,7 @@ export default function BuilderSidebar({
                 id={id}
                 isActive={activeSection === key}
                 errorCount={validation[key].errorCount}
+                completion={completions[id]}
                 onClick={() => onSectionChange(key)}
               />
             )
