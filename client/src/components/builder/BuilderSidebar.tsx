@@ -172,7 +172,7 @@ export default function BuilderSidebar({
   const reorderSections = useResumeStore((state) => state.reorderSections)
 
   return (
-    <aside className="flex h-full w-60 shrink-0 flex-col overflow-y-auto border-r border-border/60 bg-background p-4">
+    <aside className="flex h-full w-72 max-w-[85vw] shrink-0 flex-col overflow-y-auto border-r border-border/60 bg-background p-4 lg:w-60">
       <nav className="flex flex-col gap-1">
         <p className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
           İçerik
