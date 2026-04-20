@@ -83,7 +83,7 @@ export default function ClassicTemplate({ resume }: ClassicTemplateProps) {
 
   return (
     <div
-      className={`aspect-[210/297] w-full overflow-hidden bg-white ${wrapperPadding} ${fontClass} text-[10px] leading-snug text-gray-900 shadow-sm`}
+      className={`aspect-[210/297] w-full overflow-hidden bg-white ${wrapperPadding} ${fontClass} text-[13px] leading-snug text-gray-900 shadow-sm`}
       style={
         {
           '--primary-color': theme.primaryColor,

@@ -8,6 +8,7 @@ import {
 } from '@react-pdf/renderer'
 
 import { resolvePhotoUrl } from '@/lib/photoUrl'
+import { trUpper } from '@/lib/trUpper'
 import type { FontFamily, Resume, Spacing } from '@/types/resume'
 
 import './fonts'
@@ -81,9 +82,9 @@ function createStyles(
       borderBottomStyle: 'solid',
     },
     photo: {
-      width: 64,
-      height: 64,
-      borderRadius: 32,
+      width: 80,
+      height: 80,
+      borderRadius: 40,
       marginRight: 12,
       objectFit: 'cover',
     },
@@ -94,11 +95,13 @@ function createStyles(
       fontSize: 20,
       fontWeight: 'bold',
       color: text,
-      marginBottom: 2,
+      lineHeight: 1.25,
+      marginBottom: 6,
     },
     label: {
-      fontSize: 11,
+      fontSize: 14,
       color: '#555555',
+      lineHeight: 1.3,
       marginBottom: 4,
     },
     contactRow: {
@@ -115,10 +118,9 @@ function createStyles(
       marginBottom: sectionGap,
     },
     sectionHeading: {
-      fontSize: 9,
+      fontSize: 10,
       fontWeight: 'bold',
       color: primary,
-      textTransform: 'uppercase',
       letterSpacing: 1.2,
       marginBottom: 5,
       paddingBottom: 2,
@@ -295,7 +297,7 @@ export default function PDFClassicTemplate({
         {/* Summary */}
         {basics.summary && (
           <View style={styles.section}>
-            <Text style={styles.sectionHeading}>Özet</Text>
+            <Text style={styles.sectionHeading}>{trUpper('Özet')}</Text>
             <Text style={styles.itemBody}>{basics.summary}</Text>
           </View>
         )}
@@ -303,7 +305,7 @@ export default function PDFClassicTemplate({
         {/* Experience */}
         {work.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionHeading}>Deneyim</Text>
+            <Text style={styles.sectionHeading}>{trUpper('Deneyim')}</Text>
             {work.map((item) => (
               <View key={item.id} style={styles.itemBlock}>
                 <View style={styles.itemHeader}>
@@ -342,7 +344,7 @@ export default function PDFClassicTemplate({
         {/* Education */}
         {education.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionHeading}>Eğitim</Text>
+            <Text style={styles.sectionHeading}>{trUpper('Eğitim')}</Text>
             {education.map((item) => (
               <View key={item.id} style={styles.itemBlock}>
                 <View style={styles.itemHeader}>
@@ -366,7 +368,7 @@ export default function PDFClassicTemplate({
         {/* Skills */}
         {visibleSkills.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionHeading}>Yetenekler</Text>
+            <Text style={styles.sectionHeading}>{trUpper('Yetenekler')}</Text>
             {visibleSkills.map((skill) => (
               <View key={skill.id} style={styles.skillsGroup}>
                 {(skill.name || skill.level) && (
@@ -398,7 +400,7 @@ export default function PDFClassicTemplate({
         {/* Projects */}
         {projects.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionHeading}>Projeler</Text>
+            <Text style={styles.sectionHeading}>{trUpper('Projeler')}</Text>
             {projects.map((item) => (
               <View key={item.id} style={styles.itemBlock}>
                 <View style={styles.itemHeader}>
@@ -419,7 +421,7 @@ export default function PDFClassicTemplate({
         {/* Languages */}
         {languages.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionHeading}>Diller</Text>
+            <Text style={styles.sectionHeading}>{trUpper('Diller')}</Text>
             <View style={styles.languageRow}>
               {languages.map((item) => (
                 <Text key={item.id} style={styles.languageItem}>
@@ -439,7 +441,7 @@ export default function PDFClassicTemplate({
         {/* Certificates */}
         {certificates.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionHeading}>Sertifikalar</Text>
+            <Text style={styles.sectionHeading}>{trUpper('Sertifikalar')}</Text>
             {certificates.map((item) => (
               <View key={item.id} style={styles.itemBlock}>
                 <View style={styles.itemHeader}>
@@ -463,7 +465,7 @@ export default function PDFClassicTemplate({
         {/* Volunteer */}
         {volunteer.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionHeading}>Gönüllülük</Text>
+            <Text style={styles.sectionHeading}>{trUpper('Gönüllülük')}</Text>
             {volunteer.map((item) => (
               <View key={item.id} style={styles.itemBlock}>
                 <View style={styles.itemHeader}>
@@ -491,7 +493,7 @@ export default function PDFClassicTemplate({
         {/* Publications */}
         {publications.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionHeading}>Yayınlar</Text>
+            <Text style={styles.sectionHeading}>{trUpper('Yayınlar')}</Text>
             {publications.map((item) => (
               <View key={item.id} style={styles.itemBlock}>
                 <View style={styles.itemHeader}>
@@ -517,7 +519,7 @@ export default function PDFClassicTemplate({
           (section) =>
             section.title && (
               <View key={section.id} style={styles.section}>
-                <Text style={styles.sectionHeading}>{section.title}</Text>
+                <Text style={styles.sectionHeading}>{trUpper(section.title)}</Text>
                 {section.fields.map((field) => (
                   <View key={field.id} style={styles.customFieldRow}>
                     {field.label && (

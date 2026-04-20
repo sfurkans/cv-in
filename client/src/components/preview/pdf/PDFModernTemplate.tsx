@@ -8,6 +8,7 @@ import {
 } from '@react-pdf/renderer'
 
 import { resolvePhotoUrl } from '@/lib/photoUrl'
+import { trUpper } from '@/lib/trUpper'
 import type { FontFamily, Resume, Spacing } from '@/types/resume'
 
 import './fonts'
@@ -83,8 +84,8 @@ function createStyles(
       flex: 1,
     },
     photo: {
-      width: 56,
-      height: 56,
+      width: 64,
+      height: 64,
       borderRadius: 4,
       marginRight: 12,
       objectFit: 'cover',
@@ -97,13 +98,14 @@ function createStyles(
       fontWeight: 'bold',
       color: text,
       letterSpacing: -0.5,
-      marginBottom: 2,
+      lineHeight: 1.25,
+      marginBottom: 8,
     },
     label: {
-      fontSize: 9,
+      fontSize: 12,
       color: primary,
-      textTransform: 'uppercase',
       letterSpacing: 1.5,
+      lineHeight: 1.3,
     },
     contactColumn: {
       alignItems: 'flex-end',
@@ -120,7 +122,7 @@ function createStyles(
       marginBottom: 6,
     },
     sectionHeading: {
-      fontSize: 10,
+      fontSize: 11,
       fontWeight: 'bold',
       color: primary,
       letterSpacing: 0.5,
@@ -140,9 +142,9 @@ function createStyles(
       position: 'absolute',
       left: 0,
       top: 3,
-      width: 4,
-      height: 4,
-      borderRadius: 2,
+      width: 6,
+      height: 6,
+      borderRadius: 3,
       backgroundColor: primary,
     },
     itemHeader: {
@@ -290,7 +292,7 @@ export default function PDFModernTemplate({ resume }: PDFModernTemplateProps) {
               <Text style={styles.name}>
                 {basics.name || 'Adınız Soyadınız'}
               </Text>
-              {basics.label && <Text style={styles.label}>{basics.label}</Text>}
+              {basics.label && <Text style={styles.label}>{trUpper(basics.label)}</Text>}
             </View>
           </View>
           <View style={styles.contactColumn}>

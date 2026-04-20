@@ -98,7 +98,7 @@ export default function ModernTemplate({ resume }: ModernTemplateProps) {
 
   return (
     <div
-      className={`aspect-[210/297] w-full overflow-hidden bg-white ${wrapperPadding} ${fontClass} text-[10px] leading-snug text-gray-800 shadow-sm`}
+      className={`aspect-[210/297] w-full overflow-hidden bg-white ${wrapperPadding} ${fontClass} text-[13px] leading-snug text-gray-800 shadow-sm`}
       style={
         {
           '--primary-color': theme.primaryColor,
@@ -118,14 +118,14 @@ export default function ModernTemplate({ resume }: ModernTemplateProps) {
           )}
           <div className="min-w-0">
             <h1
-              className="text-2xl font-extrabold leading-tight tracking-tight"
+              className="text-2xl font-extrabold leading-[1.15] tracking-tight"
               style={{ color: 'var(--text-color)' }}
             >
               {basics.name || 'Adınız Soyadınız'}
             </h1>
             {basics.label && (
               <p
-                className="mt-1 text-xs font-light uppercase tracking-widest"
+                className="mt-2 text-xs font-light uppercase tracking-widest"
                 style={{ color: 'var(--primary-color)' }}
               >
                 {basics.label}

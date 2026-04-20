@@ -91,7 +91,7 @@ export default function CreativeTemplate({ resume }: CreativeTemplateProps) {
 
   return (
     <div
-      className={`flex aspect-[210/297] w-full overflow-hidden bg-white ${fontClass} text-[10px] leading-snug shadow-sm`}
+      className={`flex aspect-[210/297] w-full overflow-hidden bg-white ${fontClass} text-[13px] leading-snug shadow-sm`}
       style={
         {
           '--primary-color': theme.primaryColor,
