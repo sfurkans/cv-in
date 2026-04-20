@@ -10,11 +10,11 @@ export default function OfflineBanner() {
   return (
     <div
       role="alert"
-      className="flex items-center justify-center gap-2 bg-yellow-500 px-4 py-2 text-sm font-medium text-yellow-950"
+      className="flex items-center justify-center gap-2 border-b border-amber-500/30 bg-amber-50 px-4 py-2 text-xs font-medium text-amber-900"
     >
-      <WifiOff className="h-4 w-4" />
+      <WifiOff className="h-3.5 w-3.5" />
       <span>
-        Internet bağlantısı yok — değişiklikler yerel olarak saklanıyor,
+        İnternet bağlantısı yok — değişiklikler yerel olarak saklanıyor,
         bağlantı gelince otomatik senkronlanacak.
       </span>
     </div>
