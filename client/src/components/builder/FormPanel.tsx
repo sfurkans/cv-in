@@ -94,17 +94,17 @@ function ValidationSummary() {
 
   if (totalErrors === 0) {
     return (
-      <div className="mb-4 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
+      <div className="mb-6 flex items-center gap-2 rounded-lg border border-accent/30 bg-accent/5 px-3.5 py-2.5 text-xs font-medium text-accent">
         <CheckCircle2 className="h-4 w-4 shrink-0" />
-        <span>Tüm bilgiler geçerli — CV'n yayına hazır.</span>
+        <span>Tüm bilgiler geçerli — CV’n yayına hazır.</span>
       </div>
     )
   }
 
   return (
-    <div className="mb-4 flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
-      <AlertCircle className="h-4 w-4 shrink-0" />
-      <span>
+    <div className="mb-6 flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3.5 py-2.5 text-xs text-destructive">
+      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+      <span className="leading-relaxed">
         <strong>{invalidSections}</strong> bölümde toplam{' '}
         <strong>{totalErrors}</strong> eksik ya da hatalı alan var. Kenar
         menüdeki kırmızı rozetleri kontrol et.
@@ -113,10 +113,20 @@ function ValidationSummary() {
   )
 }
 
+function SectionHeader({ section }: { section: string }) {
+  const title = sectionTitles[section] ?? section
+  return (
+    <div className="mb-6">
+      <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
+    </div>
+  )
+}
+
 export default function FormPanel({ activeSection }: FormPanelProps) {
   return (
-    <div className="flex-1 overflow-y-auto p-6">
-      <div className="mx-auto max-w-3xl">
+    <div className="h-full overflow-y-auto">
+      <div className="mx-auto max-w-3xl px-6 py-8 sm:px-8">
+        <SectionHeader section={activeSection} />
         <ValidationSummary />
         {renderSection(activeSection)}
       </div>

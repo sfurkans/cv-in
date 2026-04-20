@@ -1,13 +1,30 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical } from 'lucide-react'
+import {
+  Award,
+  BookOpen,
+  Briefcase,
+  GraduationCap,
+  GripVertical,
+  Heart,
+  Languages,
+  Layers,
+  Palette,
+  Sparkles,
+  User,
+  Wrench,
+} from 'lucide-react'
+import type { ComponentType } from 'react'
 
 import { useResumeValidation } from '@/hooks/useResumeValidation'
+import { cn } from '@/lib/utils'
 import type { SectionKey } from '@/lib/validateResume'
 import { useResumeStore } from '@/store/resumeStore'
 import type { SectionId } from '@/types/resume'
 
 import SortableList from './dnd/SortableList'
+
+type IconType = ComponentType<{ className?: string }>
 
 const SECTION_LABELS: Record<SectionId, string> = {
   experience: 'Deneyim',
@@ -21,8 +38,18 @@ const SECTION_LABELS: Record<SectionId, string> = {
   custom: 'Özel Bölümler',
 }
 
-// Sidebar button id'leri (reorder için SectionId, validasyon için SectionKey).
-// `custom` tab id'si validateResume'de SectionKey olarak da 'custom' — doğrudan eşleşiyor.
+const SECTION_ICONS: Record<SectionId, IconType> = {
+  experience: Briefcase,
+  education: GraduationCap,
+  skills: Wrench,
+  projects: Sparkles,
+  languages: Languages,
+  certificates: Award,
+  volunteer: Heart,
+  publications: BookOpen,
+  custom: Layers,
+}
+
 const SECTION_ID_TO_KEY: Record<SectionId, SectionKey> = {
   experience: 'experience',
   education: 'education',
@@ -41,7 +68,7 @@ interface BuilderSidebarProps {
 }
 
 interface SectionButtonProps {
-  id: string
+  icon: IconType
   label: string
   isActive: boolean
   errorCount: number
@@ -50,6 +77,7 @@ interface SectionButtonProps {
 }
 
 function SectionButton({
+  icon: Icon,
   label,
   isActive,
   errorCount,
@@ -63,22 +91,24 @@ function SectionButton({
       <button
         type="button"
         onClick={onClick}
-        className={`flex w-full items-center justify-between gap-2 rounded-md py-2 pr-3 text-left text-sm font-medium transition-colors ${
-          dragHandle ? 'pl-8' : 'pl-3'
-        } ${
+        className={cn(
+          'flex w-full items-center gap-2.5 rounded-md py-2 pr-2.5 text-left text-sm font-medium transition-colors',
+          dragHandle ? 'pl-9' : 'pl-3',
           isActive
-            ? 'bg-primary text-primary-foreground'
-            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-        }`}
+            ? 'bg-primary/10 text-primary shadow-[inset_2px_0_0_var(--color-primary)]'
+            : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
+        )}
       >
-        <span className="truncate">{label}</span>
+        <Icon className="h-4 w-4 shrink-0" />
+        <span className="flex-1 truncate">{label}</span>
         {hasErrors && (
           <span
-            className={`inline-flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full px-1 text-[10px] font-semibold ${
+            className={cn(
+              'inline-flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full px-1 text-[10px] font-semibold',
               isActive
-                ? 'bg-primary-foreground text-primary'
-                : 'bg-destructive text-destructive-foreground'
-            }`}
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-destructive text-destructive-foreground',
+            )}
             aria-label={`${errorCount} hata`}
           >
             {errorCount}
@@ -112,7 +142,7 @@ function DraggableSection({
   return (
     <div ref={setNodeRef} style={style}>
       <SectionButton
-        id={id}
+        icon={SECTION_ICONS[id]}
         label={SECTION_LABELS[id]}
         isActive={isActive}
         errorCount={errorCount}
@@ -122,7 +152,7 @@ function DraggableSection({
             type="button"
             {...attributes}
             {...listeners}
-            className="absolute left-1 top-1/2 z-10 flex h-6 w-5 -translate-y-1/2 cursor-grab items-center justify-center rounded text-muted-foreground/60 hover:bg-muted hover:text-muted-foreground active:cursor-grabbing"
+            className="absolute left-1.5 top-1/2 z-10 flex h-6 w-5 -translate-y-1/2 cursor-grab items-center justify-center rounded text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground active:cursor-grabbing"
             aria-label={`${SECTION_LABELS[id]} — sürükleyerek sırala`}
           >
             <GripVertical className="h-3.5 w-3.5" />
@@ -142,18 +172,19 @@ export default function BuilderSidebar({
   const reorderSections = useResumeStore((state) => state.reorderSections)
 
   return (
-    <aside className="w-56 shrink-0 border-r bg-muted/30 p-4">
+    <aside className="flex h-full w-60 shrink-0 flex-col overflow-y-auto border-r border-border/60 bg-background p-4">
       <nav className="flex flex-col gap-1">
-        {/* Personal — sabit, üstte */}
+        <p className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+          İçerik
+        </p>
         <SectionButton
-          id="personal"
+          icon={User}
           label="Kişisel Bilgiler"
           isActive={activeSection === 'personal'}
           errorCount={validation.personal.errorCount}
           onClick={() => onSectionChange('personal')}
         />
 
-        {/* Reorderable middle sections */}
         <SortableList
           ids={sectionOrder}
           onReorder={(ids) => reorderSections(ids as SectionId[])}
@@ -172,9 +203,11 @@ export default function BuilderSidebar({
           })}
         </SortableList>
 
-        {/* Design — sabit, altta */}
+        <p className="mt-3 px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+          Görünüm
+        </p>
         <SectionButton
-          id="design"
+          icon={Palette}
           label="Tasarım"
           isActive={activeSection === 'design'}
           errorCount={0}
