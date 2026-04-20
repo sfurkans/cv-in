@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Mail, Phone, User } from 'lucide-react'
+import { Mail, Phone } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -8,7 +8,6 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -70,12 +69,8 @@ export default function PersonalInfoForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <User className="h-5 w-5 text-primary" />
-          Kişisel Bilgiler
-        </CardTitle>
         <CardDescription>
-          CV'nin en üst kısmında görünecek temel bilgiler.
+          CV’nin en üst kısmında görünecek temel bilgiler.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
