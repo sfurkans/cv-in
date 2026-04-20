@@ -1,70 +1,108 @@
+import { Menu, Plus, X } from 'lucide-react'
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+
+import Logo from '@/components/brand/Logo'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 const navItems = [
   { path: '/', label: 'Ana Sayfa' },
-  { path: '/builder', label: 'CV Oluştur' },
   { path: '/templates', label: 'Şablonlar' },
   { path: '/dashboard', label: "CV'lerim" },
 ]
 
 export default function Header() {
-  const { pathname } = useLocation()
+  const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
 
+  const handleNewResume = () => {
+    navigate('/builder')
+    setMenuOpen(false)
+  }
+
   return (
-    <header className="border-b bg-white">
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
-        <Link to="/" className="text-xl font-bold text-primary">
-          CV Builder
+    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+        <Link
+          to="/"
+          aria-label="cv-in ana sayfa"
+          className="rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+        >
+          <Logo />
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden gap-1 md:flex">
+        <nav className="hidden items-center gap-1 md:flex">
           {navItems.map((item) => (
-            <Link
+            <NavLink
               key={item.path}
               to={item.path}
-              className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                pathname === item.path
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-              }`}
+              end={item.path === '/'}
+              className={({ isActive }) =>
+                cn(
+                  'rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                  isActive
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                )
+              }
             >
               {item.label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
 
-        {/* Mobile hamburger */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="md:hidden"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? '✕' : '☰'}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={handleNewResume}
+            size="sm"
+            className="hidden sm:inline-flex"
+          >
+            <Plus className="h-4 w-4" />
+            Yeni CV
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label={menuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
+        </div>
       </div>
 
-      {/* Mobile menu */}
       {menuOpen && (
-        <nav className="border-t px-4 pb-3 md:hidden">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={() => setMenuOpen(false)}
-              className={`block rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                pathname === item.path
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-              }`}
+        <nav className="border-t border-border/60 bg-background md:hidden">
+          <div className="mx-auto max-w-7xl space-y-1 px-4 py-3 sm:px-6">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                end={item.path === '/'}
+                onClick={() => setMenuOpen(false)}
+                className={({ isActive }) =>
+                  cn(
+                    'block rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                    isActive
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                  )
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+            <Button
+              onClick={handleNewResume}
+              size="sm"
+              className="mt-2 w-full sm:hidden"
             >
-              {item.label}
-            </Link>
-          ))}
+              <Plus className="h-4 w-4" />
+              Yeni CV
+            </Button>
+          </div>
         </nav>
       )}
     </header>
