@@ -128,7 +128,12 @@ export default function FormPanel({ activeSection }: FormPanelProps) {
       <div className="mx-auto max-w-3xl px-6 py-8 sm:px-8">
         <SectionHeader section={activeSection} />
         <ValidationSummary />
-        {renderSection(activeSection)}
+        <div
+          key={activeSection}
+          className="animate-in fade-in-50 slide-in-from-bottom-1 duration-200"
+        >
+          {renderSection(activeSection)}
+        </div>
       </div>
     </div>
   )
