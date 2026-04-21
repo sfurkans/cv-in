@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { resumeController } from "../controllers/resumeController.js";
 import { validateBody } from "../middleware/validate.js";
-import { requireOwnerUuid } from "../middleware/ownerUuid.js";
+import { requireAuth } from "../middleware/requireAuth.js";
 import { photoUpload } from "../middleware/upload.js";
 import { resumeCreateSchema, resumeUpdateSchema } from "../schemas/resume.js";
 
 const router = Router();
 
-router.use(requireOwnerUuid);
+router.use(requireAuth);
 
 router.get("/", resumeController.list);
 router.post("/", validateBody(resumeCreateSchema), resumeController.create);

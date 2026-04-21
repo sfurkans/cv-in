@@ -6,6 +6,7 @@ import { env } from "./config/env.js";
 import { errorHandler, notFoundHandler } from "./middleware/error.js";
 import healthRouter from "./routes/health.js";
 import resumesRouter from "./routes/resumes.js";
+import authRouter from "./routes/auth.js";
 
 export function createApp() {
   const app = express();
@@ -36,6 +37,7 @@ export function createApp() {
   app.use("/uploads", express.static(path.resolve("uploads")));
 
   app.use("/health", healthRouter);
+  app.use("/api/auth", authRouter);
   app.use("/api/resumes", resumesRouter);
 
   app.use(notFoundHandler);

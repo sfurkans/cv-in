@@ -10,9 +10,19 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  resumes Resume[]
+}
+
 model Resume {
   id         String   @id @default(cuid())
-  ownerUuid  String
+  userId     String
   templateId String   @default("classic")
   theme      Json?
   content    Json
@@ -21,5 +31,7 @@ model Resume {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  @@index([ownerUuid])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

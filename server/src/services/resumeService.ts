@@ -7,9 +7,9 @@ const asJson = (value: unknown): Prisma.InputJsonValue =>
   value as Prisma.InputJsonValue;
 
 export const resumeService = {
-  list(ownerUuid: string) {
+  list(userId: string) {
     return prisma.resume.findMany({
-      where: { ownerUuid },
+      where: { userId },
       orderBy: { updatedAt: "desc" },
       select: {
         id: true,
@@ -24,17 +24,17 @@ export const resumeService = {
     });
   },
 
-  async getById(id: string, ownerUuid: string) {
+  async getById(id: string, userId: string) {
     const resume = await prisma.resume.findUnique({ where: { id } });
     if (!resume) throw new HttpError(404, "CV bulunamadı");
-    if (resume.ownerUuid !== ownerUuid) throw new HttpError(403, "Yetkisiz erişim");
+    if (resume.userId !== userId) throw new HttpError(403, "Yetkisiz erişim");
     return resume;
   },
 
-  create(ownerUuid: string, input: ResumeCreateInput) {
+  create(userId: string, input: ResumeCreateInput) {
     return prisma.resume.create({
       data: {
-        ownerUuid,
+        userId,
         templateId: input.templateId,
         ...(input.theme != null && { theme: asJson(input.theme) }),
         content: asJson(input.content),
@@ -42,8 +42,8 @@ export const resumeService = {
     });
   },
 
-  async update(id: string, ownerUuid: string, input: ResumeUpdateInput) {
-    await this.getById(id, ownerUuid);
+  async update(id: string, userId: string, input: ResumeUpdateInput) {
+    await this.getById(id, userId);
     return prisma.resume.update({
       where: { id },
       data: {
@@ -56,13 +56,13 @@ export const resumeService = {
     });
   },
 
-  async remove(id: string, ownerUuid: string) {
-    await this.getById(id, ownerUuid);
+  async remove(id: string, userId: string) {
+    await this.getById(id, userId);
     await prisma.resume.delete({ where: { id } });
   },
 
-  async setPhoto(id: string, ownerUuid: string, photoUrl: string) {
-    await this.getById(id, ownerUuid);
+  async setPhoto(id: string, userId: string, photoUrl: string) {
+    await this.getById(id, userId);
     return prisma.resume.update({
       where: { id },
       data: { photoUrl },

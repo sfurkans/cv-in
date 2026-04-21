@@ -10,6 +10,7 @@ const envSchema = z.object({
     .default(
       "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176,http://localhost:5177,http://localhost:5178"
     ),
+  JWT_SECRET: z.string().min(32, "JWT_SECRET en az 32 karakter olmalı"),
 });
 
 const parsed = envSchema.safeParse(process.env);

@@ -14,7 +14,9 @@ beforeAll(() => {
 });
 
 afterEach(async () => {
+  // Resume'lar userId FK ile User'a bağlı, cascade delete için User silmek yeterli
   await prisma.resume.deleteMany();
+  await prisma.user.deleteMany();
 });
 
 afterAll(async () => {
