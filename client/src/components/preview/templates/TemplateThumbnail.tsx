@@ -25,8 +25,7 @@ export default function TemplateThumbnail({
       {templateId === 'color-accent' && <ColorAccentThumb />}
       {templateId === 'modern-clean' && <ModernCleanThumb />}
       {templateId === 'terminal' && <TerminalThumb />}
-      {/* Faz 8'de eklenecek — geçici Classic fallback */}
-      {templateId === 'infographic' && <ClassicThumb />}
+      {templateId === 'infographic' && <InfographicThumb />}
     </div>
   )
 }
@@ -121,6 +120,74 @@ function CreativeThumb() {
       <rect x="82" y="126" width="48" height="6" rx="1" fill="#14B8A6" />
       <rect x="82" y="138" width="70" height="4" rx="1" fill="#111827" />
       <rect x="82" y="148" width="100" height="3" rx="1" fill="#d1d5db" />
+    </svg>
+  )
+}
+
+function InfographicThumb() {
+  return (
+    <svg viewBox="0 0 200 280" className="h-full w-full">
+      <defs>
+        <linearGradient id="info-hdr" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#7C3AED" />
+          <stop offset="1" stopColor="#5B21B6" />
+        </linearGradient>
+        <linearGradient id="info-bar" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#7C3AED" />
+          <stop offset="1" stopColor="#C4B5FD" />
+        </linearGradient>
+      </defs>
+      <rect width="200" height="280" fill="#fff" />
+      {/* Gradient header */}
+      <rect x="0" y="0" width="200" height="62" fill="url(#info-hdr)" />
+      <circle cx="30" cy="32" r="14" fill="#fff" opacity="0.35" stroke="#fff" strokeWidth="1.5" />
+      <rect x="52" y="18" width="100" height="9" rx="1" fill="#fff" />
+      <rect x="52" y="30" width="70" height="4" rx="1" fill="#fff" opacity="0.9" />
+      <rect x="52" y="40" width="40" height="3" rx="1" fill="#fff" opacity="0.75" />
+      <rect x="96" y="40" width="44" height="3" rx="1" fill="#fff" opacity="0.75" />
+      {/* Section heading */}
+      <rect x="18" y="74" width="8" height="8" fill="#7C3AED" />
+      <rect x="30" y="76" width="46" height="5" rx="1" fill="#111827" />
+      <rect x="18" y="88" width="160" height="3" rx="1" fill="#d1d5db" />
+      <rect x="18" y="96" width="140" height="3" rx="1" fill="#d1d5db" />
+      {/* Skills grid — 2 columns */}
+      <rect x="18" y="110" width="8" height="8" fill="#7C3AED" />
+      <rect x="30" y="112" width="60" height="5" rx="1" fill="#111827" />
+      {/* Skill 1 */}
+      <rect x="18" y="128" width="40" height="3" rx="0" fill="#111827" />
+      <rect x="76" y="128" width="18" height="3" rx="0" fill="#7C3AED" />
+      <rect x="18" y="134" width="76" height="2" rx="1" fill="#e5e7eb" />
+      <rect x="18" y="134" width="60" height="2" rx="1" fill="url(#info-bar)" />
+      {/* Skill 2 */}
+      <rect x="104" y="128" width="42" height="3" rx="0" fill="#111827" />
+      <rect x="160" y="128" width="18" height="3" rx="0" fill="#7C3AED" />
+      <rect x="104" y="134" width="76" height="2" rx="1" fill="#e5e7eb" />
+      <rect x="104" y="134" width="50" height="2" rx="1" fill="url(#info-bar)" />
+      {/* Skill 3 */}
+      <rect x="18" y="146" width="42" height="3" rx="0" fill="#111827" />
+      <rect x="76" y="146" width="18" height="3" rx="0" fill="#7C3AED" />
+      <rect x="18" y="152" width="76" height="2" rx="1" fill="#e5e7eb" />
+      <rect x="18" y="152" width="70" height="2" rx="1" fill="url(#info-bar)" />
+      {/* Skill 4 */}
+      <rect x="104" y="146" width="48" height="3" rx="0" fill="#111827" />
+      <rect x="160" y="146" width="18" height="3" rx="0" fill="#7C3AED" />
+      <rect x="104" y="152" width="76" height="2" rx="1" fill="#e5e7eb" />
+      <rect x="104" y="152" width="40" height="2" rx="1" fill="url(#info-bar)" />
+      {/* Section heading 2 — Experience w/ timeline */}
+      <rect x="18" y="170" width="8" height="8" fill="#7C3AED" />
+      <rect x="30" y="172" width="58" height="5" rx="1" fill="#111827" />
+      {/* Timeline */}
+      <rect x="25" y="188" width="1.5" height="60" fill="#7C3AED" opacity="0.3" />
+      <circle cx="25.75" cy="192" r="3" fill="#7C3AED" />
+      <rect x="36" y="190" width="60" height="3" rx="0" fill="#7C3AED" />
+      <rect x="99" y="190" width="40" height="3" rx="0" fill="#111827" />
+      <rect x="36" y="198" width="140" height="3" rx="1" fill="#d1d5db" />
+      <rect x="36" y="206" width="130" height="3" rx="1" fill="#d1d5db" />
+      <circle cx="25.75" cy="222" r="3" fill="#7C3AED" />
+      <rect x="36" y="220" width="50" height="3" rx="0" fill="#7C3AED" />
+      <rect x="89" y="220" width="36" height="3" rx="0" fill="#111827" />
+      <rect x="36" y="228" width="140" height="3" rx="1" fill="#d1d5db" />
+      <rect x="36" y="236" width="110" height="3" rx="1" fill="#d1d5db" />
     </svg>
   )
 }
