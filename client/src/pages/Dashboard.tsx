@@ -260,28 +260,39 @@ function ResumeCard({ resume, onDelete, isDeleting }: ResumeCardProps) {
           Son düzenleme · {relative}
         </p>
 
-        <div className="mt-auto flex gap-2 pt-1">
+        <div className="mt-auto flex items-stretch gap-2 pt-1">
           <Link
             to={`/builder/${resume.id}`}
-            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            className={cn(
+              'group/edit inline-flex h-9 flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-all',
+              'hover:bg-primary/90 hover:shadow-md hover:shadow-primary/25',
+              'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none',
+              'active:translate-y-px',
+            )}
           >
-            <Edit3 className="h-3.5 w-3.5" />
+            <Edit3 className="h-4 w-4 transition-transform group-hover/edit:-rotate-6" />
             Düzenle
           </Link>
-          <Button
-            size="sm"
-            variant="outline"
+          <button
+            type="button"
             onClick={() => onDelete(resume.id)}
             disabled={isDeleting}
-            className="text-muted-foreground hover:border-destructive/30 hover:text-destructive"
             aria-label={`${name} — sil`}
+            title="Sil"
+            className={cn(
+              'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-all',
+              'hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive hover:shadow-sm',
+              'focus-visible:ring-2 focus-visible:ring-destructive/40 focus-visible:ring-offset-2 focus-visible:outline-none',
+              'active:translate-y-px',
+              'disabled:pointer-events-none disabled:opacity-50',
+            )}
           >
             {isDeleting ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-4 w-4" />
             )}
-          </Button>
+          </button>
         </div>
       </div>
     </article>
