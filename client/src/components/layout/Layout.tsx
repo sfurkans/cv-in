@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom'
+import { GlobalAuthModal } from '@/components/auth/GlobalAuthModal'
 import OfflineBanner from '@/components/OfflineBanner'
 import Toaster from '@/components/Toaster'
 import Header from './Header'
@@ -14,6 +15,7 @@ export default function Layout() {
       </main>
       <Footer />
       <Toaster />
+      <GlobalAuthModal />
     </div>
   )
 }
