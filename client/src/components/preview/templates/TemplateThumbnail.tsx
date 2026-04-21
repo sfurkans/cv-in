@@ -23,8 +23,8 @@ export default function TemplateThumbnail({
       {templateId === 'sidebar-left' && <SidebarLeftThumb />}
       {templateId === 'ats' && <AtsThumb />}
       {templateId === 'color-accent' && <ColorAccentThumb />}
-      {/* Faz 6-8'de eklenecek — geçici Classic fallback */}
-      {templateId === 'modern-clean' && <ClassicThumb />}
+      {templateId === 'modern-clean' && <ModernCleanThumb />}
+      {/* Faz 7-8'de eklenecek — geçici Classic fallback */}
       {templateId === 'terminal' && <ClassicThumb />}
       {templateId === 'infographic' && <ClassicThumb />}
     </div>
@@ -121,6 +121,40 @@ function CreativeThumb() {
       <rect x="82" y="126" width="48" height="6" rx="1" fill="#14B8A6" />
       <rect x="82" y="138" width="70" height="4" rx="1" fill="#111827" />
       <rect x="82" y="148" width="100" height="3" rx="1" fill="#d1d5db" />
+    </svg>
+  )
+}
+
+function ModernCleanThumb() {
+  return (
+    <svg viewBox="0 0 200 280" className="h-full w-full">
+      <rect width="200" height="280" fill="#fff" />
+      <circle cx="30" cy="36" r="12" fill="#e5e7eb" />
+      <rect x="48" y="22" width="120" height="14" rx="2" fill="#111827" />
+      <rect x="48" y="40" width="60" height="4" rx="1" fill="#9ca3af" />
+      <rect x="48" y="48" width="20" height="2" rx="1" fill="#7C3AED" />
+      <rect x="24" y="62" width="60" height="3" rx="1" fill="#9ca3af" />
+      <rect x="88" y="62" width="36" height="3" rx="1" fill="#9ca3af" />
+      <circle cx="26" cy="90" r="2.5" fill="#7C3AED" />
+      <rect x="34" y="86" width="45" height="6" rx="1" fill="#111827" />
+      <rect x="24" y="102" width="85" height="4" rx="1" fill="#111827" />
+      <rect x="155" y="102" width="25" height="3" rx="1" fill="#9ca3af" />
+      <rect x="24" y="112" width="48" height="3.5" rx="1" fill="#7C3AED" />
+      <rect x="24" y="122" width="156" height="3" rx="1" fill="#d1d5db" />
+      <rect x="24" y="130" width="140" height="3" rx="1" fill="#d1d5db" />
+      <circle cx="26" cy="156" r="2.5" fill="#7C3AED" />
+      <rect x="34" y="152" width="45" height="6" rx="1" fill="#111827" />
+      <rect x="24" y="168" width="90" height="4" rx="1" fill="#111827" />
+      <rect x="155" y="168" width="25" height="3" rx="1" fill="#9ca3af" />
+      <rect x="24" y="178" width="140" height="3" rx="1" fill="#d1d5db" />
+      <circle cx="26" cy="200" r="2.5" fill="#7C3AED" />
+      <rect x="34" y="196" width="50" height="6" rx="1" fill="#111827" />
+      <rect x="24" y="212" width="60" height="4" rx="1" fill="#111827" />
+      <rect x="24" y="222" width="156" height="3" rx="1" fill="#d1d5db" />
+      <rect x="24" y="230" width="130" height="3" rx="1" fill="#d1d5db" />
+      <circle cx="26" cy="252" r="2.5" fill="#7C3AED" />
+      <rect x="34" y="248" width="45" height="6" rx="1" fill="#111827" />
+      <rect x="24" y="264" width="100" height="3" rx="1" fill="#d1d5db" />
     </svg>
   )
 }
