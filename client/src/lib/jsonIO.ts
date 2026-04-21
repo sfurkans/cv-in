@@ -111,7 +111,29 @@ const themeSchema = z.object({
   spacing: z.enum(['compact', 'normal', 'relaxed']),
 })
 
-const templateIdSchema = z.enum(['classic', 'modern', 'creative'])
+const templateIdSchema = z.enum([
+  'classic',
+  'modern',
+  'creative',
+  'sidebar-left',
+  'ats',
+  'color-accent',
+  'modern-clean',
+  'terminal',
+  'infographic',
+])
+
+const sectionIdSchema = z.enum([
+  'experience',
+  'education',
+  'skills',
+  'projects',
+  'languages',
+  'certificates',
+  'volunteer',
+  'publications',
+  'custom',
+])
 
 export const fullResumeSchema = z.object({
   basics: basicsSchema,
@@ -124,6 +146,9 @@ export const fullResumeSchema = z.object({
   volunteer: z.array(volunteerSchema),
   publications: z.array(publicationSchema),
   customSections: z.array(customSectionSchema),
+  // Eski export'lar geri uyumlu kalsın; yoksa [] olarak import edilir,
+  // store tarafı (loadResume) default sırayı doldurur.
+  sectionOrder: z.array(sectionIdSchema).optional().default([]),
   templateId: templateIdSchema,
   theme: themeSchema,
 })

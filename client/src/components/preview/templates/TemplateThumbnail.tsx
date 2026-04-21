@@ -20,6 +20,13 @@ export default function TemplateThumbnail({
       {templateId === 'classic' && <ClassicThumb />}
       {templateId === 'modern' && <ModernThumb />}
       {templateId === 'creative' && <CreativeThumb />}
+      {/* Yeni template'ler için thumbnail Faz 3-8'de eklenecek — geçici olarak Classic fallback */}
+      {templateId === 'sidebar-left' && <ClassicThumb />}
+      {templateId === 'ats' && <ClassicThumb />}
+      {templateId === 'color-accent' && <ClassicThumb />}
+      {templateId === 'modern-clean' && <ClassicThumb />}
+      {templateId === 'terminal' && <ClassicThumb />}
+      {templateId === 'infographic' && <ClassicThumb />}
     </div>
   )
 }

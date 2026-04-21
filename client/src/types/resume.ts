@@ -92,7 +92,16 @@ export interface CustomSection {
   fields: CustomField[]
 }
 
-export type TemplateId = 'classic' | 'modern' | 'creative'
+export type TemplateId =
+  | 'classic'
+  | 'modern'
+  | 'creative'
+  | 'sidebar-left'
+  | 'ats'
+  | 'color-accent'
+  | 'modern-clean'
+  | 'terminal'
+  | 'infographic'
 
 export type SectionId =
   | 'experience'
