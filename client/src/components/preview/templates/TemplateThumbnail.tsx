@@ -24,8 +24,8 @@ export default function TemplateThumbnail({
       {templateId === 'ats' && <AtsThumb />}
       {templateId === 'color-accent' && <ColorAccentThumb />}
       {templateId === 'modern-clean' && <ModernCleanThumb />}
-      {/* Faz 7-8'de eklenecek — geçici Classic fallback */}
-      {templateId === 'terminal' && <ClassicThumb />}
+      {templateId === 'terminal' && <TerminalThumb />}
+      {/* Faz 8'de eklenecek — geçici Classic fallback */}
       {templateId === 'infographic' && <ClassicThumb />}
     </div>
   )
@@ -121,6 +121,57 @@ function CreativeThumb() {
       <rect x="82" y="126" width="48" height="6" rx="1" fill="#14B8A6" />
       <rect x="82" y="138" width="70" height="4" rx="1" fill="#111827" />
       <rect x="82" y="148" width="100" height="3" rx="1" fill="#d1d5db" />
+    </svg>
+  )
+}
+
+function TerminalThumb() {
+  return (
+    <svg viewBox="0 0 200 280" className="h-full w-full">
+      <rect width="200" height="280" fill="#0d1117" />
+      {/* Prompt line */}
+      <rect x="14" y="18" width="40" height="4" rx="0" fill="#7ee787" />
+      <rect x="56" y="18" width="60" height="4" rx="0" fill="#c9d1d9" />
+      {/* Divider */}
+      <rect x="14" y="30" width="170" height="0.5" fill="#8b949e" opacity="0.4" />
+      {/* Photo */}
+      <rect x="14" y="38" width="28" height="28" fill="#21262d" stroke="#8b949e" strokeWidth="0.5" />
+      {/* Name # Header */}
+      <rect x="14" y="74" width="140" height="10" rx="1" fill="#c9d1d9" />
+      <rect x="14" y="88" width="90" height="3" rx="0" fill="#6a737d" />
+      {/* Meta */}
+      <rect x="14" y="100" width="30" height="3" rx="0" fill="#8b949e" />
+      <rect x="46" y="100" width="90" height="3" rx="0" fill="#a5d6ff" />
+      <rect x="14" y="108" width="30" height="3" rx="0" fill="#8b949e" />
+      <rect x="46" y="108" width="70" height="3" rx="0" fill="#a5d6ff" />
+      {/* Section heading 1 */}
+      <rect x="14" y="126" width="60" height="5" rx="1" fill="#7C3AED" />
+      {/* Experience entries */}
+      <rect x="14" y="140" width="30" height="3" rx="0" fill="#6a737d" />
+      <rect x="46" y="140" width="50" height="3" rx="0" fill="#d2a8ff" />
+      <rect x="100" y="140" width="44" height="3" rx="0" fill="#ff7b72" />
+      <rect x="14" y="148" width="160" height="3" rx="0" fill="#c9d1d9" />
+      {/* bullets */}
+      <rect x="18" y="156" width="3" height="3" rx="0" fill="#7C3AED" />
+      <rect x="24" y="156" width="140" height="3" rx="0" fill="#c9d1d9" />
+      <rect x="18" y="164" width="3" height="3" rx="0" fill="#7C3AED" />
+      <rect x="24" y="164" width="130" height="3" rx="0" fill="#c9d1d9" />
+      {/* Section heading 2 */}
+      <rect x="14" y="180" width="48" height="5" rx="1" fill="#7C3AED" />
+      {/* Skills — const array */}
+      <rect x="14" y="194" width="30" height="3" rx="0" fill="#ff7b72" />
+      <rect x="46" y="194" width="48" height="3" rx="0" fill="#d2a8ff" />
+      <rect x="14" y="202" width="10" height="3" rx="0" fill="#8b949e" />
+      <rect x="26" y="202" width="20" height="3" rx="0" fill="#a5d6ff" />
+      <rect x="48" y="202" width="30" height="3" rx="0" fill="#a5d6ff" />
+      <rect x="80" y="202" width="24" height="3" rx="0" fill="#a5d6ff" />
+      {/* Section heading 3 */}
+      <rect x="14" y="222" width="52" height="5" rx="1" fill="#7C3AED" />
+      <rect x="14" y="236" width="3" height="3" rx="0" fill="#7C3AED" />
+      <rect x="20" y="236" width="40" height="3" rx="0" fill="#d2a8ff" />
+      <rect x="62" y="236" width="80" height="3" rx="0" fill="#8b949e" />
+      {/* EOF */}
+      <rect x="14" y="258" width="70" height="3" rx="0" fill="#6a737d" opacity="0.7" />
     </svg>
   )
 }
