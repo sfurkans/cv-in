@@ -94,7 +94,7 @@ export default function TerminalTemplate({ resume }: TerminalTemplateProps) {
     >
       {/* Prompt line */}
       <div className="flex items-start gap-1 text-[10px] break-all">
-        <span style={{ color: '#7ee787' }}>{userName}@cv-in</span>
+        <span style={{ color: '#7ee787' }}>{userName}@Cv-İn</span>
         <span style={{ color: DIM }}>:</span>
         <span style={{ color: STRING }}>~</span>
         <span style={{ color: DIM }}>$ </span>

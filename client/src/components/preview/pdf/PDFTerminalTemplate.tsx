@@ -197,7 +197,7 @@ export default function PDFTerminalTemplate({
       <Page size="A4" style={styles.page}>
         {/* Prompt line */}
         <View style={styles.promptRow}>
-          <Text style={styles.green}>{userName}@cv-in</Text>
+          <Text style={styles.green}>{userName}@Cv-İn</Text>
           <Text style={styles.dim}>:</Text>
           <Text style={styles.string}>~</Text>
           <Text style={styles.dim}>$ </Text>

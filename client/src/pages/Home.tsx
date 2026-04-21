@@ -1,11 +1,14 @@
 import {
+  Check,
+  Cloud,
   Download,
+  Eye,
   FilePlus,
-  FileText,
   Layers,
+  Palette,
+  Save,
   Sparkles,
   UserPlus,
-  Zap,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -17,40 +20,40 @@ import { useResumeStore } from '@/store/resumeStore'
 
 const features = [
   {
-    icon: Zap,
-    title: 'Canlı önizleme',
+    icon: Eye,
+    title: 'Canlı A4 önizleme',
     description:
-      'Yazdığın her kelime sağ tarafta anında A4 formatında görünür. Tasarımı yazarken mükemmelleştir.',
-  },
-  {
-    icon: UserPlus,
-    title: 'Kaydet, istediğin zaman dön',
-    description:
-      'İsteğe bağlı hesap aç ve CV’lerini buluta kaydet. Farklı cihazlardan aynı hesabınla eriş.',
+      'Yazdığın her kelime gerçek A4 formatında sağda anında belirir. Tasarımı yazarken şekillendir, sürpriz yaşama.',
   },
   {
     icon: Layers,
-    title: 'Çoklu şablon',
+    title: 'ATS uyumlu şablonlar',
     description:
-      'Klasik, modern ve yaratıcı tasarımlar arasında geçiş yap. Her biri ATS-dostu ve PDF çıktıya hazır.',
+      'Klasik, modern, yaratıcı ve terminal stilleri — hepsi iş başvuru sistemlerinden (ATS) geçecek şekilde kurgulandı.',
   },
   {
     icon: Download,
-    title: 'PDF export',
+    title: 'Profesyonel PDF çıktı',
     description:
-      'CV’ni profesyonel kalitede PDF olarak indir. İş başvurularında kullanıma hazır.',
+      'Türkçe karakter destekli, çok sayfalı, baskı kalitesinde PDF. Tek tıkla indir, başvurunu gönder.',
   },
   {
-    icon: FileText,
-    title: 'JSON yedek',
+    icon: Save,
+    title: 'Otomatik kayıt & offline',
     description:
-      'Verini JSON olarak kaydet, başka bir cihazda tek tıkla geri yükle.',
+      'Her değişiklik arka planda saniyeler içinde kaydedilir. İnternet kesilse bile yazmaya devam edebilirsin.',
   },
   {
-    icon: Sparkles,
-    title: 'Sıfırdan veya örnekle',
+    icon: Cloud,
+    title: 'Bulut & çoklu cihaz',
     description:
-      'Boş bir sayfadan başla ya da hazır bir örnek ile tanışma süreni hızlandır.',
+      'İsteğe bağlı hesap aç, CV’lerini buluta al. Farklı cihazlardan aynı hesapla kesintisiz devam et.',
+  },
+  {
+    icon: Palette,
+    title: 'Tam özelleştirme',
+    description:
+      'Bölüm sırasını sürükle-bırak ile düzenle, tema rengini seç, fotoğrafını ekle — CV’ni senin yap.',
   },
 ]
 
@@ -96,7 +99,7 @@ export default function Home() {
             opacity: 0.07,
           }}
         >
-          cv-in
+          Cv-İn
         </div>
 
         <svg
@@ -155,12 +158,29 @@ export default function Home() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground sm:text-xl">
-            Modern, ATS-dostu CV oluşturucu. Yazdıkların canlı önizlemede anında
-            görünür, tek tıkla PDF olarak indir. İstersen hesap aç,
-            CV’lerini istediğin zaman düzenle.
+            Profesyonel bir CV için ihtiyacın olan her şey tek yerde.
           </p>
 
-          <div className="mx-auto mt-12 grid max-w-3xl gap-4 sm:grid-cols-3">
+          <ul className="mx-auto mt-8 grid max-w-2xl gap-x-8 gap-y-3 text-left sm:grid-cols-2">
+            {[
+              'ATS uyumlu modern şablonlar',
+              'Canlı A4 önizleme',
+              'Fotoğraf ve zengin alanlar',
+              'Tek tıkla PDF export',
+              'Kayıtsız başla ya da hesap aç',
+              'Buluta kaydet, her cihazdan eriş',
+            ].map((feature) => (
+              <li
+                key={feature}
+                className="flex items-start gap-2.5 text-sm text-muted-foreground sm:text-base"
+              >
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mx-auto mt-[300px] grid max-w-6xl gap-6 sm:grid-cols-3">
             <HomeActionCard
               icon={FilePlus}
               title="Boş CV Oluştur"
@@ -203,32 +223,72 @@ export default function Home() {
         />
 
         <section className="mt-12 sm:mt-16">
-          <div className="mb-12 text-center">
-            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-              Neden cv-in?
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
+              Özellikler
+            </span>
+            <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+              Neden{' '}
+              <span className="text-brand-gradient">Cv-İn</span>?
             </h2>
-            <p className="mt-3 text-muted-foreground">
-              Güzel görünen, hızlı, kaydedebileceğin bir CV oluşturucu.
+            <p className="mt-4 text-base text-muted-foreground sm:text-lg">
+              Profesyonel bir CV için gereken her özellik, sade ve hızlı bir arayüzde.
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="relative grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -top-4 bottom-[calc(50%_+_0.6rem)] left-[calc(33.333%_-_0.417rem)] hidden w-px bg-gradient-to-b from-transparent to-primary/30 lg:block"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute top-[calc(50%_+_0.6rem)] -bottom-4 left-[calc(33.333%_-_0.417rem)] hidden w-px bg-gradient-to-b from-primary/30 to-transparent lg:block"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -top-4 bottom-[calc(50%_+_0.6rem)] left-[calc(66.667%_+_0.417rem)] hidden w-px bg-gradient-to-b from-transparent to-primary/30 lg:block"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute top-[calc(50%_+_0.6rem)] -bottom-4 left-[calc(66.667%_+_0.417rem)] hidden w-px bg-gradient-to-b from-primary/30 to-transparent lg:block"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute top-1/2 -left-4 right-[calc(66.667%_+_1.017rem)] hidden h-px bg-gradient-to-r from-transparent to-primary/30 lg:block"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute top-1/2 left-[calc(33.333%_+_0.183rem)] right-[calc(33.333%_+_0.183rem)] hidden h-px bg-primary/30 lg:block"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute top-1/2 left-[calc(66.667%_+_1.017rem)] -right-4 hidden h-px bg-gradient-to-r from-primary/30 to-transparent lg:block"
+            />
             {features.map(({ icon: Icon, title, description }, i) => (
               <article
                 key={title}
-                className="group relative rounded-xl border border-border/60 bg-card/70 p-6 backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+                className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card/70 p-7 backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10"
               >
                 <div
-                  className={`mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg ${
+                  aria-hidden
+                  className={`pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full blur-3xl transition-opacity duration-300 ${
+                    i % 2 === 0 ? 'bg-primary/10' : 'bg-accent/10'
+                  } opacity-0 group-hover:opacity-100`}
+                />
+                <div
+                  className={`relative mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl ${
                     i % 2 === 0
-                      ? 'bg-primary/10 text-primary'
-                      : 'bg-accent/10 text-accent'
+                      ? 'bg-primary/10 text-primary ring-1 ring-primary/20'
+                      : 'bg-accent/10 text-accent ring-1 ring-accent/20'
                   }`}
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-6 w-6" />
                 </div>
-                <h3 className="font-semibold">{title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                <h3 className="relative text-lg font-semibold tracking-tight">
+                  {title}
+                </h3>
+                <p className="relative mt-2 text-sm leading-relaxed text-muted-foreground">
                   {description}
                 </p>
               </article>
@@ -292,24 +352,24 @@ function HomeActionCard({
     <button
       type="button"
       onClick={onClick}
-      className="group relative flex flex-col items-start gap-3 rounded-xl border border-border/60 bg-card/70 p-5 text-left backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      className="group relative flex flex-col items-start gap-5 rounded-2xl border border-border/60 bg-card/70 p-8 text-left backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
     >
       <div
-        className={`inline-flex h-11 w-11 items-center justify-center rounded-lg ${
+        className={`inline-flex h-16 w-16 items-center justify-center rounded-xl ${
           accent === 'primary'
             ? 'bg-primary/10 text-primary'
             : 'bg-accent/10 text-accent'
         }`}
       >
-        <Icon className="h-5 w-5" />
+        <Icon className="h-8 w-8" />
       </div>
       <div className="min-w-0">
-        <h3 className="font-semibold">{title}</h3>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+        <h3 className="text-xl font-semibold">{title}</h3>
+        <p className="mt-2 text-base leading-relaxed text-muted-foreground">
           {description}
         </p>
       </div>
-      <span className="mt-auto text-sm font-medium text-primary underline-offset-4 group-hover:underline">
+      <span className="mt-auto text-base font-medium text-primary underline-offset-4 group-hover:underline">
         {cta} →
       </span>
     </button>

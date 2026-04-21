@@ -12,19 +12,39 @@ export function LogoMark({ className }: LogoMarkProps) {
       aria-hidden="true"
       className={cn('shrink-0', className)}
     >
-      <defs>
-        <linearGradient id="cvinGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#7C3AED" />
-          <stop offset="100%" stopColor="#14B8A6" />
-        </linearGradient>
-      </defs>
-      <rect x="2" y="2" width="28" height="28" rx="8" fill="url(#cvinGradient)" />
       <path
-        d="M20.5 11.5a6 6 0 1 0 0 9"
+        d="M 10 8 L 19 8 L 24 13 L 24 24 L 10 24 Z"
         stroke="white"
-        strokeWidth="2.4"
+        strokeWidth="2"
+        strokeLinejoin="round"
         strokeLinecap="round"
         fill="none"
+      />
+      <path
+        d="M 19 8 L 19 13 L 24 13"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <line
+        x1="13"
+        y1="17"
+        x2="21"
+        y2="17"
+        stroke="white"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
+      <line
+        x1="13"
+        y1="20"
+        x2="18.5"
+        y2="20"
+        stroke="white"
+        strokeWidth="1.4"
+        strokeLinecap="round"
       />
     </svg>
   )
@@ -51,7 +71,7 @@ export default function Logo({
             wordmarkClassName,
           )}
         >
-          cv-in
+          Cv-İn
         </span>
       )}
     </span>
