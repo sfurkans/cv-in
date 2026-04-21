@@ -1,0 +1,230 @@
+{
+  "templateId": "modern-clean",
+  "theme": {
+    "primaryColor": "#7C3AED",
+    "textColor": "#111827",
+    "fontFamily": "sans",
+    "spacing": "normal"
+  },
+  "content": {
+    "basics": {
+      "name": "Furkan Şahin",
+      "label": "Full-Stack Developer · React & Node.js",
+      "email": "furknshin.06@gmail.com",
+      "phone": "+90 555 123 45 67",
+      "summary": "Modern web uygulamaları geliştiren, ürün odaklı full-stack geliştirici. React 19 + TypeScript ön yüzde, Node.js + PostgreSQL arka yüzde üretim seviyesinde deneyimli. Açık kaynak projelere katkı veriyor, performans optimizasyonu ve geliştirici deneyimi üzerinde tutku ile çalışıyorum.",
+      "photo": "",
+      "profiles": [
+        { "network": "LinkedIn", "url": "https://linkedin.com/in/furkansahin", "username": "furkansahin" },
+        { "network": "GitHub", "url": "https://github.com/furkansahin", "username": "furkansahin" },
+        { "network": "Website", "url": "https://furkansahin.dev", "username": "furkansahin" },
+        { "network": "Twitter", "url": "https://twitter.com/furkansahindev", "username": "furkansahindev" }
+      ]
+    },
+    "work": [
+      {
+        "id": "w1",
+        "company": "Trendyol",
+        "position": "Senior Full-Stack Developer",
+        "startDate": "2024-03",
+        "endDate": "",
+        "summary": "E-ticaret platformunda ödeme akışı ve kampanya motoru üzerinde teknik liderlik.",
+        "highlights": [
+          "Checkout sayfasının LCP'sini 3.2sn'den 1.1sn'ye indirerek dönüşüm oranını %12 artırdım",
+          "React Query + Suspense mimarisine geçişte 40+ component'i modernize ettim",
+          "Stripe + Iyzico çift ödeme sağlayıcı entegrasyonunu ve failover mekanizmasını kurdum",
+          "6 kişilik bir ekipte kod inceleme süreçlerini iyileştirerek PR döngüsünü ortalama 2 güne indirdim"
+        ]
+      },
+      {
+        "id": "w2",
+        "company": "Hepsiburada",
+        "position": "Full-Stack Developer",
+        "startDate": "2022-01",
+        "endDate": "2024-02",
+        "summary": "B2B satıcı panelinde dashboard, rapor üretim ve bildirim sistemleri.",
+        "highlights": [
+          "Eski AngularJS tabanlı panelin React 18 + TypeScript'e kademeli geçişini tamamladım",
+          "Node.js + PostgreSQL ile her gün 2M+ sipariş analiz eden rapor servisini yazdım",
+          "Query optimizasyonu ile 8sn'den 1.2sn'ye inen dashboard ortalama yanıt süresi sağladım",
+          "Kafka tabanlı gerçek zamanlı bildirim sisteminin retry + DLQ mekanizmalarını kurdum"
+        ]
+      },
+      {
+        "id": "w3",
+        "company": "Garanti Teknoloji",
+        "position": "Junior Developer",
+        "startDate": "2020-08",
+        "endDate": "2021-12",
+        "summary": "İnternet bankacılığı mobil uygulamasında React Native geliştirme.",
+        "highlights": [
+          "Yatırım ekranlarında canlı piyasa verisi için WebSocket altyapısını kurdum",
+          "iOS + Android crash oranını Sentry entegrasyonu ile %45 azalttım",
+          "KVKK uyumluluk kapsamında PII logging filtrelerini implement ettim"
+        ]
+      }
+    ],
+    "education": [
+      {
+        "id": "e1",
+        "institution": "İstanbul Teknik Üniversitesi",
+        "degree": "Yüksek Lisans",
+        "field": "Bilgisayar Mühendisliği",
+        "startDate": "2021-09",
+        "endDate": "2023-06"
+      },
+      {
+        "id": "e2",
+        "institution": "Boğaziçi Üniversitesi",
+        "degree": "Lisans",
+        "field": "Bilgisayar Mühendisliği",
+        "startDate": "2017-09",
+        "endDate": "2021-06"
+      }
+    ],
+    "skills": [
+      {
+        "id": "s1",
+        "name": "Frontend",
+        "level": "expert",
+        "keywords": ["React 19", "TypeScript", "Vite", "Tailwind CSS", "Zustand", "React Query", "Next.js", "Radix UI"]
+      },
+      {
+        "id": "s2",
+        "name": "Backend",
+        "level": "advanced",
+        "keywords": ["Node.js", "Express", "Prisma", "PostgreSQL", "Redis", "Kafka", "gRPC", "REST API"]
+      },
+      {
+        "id": "s3",
+        "name": "DevOps & Tooling",
+        "level": "intermediate",
+        "keywords": ["Docker", "Kubernetes", "GitHub Actions", "Terraform", "AWS", "Datadog", "Sentry"]
+      },
+      {
+        "id": "s4",
+        "name": "Mobil",
+        "level": "intermediate",
+        "keywords": ["React Native", "Expo", "iOS", "Android"]
+      }
+    ],
+    "projects": [
+      {
+        "id": "p1",
+        "name": "CV Builder (cv-in)",
+        "description": "Modern, açık kaynak CV oluşturma aracı. React 19 + TypeScript + Zustand ile geliştirildi. 9 farklı template, PDF export, JSON yedek, misafir/hesaplı mod, Express+Prisma backend ve JWT auth.",
+        "url": "https://github.com/furkansahin/cv-builder",
+        "startDate": "2026-04",
+        "endDate": ""
+      },
+      {
+        "id": "p2",
+        "name": "Metro Tracker",
+        "description": "İstanbul metrosu için gerçek zamanlı sefer takip uygulaması. React Native + GraphQL + Apollo ile kuruldu, 50K+ aktif kullanıcı.",
+        "url": "https://github.com/furkansahin/metro-tracker",
+        "startDate": "2023-05",
+        "endDate": "2024-01"
+      },
+      {
+        "id": "p3",
+        "name": "tRPC Snippet Manager",
+        "description": "Kod parçacıklarını paylaşmak için tRPC + Prisma + Next.js 14 ile yazılmış web uygulaması. tRPC ile end-to-end type safety örneği.",
+        "url": "https://snippets.furkansahin.dev",
+        "startDate": "2024-06",
+        "endDate": "2024-09"
+      }
+    ],
+    "languages": [
+      { "id": "l1", "name": "Türkçe", "proficiency": "native" },
+      { "id": "l2", "name": "İngilizce", "proficiency": "c1" },
+      { "id": "l3", "name": "Almanca", "proficiency": "b1" }
+    ],
+    "certificates": [
+      {
+        "id": "c1",
+        "name": "AWS Certified Solutions Architect — Associate",
+        "issuer": "Amazon Web Services",
+        "date": "2024-08",
+        "url": "https://credly.com/badges/aws-saa-furkansahin"
+      },
+      {
+        "id": "c2",
+        "name": "Professional Scrum Master I",
+        "issuer": "Scrum.org",
+        "date": "2023-11",
+        "url": "https://scrum.org/certificates/psm-furkansahin"
+      },
+      {
+        "id": "c3",
+        "name": "Meta Frontend Developer Professional",
+        "issuer": "Coursera",
+        "date": "2023-04",
+        "url": "https://coursera.org/verify/meta-fe-furkansahin"
+      }
+    ],
+    "volunteer": [
+      {
+        "id": "v1",
+        "organization": "Kodluyoruz",
+        "role": "Eğitmen / Mentor",
+        "startDate": "2023-01",
+        "endDate": "",
+        "summary": "Junior geliştiricilere React ve modern JavaScript üzerine hafta sonu eğitimleri veriyorum. Bugüne kadar 120+ öğrenciye mentorluk yaptım."
+      },
+      {
+        "id": "v2",
+        "organization": "Açık Kaynak Türkiye",
+        "role": "Katkı Sağlayıcı",
+        "startDate": "2022-06",
+        "endDate": "2023-12",
+        "summary": "Türkçe dokümantasyon çevirileri ve topluluk projelerinde kod incelemesi."
+      }
+    ],
+    "publications": [
+      {
+        "id": "pub1",
+        "name": "Production React: Suspense + RSC ile Veri Getirme Kalıpları",
+        "publisher": "Medium — Trendyol Tech",
+        "date": "2025-02",
+        "url": "https://medium.com/trendyol-tech/production-react-suspense-rsc-furkansahin"
+      },
+      {
+        "id": "pub2",
+        "name": "PostgreSQL Index Stratejileri: Gerçek Dünya Örnekleri",
+        "publisher": "Dev.to",
+        "date": "2024-05",
+        "url": "https://dev.to/furkansahin/postgres-index-strategies"
+      }
+    ],
+    "customSections": [
+      {
+        "id": "cs1",
+        "title": "Konuşmalar",
+        "fields": [
+          { "id": "cf1", "label": "JSConf Istanbul 2024", "value": "React 19 — Actions, use() ve Form Entegrasyonu (40 dk)" },
+          { "id": "cf2", "label": "DevFest Istanbul 2023", "value": "Prisma ile Type-Safe Backend — 30 dk lightning talk" },
+          { "id": "cf3", "label": "Papara Tech Meetup 2023", "value": "React Native Performans Optimizasyonu Workshop" }
+        ]
+      },
+      {
+        "id": "cs2",
+        "title": "İlgi Alanları",
+        "fields": [
+          { "id": "cf4", "label": "Hobi", "value": "Satranç (FIDE 1650), dağcılık, espresso demleme" },
+          { "id": "cf5", "label": "Teknik", "value": "Rust ve WebAssembly, developer tooling, compiler tasarımı" }
+        ]
+      }
+    ],
+    "sectionOrder": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "languages",
+      "certificates",
+      "volunteer",
+      "publications",
+      "custom"
+    ]
+  }
+}
