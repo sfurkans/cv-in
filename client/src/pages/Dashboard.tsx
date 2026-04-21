@@ -1,4 +1,4 @@
-import { Edit, FileText, Loader2, Plus, Trash2 } from 'lucide-react'
+import { Edit, FileText, LogIn, Loader2, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -11,6 +11,8 @@ import {
 import { normalizeError } from '@/lib/apiClient'
 import { resolvePhotoUrl } from '@/lib/photoUrl'
 import { toast } from '@/lib/toast'
+import { useAuthModalStore } from '@/store/authModalStore'
+import { useAuthStore } from '@/store/authStore'
 
 function formatRelative(date: string): string {
   const d = new Date(date)
@@ -29,13 +31,23 @@ function formatRelative(date: string): string {
 
 export default function Dashboard() {
   const navigate = useNavigate()
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const isRestoring = useAuthStore((s) => s.isRestoring)
+  const openAuthModal = useAuthModalStore((s) => s.openModal)
+
   const [resumes, setResumes] = useState<ResumeSummary[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      setLoading(false)
+      return
+    }
     let cancelled = false
+    setLoading(true)
+    setError(null)
     listResumes()
       .then((data) => {
         if (cancelled) return
@@ -50,7 +62,7 @@ export default function Dashboard() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [isAuthenticated])
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Bu CV'yi silmek istediğine emin misin?")) return
@@ -64,6 +76,23 @@ export default function Dashboard() {
     } finally {
       setDeletingId(null)
     }
+  }
+
+  // Session restore bitmeden bekleme ekranı gösterme — flicker önler
+  if (isRestoring) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
+        <SkeletonGrid />
+      </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
+        <GuestGate onLogin={() => openAuthModal('login')} onRegister={() => openAuthModal('register')} />
+      </div>
+    )
   }
 
   const subtitle = loading
@@ -109,6 +138,38 @@ export default function Dashboard() {
           ))}
         </div>
       )}
+    </div>
+  )
+}
+
+function GuestGate({
+  onLogin,
+  onRegister,
+}: {
+  onLogin: () => void
+  onRegister: () => void
+}) {
+  return (
+    <div className="rounded-2xl border border-dashed border-border/80 bg-muted/10 px-6 py-16 text-center">
+      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-gradient text-white shadow-lg shadow-primary/20">
+        <LogIn className="h-10 w-10" />
+      </div>
+      <h2 className="mt-6 text-xl font-semibold tracking-tight sm:text-2xl">
+        CV'lerini görmek için giriş yap
+      </h2>
+      <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+        Kaydettiğin CV'ler hesabına bağlı. Giriş yaparak tüm CV'lerini düzenleyebilir,
+        farklı cihazlardan erişebilirsin.
+      </p>
+      <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <Button size="lg" onClick={onLogin}>
+          <LogIn className="h-4 w-4" />
+          Giriş Yap
+        </Button>
+        <Button size="lg" variant="outline" onClick={onRegister}>
+          Hesap Oluştur
+        </Button>
+      </div>
     </div>
   )
 }

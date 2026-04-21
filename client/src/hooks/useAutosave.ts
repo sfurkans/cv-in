@@ -1,16 +1,24 @@
 import { useEffect, useRef } from 'react'
 
 import { hasMeaningfulContent, saveResume } from '@/lib/sync'
+import { useAuthStore } from '@/store/authStore'
 import { useResumeStore } from '@/store/resumeStore'
 
 const DEFAULT_DEBOUNCE_MS = 2000
 
 export function useAutosave(debounceMs: number = DEFAULT_DEBOUNCE_MS): void {
   const resume = useResumeStore((s) => s.resume)
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const isFirstRunRef = useRef(true)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
+    // Misafir kullanıcı: backend sync devre dışı, sadece localStorage persist kalır
+    if (!isAuthenticated) {
+      isFirstRunRef.current = true
+      return
+    }
+
     if (isFirstRunRef.current) {
       isFirstRunRef.current = false
       // İlk mount: localStorage'dan gelen resume backend'e hiç push edilmemişse
@@ -30,5 +38,5 @@ export function useAutosave(debounceMs: number = DEFAULT_DEBOUNCE_MS): void {
     return () => {
       if (timerRef.current !== null) clearTimeout(timerRef.current)
     }
-  }, [resume, debounceMs])
+  }, [resume, debounceMs, isAuthenticated])
 }

@@ -1,12 +1,17 @@
 import { AlertCircle, Check, CloudOff, Loader2 } from 'lucide-react'
 
+import { useAuthStore } from '@/store/authStore'
 import { useResumeStore } from '@/store/resumeStore'
 
 export default function SyncStatusIndicator() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const syncStatus = useResumeStore((s) => s.syncStatus)
   const lastSyncedAt = useResumeStore((s) => s.lastSyncedAt)
   const lastSyncError = useResumeStore((s) => s.lastSyncError)
   const remoteId = useResumeStore((s) => s.remoteId)
+
+  // Misafir kullanıcı: indicator göstermeye gerek yok (kaydetme zaten kapalı)
+  if (!isAuthenticated) return null
 
   if (syncStatus === 'syncing') {
     return (
