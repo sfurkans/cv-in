@@ -22,8 +22,8 @@ export default function TemplateThumbnail({
       {templateId === 'creative' && <CreativeThumb />}
       {templateId === 'sidebar-left' && <SidebarLeftThumb />}
       {templateId === 'ats' && <AtsThumb />}
-      {/* Faz 5-8'de eklenecek — geçici Classic fallback */}
-      {templateId === 'color-accent' && <ClassicThumb />}
+      {templateId === 'color-accent' && <ColorAccentThumb />}
+      {/* Faz 6-8'de eklenecek — geçici Classic fallback */}
       {templateId === 'modern-clean' && <ClassicThumb />}
       {templateId === 'terminal' && <ClassicThumb />}
       {templateId === 'infographic' && <ClassicThumb />}
@@ -121,6 +121,47 @@ function CreativeThumb() {
       <rect x="82" y="126" width="48" height="6" rx="1" fill="#14B8A6" />
       <rect x="82" y="138" width="70" height="4" rx="1" fill="#111827" />
       <rect x="82" y="148" width="100" height="3" rx="1" fill="#d1d5db" />
+    </svg>
+  )
+}
+
+function ColorAccentThumb() {
+  return (
+    <svg viewBox="0 0 200 280" className="h-full w-full">
+      <rect width="200" height="280" fill="#fff" />
+      {/* Üst renk barı */}
+      <rect x="0" y="0" width="200" height="12" fill="#7C3AED" />
+      {/* Foto daire */}
+      <circle cx="38" cy="38" r="14" fill="#fff" stroke="#7C3AED" strokeWidth="2" />
+      <rect x="62" y="24" width="100" height="10" rx="1" fill="#111827" />
+      <rect x="62" y="40" width="70" height="5" rx="1" fill="#7C3AED" />
+      <rect x="62" y="50" width="40" height="3" rx="0" fill="#9ca3af" />
+      <rect x="106" y="50" width="36" height="3" rx="0" fill="#9ca3af" />
+      {/* Section 1 — bar + başlık */}
+      <rect x="20" y="84" width="2" height="6" fill="#7C3AED" />
+      <rect x="26" y="85" width="40" height="5" rx="1" fill="#7C3AED" />
+      <rect x="20" y="96" width="160" height="3" rx="1" fill="#d1d5db" />
+      <rect x="20" y="104" width="150" height="3" rx="1" fill="#d1d5db" />
+      <rect x="20" y="112" width="140" height="3" rx="1" fill="#d1d5db" />
+      {/* Section 2 */}
+      <rect x="20" y="130" width="2" height="6" fill="#7C3AED" />
+      <rect x="26" y="131" width="50" height="5" rx="1" fill="#7C3AED" />
+      <rect x="20" y="142" width="90" height="4" rx="1" fill="#111827" />
+      <rect x="150" y="142" width="28" height="7" rx="1" fill="#7C3AED" />
+      <rect x="20" y="152" width="160" height="3" rx="1" fill="#d1d5db" />
+      <rect x="20" y="160" width="140" height="3" rx="1" fill="#d1d5db" />
+      {/* Section 3 chips */}
+      <rect x="20" y="180" width="2" height="6" fill="#7C3AED" />
+      <rect x="26" y="181" width="55" height="5" rx="1" fill="#7C3AED" />
+      <rect x="20" y="194" width="28" height="10" rx="2" fill="#fff" stroke="#7C3AED" strokeWidth="0.8" />
+      <rect x="52" y="194" width="34" height="10" rx="2" fill="#fff" stroke="#7C3AED" strokeWidth="0.8" />
+      <rect x="90" y="194" width="30" height="10" rx="2" fill="#fff" stroke="#7C3AED" strokeWidth="0.8" />
+      <rect x="124" y="194" width="26" height="10" rx="2" fill="#fff" stroke="#7C3AED" strokeWidth="0.8" />
+      {/* Section 4 */}
+      <rect x="20" y="222" width="2" height="6" fill="#7C3AED" />
+      <rect x="26" y="223" width="48" height="5" rx="1" fill="#7C3AED" />
+      <rect x="20" y="234" width="160" height="3" rx="1" fill="#d1d5db" />
+      <rect x="20" y="242" width="130" height="3" rx="1" fill="#d1d5db" />
     </svg>
   )
 }
