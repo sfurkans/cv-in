@@ -21,8 +21,8 @@ export default function TemplateThumbnail({
       {templateId === 'modern' && <ModernThumb />}
       {templateId === 'creative' && <CreativeThumb />}
       {templateId === 'sidebar-left' && <SidebarLeftThumb />}
-      {/* Faz 4-8'de eklenecek — geçici Classic fallback */}
-      {templateId === 'ats' && <ClassicThumb />}
+      {templateId === 'ats' && <AtsThumb />}
+      {/* Faz 5-8'de eklenecek — geçici Classic fallback */}
       {templateId === 'color-accent' && <ClassicThumb />}
       {templateId === 'modern-clean' && <ClassicThumb />}
       {templateId === 'terminal' && <ClassicThumb />}
@@ -121,6 +121,38 @@ function CreativeThumb() {
       <rect x="82" y="126" width="48" height="6" rx="1" fill="#14B8A6" />
       <rect x="82" y="138" width="70" height="4" rx="1" fill="#111827" />
       <rect x="82" y="148" width="100" height="3" rx="1" fill="#d1d5db" />
+    </svg>
+  )
+}
+
+function AtsThumb() {
+  return (
+    <svg viewBox="0 0 200 280" className="h-full w-full">
+      <rect width="200" height="280" fill="#fff" />
+      <rect x="20" y="22" width="140" height="11" rx="1" fill="#000" />
+      <rect x="20" y="40" width="80" height="4" rx="0" fill="#000" />
+      <rect x="20" y="50" width="50" height="3" rx="0" fill="#000" />
+      <rect x="76" y="50" width="40" height="3" rx="0" fill="#000" />
+      <rect x="20" y="62" width="160" height="1" fill="#000" />
+      <rect x="20" y="74" width="40" height="4" rx="0" fill="#000" />
+      <rect x="20" y="82" width="160" height="0.8" fill="#000" />
+      <rect x="20" y="92" width="160" height="3" rx="0" fill="#374151" />
+      <rect x="20" y="100" width="150" height="3" rx="0" fill="#374151" />
+      <rect x="20" y="108" width="140" height="3" rx="0" fill="#374151" />
+      <rect x="20" y="124" width="50" height="4" rx="0" fill="#000" />
+      <rect x="20" y="132" width="160" height="0.8" fill="#000" />
+      <rect x="20" y="142" width="90" height="3.5" rx="0" fill="#000" />
+      <rect x="20" y="150" width="60" height="3" rx="0" fill="#374151" />
+      <rect x="20" y="158" width="160" height="3" rx="0" fill="#374151" />
+      <rect x="20" y="166" width="150" height="3" rx="0" fill="#374151" />
+      <rect x="20" y="182" width="55" height="4" rx="0" fill="#000" />
+      <rect x="20" y="190" width="160" height="0.8" fill="#000" />
+      <rect x="20" y="200" width="140" height="3" rx="0" fill="#374151" />
+      <rect x="20" y="208" width="130" height="3" rx="0" fill="#374151" />
+      <rect x="20" y="224" width="50" height="4" rx="0" fill="#000" />
+      <rect x="20" y="232" width="160" height="0.8" fill="#000" />
+      <rect x="20" y="242" width="140" height="3" rx="0" fill="#374151" />
+      <rect x="20" y="250" width="120" height="3" rx="0" fill="#374151" />
     </svg>
   )
 }
