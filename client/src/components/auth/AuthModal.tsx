@@ -57,7 +57,7 @@ export function AuthModal({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-md rounded-2xl bg-card p-6 shadow-2xl ring-1 ring-foreground/10"
+        className="relative max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl bg-card p-5 shadow-2xl ring-1 ring-foreground/10 sm:p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <Button

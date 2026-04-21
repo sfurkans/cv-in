@@ -214,27 +214,33 @@ function ResumeCard({ resume, onDelete, isDeleting }: ResumeCardProps) {
   return (
     <article
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-xl border border-border/60 bg-card shadow-sm transition-all',
+        'group relative flex overflow-hidden rounded-xl border border-border/60 bg-card shadow-sm transition-all',
+        // Mobile: yatay (thumb solda), sm+: dikey (thumb üstte)
+        'flex-row sm:flex-col',
         'hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10',
       )}
     >
       {/* Mini preview — tıklanabilir (düzenleme linki) */}
       <Link
         to={`/builder/${resume.id}`}
-        className="relative block bg-gray-50"
+        className={cn(
+          'relative block shrink-0 bg-gray-50',
+          // Mobile: sol tarafta 100px sabit thumb
+          'w-[110px] sm:w-full',
+        )}
         aria-label={`${name} — düzenle`}
       >
         <ResumeMiniPreview summary={resume} />
-        <div className="pointer-events-none absolute inset-0 rounded-t-xl ring-1 ring-inset ring-foreground/5" />
+        <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-foreground/5 sm:rounded-t-xl" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/0 via-transparent to-transparent opacity-0 transition-opacity group-hover:from-black/20 group-hover:opacity-100" />
-        <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-medium text-foreground shadow-sm backdrop-blur-sm">
-          <Sparkles className="h-3 w-3 text-primary" />
-          {templateMeta.name}
+        <span className="absolute left-1.5 top-1.5 inline-flex items-center gap-1 rounded-full bg-white/95 px-1.5 py-0.5 text-[9px] font-medium text-foreground shadow-sm backdrop-blur-sm sm:left-3 sm:top-3 sm:px-2.5 sm:py-1 sm:text-[10px]">
+          <Sparkles className="h-2.5 w-2.5 text-primary sm:h-3 sm:w-3" />
+          <span className="max-w-[70px] truncate sm:max-w-none">{templateMeta.name}</span>
         </span>
       </Link>
 
       {/* Body */}
-      <div className="flex flex-1 flex-col gap-3 p-4">
+      <div className="flex min-w-0 flex-1 flex-col gap-2 p-3 sm:gap-3 sm:p-4">
         <div className="min-w-0">
           <h3 className="truncate font-semibold leading-tight">{name}</h3>
           {label ? (

@@ -100,28 +100,44 @@ export default function SocialLinksInput() {
       <Label>Sosyal Linkler</Label>
 
       {profiles.length > 0 && (
-        <div className="space-y-2">
+        <div className="space-y-3 sm:space-y-2">
           {profiles.map((profile, index) => {
             const Icon = getIcon(profile.network)
             return (
-              <div key={index} className="flex items-center gap-2">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border bg-muted/30">
-                  <Icon className="h-4 w-4 text-muted-foreground" />
+              <div
+                key={index}
+                className="flex flex-col gap-2 rounded-lg border border-border/40 bg-muted/10 p-2 sm:flex-row sm:items-center sm:border-0 sm:bg-transparent sm:p-0"
+              >
+                {/* Mobile: icon + select + delete bir arada (üst satır) */}
+                <div className="flex items-center gap-2 sm:contents">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border bg-background sm:bg-muted/30">
+                    <Icon className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <select
+                    value={profile.network}
+                    onChange={(e) =>
+                      updateProfile(index, { network: e.target.value })
+                    }
+                    className="flex h-9 flex-1 rounded-lg border border-input bg-transparent px-2 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 sm:w-32 sm:flex-initial"
+                    aria-label="Platform"
+                  >
+                    {NETWORK_OPTIONS.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                  {/* Mobile'de delete butonu üst satırda sağda */}
+                  <button
+                    type="button"
+                    onClick={() => removeProfile(index)}
+                    aria-label={`${profile.network} kaldır`}
+                    className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive sm:hidden"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
-                <select
-                  value={profile.network}
-                  onChange={(e) =>
-                    updateProfile(index, { network: e.target.value })
-                  }
-                  className="flex h-9 w-32 shrink-0 rounded-lg border border-input bg-transparent px-2 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-                  aria-label="Platform"
-                >
-                  {NETWORK_OPTIONS.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
+                {/* URL input — mobilde alt satır, desktop'ta inline */}
                 <Input
                   type="url"
                   placeholder={getPlaceholder(profile.network)}
@@ -130,17 +146,17 @@ export default function SocialLinksInput() {
                     updateProfile(index, { url: e.target.value })
                   }
                   aria-label={`${profile.network} URL`}
+                  className="h-10 sm:h-9"
                 />
-                <Button
+                {/* Desktop'ta delete inline sağda */}
+                <button
                   type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="shrink-0 text-muted-foreground hover:text-destructive"
                   onClick={() => removeProfile(index)}
                   aria-label={`${profile.network} kaldır`}
+                  className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive sm:inline-flex"
                 >
                   <Trash2 className="h-4 w-4" />
-                </Button>
+                </button>
               </div>
             )
           })}
