@@ -55,16 +55,16 @@ describe('resumeFullResponseSchema', () => {
     expect(result.data.theme).toBeNull()
   })
 
-  it('ownerUuid opsiyonel', () => {
-    const withOwner = resumeFullResponseSchema.parse({
-      data: { ...validResumeFull, ownerUuid: 'uuid-123' },
+  it('userId opsiyonel', () => {
+    const withUser = resumeFullResponseSchema.parse({
+      data: { ...validResumeFull, userId: 'user-123' },
     })
-    expect(withOwner.data.ownerUuid).toBe('uuid-123')
+    expect(withUser.data.userId).toBe('user-123')
 
-    const withoutOwner = resumeFullResponseSchema.parse({
+    const withoutUser = resumeFullResponseSchema.parse({
       data: validResumeFull,
     })
-    expect(withoutOwner.data.ownerUuid).toBeUndefined()
+    expect(withoutUser.data.userId).toBeUndefined()
   })
 
   it('eksik content.basics alanında hata verir', () => {

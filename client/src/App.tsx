@@ -5,8 +5,11 @@ import Builder from '@/pages/Builder'
 import Templates from '@/pages/Templates'
 import Dashboard from '@/pages/Dashboard'
 import NotFound from '@/pages/NotFound'
+import { useAuthBootstrap } from '@/hooks/useAuthBootstrap'
 
 function App() {
+  useAuthBootstrap()
+
   return (
     <BrowserRouter>
       <Routes>

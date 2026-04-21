@@ -133,7 +133,7 @@ const themeSchema = z.object({
 
 const apiResumeFullSchema = z.object({
   id: z.string(),
-  ownerUuid: z.string().optional(),
+  userId: z.string().optional(),
   templateId: z.string(),
   theme: themeSchema.nullable(),
   content: resumeContentSchema,
