@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react'
 import { AlertTriangle, Home, RotateCcw } from 'lucide-react'
 import { Component } from 'react'
 import type { ErrorInfo, ReactNode } from 'react'
@@ -24,6 +25,10 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, info: ErrorInfo): void {
     // eslint-disable-next-line no-console
     console.error('[ErrorBoundary]', error, info.componentStack)
+    // Sentry init edilmemişse captureException no-op'tur, güvenli.
+    Sentry.captureException(error, {
+      contexts: { react: { componentStack: info.componentStack } },
+    })
   }
 
   handleReset = () => {
