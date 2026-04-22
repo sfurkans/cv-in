@@ -1,22 +1,8 @@
-import {
-  ChevronDown,
-  ChevronUp,
-  Files,
-  Home,
-  LayoutTemplate,
-  LogIn,
-  LogOut,
-  Menu,
-  Plus,
-  User,
-  X,
-  type LucideIcon,
-} from 'lucide-react'
+import { ChevronDown, ChevronUp, Menu, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 
 import { LogoMark } from '@/components/brand/Logo'
-import { Button } from '@/components/ui/button'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import { useAuthModalStore } from '@/store/authModalStore'
@@ -25,14 +11,18 @@ import { useAuthStore } from '@/store/authStore'
 type NavItem = {
   path: string
   label: string
-  icon: LucideIcon
 }
 
 const navItems: NavItem[] = [
-  { path: '/', label: 'Ana Sayfa', icon: Home },
-  { path: '/templates', label: 'Şablonlar', icon: LayoutTemplate },
-  { path: '/dashboard', label: "CV'lerim", icon: Files },
+  { path: '/', label: 'Ana Sayfa' },
+  { path: '/templates', label: 'Şablonlar' },
+  { path: '/dashboard', label: "CV'lerim" },
 ]
+
+const linkBase =
+  'inline-flex items-center px-4 pb-3 pt-2 text-xl tracking-[0.01em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-sm'
+const linkActive = 'text-primary font-medium border-b-2 border-current'
+const linkInactive = 'text-primary/65 font-medium border-b border-current'
 
 export default function Header() {
   const navigate = useNavigate()
@@ -89,137 +79,143 @@ export default function Header() {
     <>
     <header
       className={cn(
-        'sticky top-0 z-40 bg-gradient-to-b from-background via-background/85 to-transparent px-3 pt-3 pb-5 transition-transform duration-300 ease-out sm:px-4',
+        'sticky top-0 z-40 overflow-x-clip transition-transform duration-300 ease-out',
         (hidden || manualHidden) && !menuOpen ? '-translate-y-full' : 'translate-y-0',
       )}
     >
-      <div className="mx-auto max-w-5xl rounded-full border border-white/10 bg-[oklch(0.58_0.22_293_/_0.90)] shadow-2xl shadow-primary/15 ring-1 ring-inset ring-white/10 backdrop-blur-md">
-        <div className="flex h-16 items-center justify-between gap-4 pl-6 pr-2 sm:pr-3">
-          <Link
-            to="/"
-            aria-label="Cv-İn ana sayfa"
-            className="inline-flex items-center gap-2 rounded-full focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none"
-          >
-            <LogoMark className="h-8 w-8" />
-            <span className="text-lg font-semibold tracking-tight text-primary-foreground">
-              Cv-İn
-            </span>
-          </Link>
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <div className="relative flex h-24 items-center">
+          <div className="relative ml-2 flex-none sm:ml-6 md:ml-10 lg:ml-14">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -inset-y-2 left-1/2 w-60 -translate-x-1/2 bg-[linear-gradient(90deg,transparent_0%,color-mix(in_oklch,var(--color-primary)_22%,transparent)_20%,color-mix(in_oklch,var(--color-primary)_65%,transparent)_50%,color-mix(in_oklch,var(--color-primary)_22%,transparent)_80%,transparent_100%)] blur-2xl md:w-[20rem]"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 left-1/2 w-44 -translate-x-1/2 bg-[linear-gradient(90deg,transparent,color-mix(in_oklch,var(--color-primary)_70%,transparent),transparent)] opacity-75 blur-md md:w-56"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-2 left-1/2 w-32 -translate-x-1/2 bg-[linear-gradient(90deg,transparent,color-mix(in_oklch,var(--color-primary)_55%,transparent),transparent)] blur-sm md:w-40"
+            />
+            <Link
+              to="/"
+              aria-label="Cv-İn ana sayfa"
+              className="relative inline-flex items-center gap-2.5 rounded-sm text-white drop-shadow-[0_1px_8px_color-mix(in_oklch,var(--color-primary)_50%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
+            >
+              <LogoMark className="h-10 w-10" />
+              <span className="text-2xl font-bold tracking-tight">
+                Cv-İn
+              </span>
+            </Link>
+          </div>
 
-          <nav className="hidden items-center gap-1 md:flex">
-            {navItems.map((item) => {
-              const Icon = item.icon
-              return (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  end={item.path === '/'}
-                  className={({ isActive }) =>
-                    cn(
-                      'flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors',
-                      isActive
-                        ? 'bg-white/10 text-primary-foreground'
-                        : 'text-primary-foreground/75 hover:bg-white/10 hover:text-primary-foreground',
-                    )
-                  }
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.label}
-                </NavLink>
-              )
-            })}
+          <nav className="absolute inset-y-0 left-1/2 hidden -translate-x-1/2 items-center gap-12 md:flex lg:gap-20">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                end={item.path === '/'}
+                className={({ isActive }) =>
+                  cn(linkBase, isActive ? linkActive : linkInactive)
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
           </nav>
 
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={handleNewResume}
-              size="default"
-              className="hidden rounded-full bg-gradient-to-b from-white to-violet-50 text-primary shadow-lg shadow-primary/20 ring-1 ring-inset ring-white/80 transition-all hover:from-white hover:to-white hover:shadow-xl hover:shadow-primary/30 sm:inline-flex"
-            >
-              <Plus className="h-4 w-4" />
-              Yeni CV
-            </Button>
-
-            {isAuthenticated ? (
-              <div className="hidden items-center gap-2 md:flex">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-primary-foreground">
-                  <User className="h-3.5 w-3.5" />
-                  {user?.email}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="default"
-                  onClick={handleLogout}
-                  className="rounded-full text-primary-foreground hover:bg-white/10 hover:text-primary-foreground"
-                  title="Çıkış yap"
-                >
-                  <LogOut className="h-4 w-4" />
-                  Çıkış
-                </Button>
-              </div>
-            ) : (
-              <Button
-                variant="ghost"
-                size="default"
-                onClick={handleLogin}
-                className="hidden rounded-full text-primary-foreground hover:bg-white/10 hover:text-primary-foreground md:inline-flex"
+          <div className="ml-auto flex flex-none items-center gap-5 lg:gap-7">
+            {isBuilder && (
+              <button
+                type="button"
+                onClick={() => setManualHidden((v) => !v)}
+                aria-label="Menüyü gizle"
+                title="Menüyü gizle"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-sm text-primary/65 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               >
-                <LogIn className="h-4 w-4" />
-                Giriş Yap
-              </Button>
+                <ChevronUp className="h-5 w-5 md:h-6 md:w-6" />
+              </button>
             )}
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full text-primary-foreground hover:bg-white/10 hover:text-primary-foreground md:hidden"
+            <span
+              aria-hidden
+              className="hidden h-7 w-px bg-primary/20 md:inline-block"
+            />
+
+            <button
+              type="button"
+              onClick={handleNewResume}
+              className={cn(linkBase, linkInactive, 'hidden sm:inline-flex')}
+            >
+              Yeni CV
+            </button>
+
+            {isAuthenticated ? (
+              <div className="hidden items-center gap-5 md:flex lg:gap-7">
+                <span className="text-base font-medium text-primary/70">
+                  {user?.email}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className={cn(linkBase, linkInactive)}
+                  title="Çıkış yap"
+                >
+                  Çıkış
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={handleLogin}
+                className={cn(linkBase, linkInactive, 'hidden md:inline-flex')}
+              >
+                Giriş Yap
+              </button>
+            )}
+
+            <button
+              type="button"
+              className="inline-flex h-12 w-12 items-center justify-center rounded-sm text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 md:hidden"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label={menuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
             >
-              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
+              {menuOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
+            </button>
           </div>
         </div>
       </div>
 
       {menuOpen && (
-        <nav className="mx-auto mt-2 max-w-5xl rounded-2xl border border-white/10 bg-[oklch(0.58_0.22_293_/_0.90)] p-2 shadow-2xl shadow-primary/15 ring-1 ring-inset ring-white/10 backdrop-blur-md md:hidden">
-          <div className="space-y-1">
-            {navItems.map((item) => {
-              const Icon = item.icon
-              return (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  end={item.path === '/'}
-                  onClick={() => setMenuOpen(false)}
-                  className={({ isActive }) =>
-                    cn(
-                      'flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors',
-                      isActive
-                        ? 'bg-white/10 text-primary-foreground'
-                        : 'text-primary-foreground/75 hover:bg-white/10 hover:text-primary-foreground',
-                    )
-                  }
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.label}
-                </NavLink>
-              )
-            })}
+        <nav className="md:hidden">
+          <div className="flex w-full flex-col items-start gap-5 px-4 py-5 sm:px-6">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                end={item.path === '/'}
+                onClick={() => setMenuOpen(false)}
+                className={({ isActive }) =>
+                  cn(linkBase, isActive ? linkActive : linkInactive)
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+
+            <span aria-hidden className="h-px w-12 bg-primary/20" />
 
             {isAuthenticated ? (
               <>
-                <div className="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-primary-foreground/80">
-                  <User className="h-4 w-4" />
+                <div className="px-1 text-base font-medium text-primary/70">
                   {user?.email}
                 </div>
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-primary-foreground/75 transition-colors hover:bg-white/10 hover:text-primary-foreground"
+                  className={cn(linkBase, linkInactive)}
                 >
-                  <LogOut className="h-4 w-4" />
                   Çıkış Yap
                 </button>
               </>
@@ -227,38 +223,32 @@ export default function Header() {
               <button
                 type="button"
                 onClick={handleLogin}
-                className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-primary-foreground/75 transition-colors hover:bg-white/10 hover:text-primary-foreground"
+                className={cn(linkBase, linkInactive)}
               >
-                <LogIn className="h-4 w-4" />
                 Giriş Yap
               </button>
             )}
 
-            <Button
+            <button
+              type="button"
               onClick={handleNewResume}
-              size="default"
-              className="mt-2 w-full rounded-full bg-gradient-to-b from-white to-violet-50 text-primary shadow-lg shadow-primary/20 ring-1 ring-inset ring-white/80 transition-all hover:from-white hover:to-white hover:shadow-xl hover:shadow-primary/30 sm:hidden"
+              className={cn(linkBase, linkInactive, 'sm:hidden')}
             >
-              <Plus className="h-4 w-4" />
               Yeni CV
-            </Button>
+            </button>
           </div>
         </nav>
       )}
     </header>
-    {isBuilder && (
+    {isBuilder && manualHidden && (
       <button
         type="button"
-        onClick={() => setManualHidden((v) => !v)}
-        aria-label={manualHidden ? 'Menüyü göster' : 'Menüyü gizle'}
-        title={manualHidden ? 'Menüyü göster' : 'Menüyü gizle'}
-        className="fixed right-3 top-6 z-50 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[oklch(0.58_0.22_293_/_0.90)] text-primary-foreground shadow-2xl shadow-primary/15 ring-1 ring-inset ring-white/10 backdrop-blur-md transition-colors hover:bg-[oklch(0.53_0.22_293_/_0.95)] sm:right-4 xl:right-[calc(50%_-_32rem_-_3.25rem)]"
+        onClick={() => setManualHidden(false)}
+        aria-label="Menüyü göster"
+        title="Menüyü göster"
+        className="fixed right-4 top-3 z-50 inline-flex h-10 w-10 items-center justify-center rounded-sm text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:right-6"
       >
-        {manualHidden ? (
-          <ChevronDown className="h-5 w-5" />
-        ) : (
-          <ChevronUp className="h-5 w-5" />
-        )}
+        <ChevronDown className="h-5 w-5" />
       </button>
     )}
     </>

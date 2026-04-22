@@ -24,7 +24,7 @@ export default function Builder() {
   const [mobileTab, setMobileTab] = useState<MobileTab>('content')
 
   return (
-    <div className="flex h-[calc(100dvh-4rem)] min-h-[520px] flex-col bg-muted/20 lg:h-[calc(100dvh-4rem-5rem)] lg:flex-row">
+    <div className="flex h-[calc(100dvh-4rem)] min-h-[520px] flex-col bg-muted/20 pt-4 sm:pt-6 lg:h-[calc(100dvh-4rem-5rem)] lg:flex-row lg:pt-8">
       {/* Desktop sidebar (lg+) */}
       <div className="hidden lg:block">
         <BuilderSidebar

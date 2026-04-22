@@ -388,7 +388,7 @@ export default function PDFCreativeTemplate({
           {/* Summary */}
           {basics.summary && (
             <View style={styles.mainSection}>
-              <Text style={styles.mainHeading}>{trUpper('Hakkımda')}</Text>
+              <Text style={styles.mainHeading} minPresenceAhead={40}>{trUpper('Hakkımda')}</Text>
               <Text style={styles.itemBody}>{basics.summary}</Text>
             </View>
           )}
@@ -406,9 +406,9 @@ export default function PDFCreativeTemplate({
     if (work.length === 0) return null
     return (
       <View style={styles.mainSection}>
-        <Text style={styles.mainHeading}>{trUpper('Deneyim')}</Text>
+        <Text style={styles.mainHeading} minPresenceAhead={40}>{trUpper('Deneyim')}</Text>
         {work.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.position || 'Pozisyon'}
@@ -447,9 +447,9 @@ export default function PDFCreativeTemplate({
     if (education.length === 0) return null
     return (
       <View style={styles.mainSection}>
-        <Text style={styles.mainHeading}>{trUpper('Eğitim')}</Text>
+        <Text style={styles.mainHeading} minPresenceAhead={40}>{trUpper('Eğitim')}</Text>
         {education.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.institution || 'Okul'}
@@ -473,9 +473,9 @@ export default function PDFCreativeTemplate({
     if (projects.length === 0) return null
     return (
       <View style={styles.mainSection}>
-        <Text style={styles.mainHeading}>{trUpper('Projeler')}</Text>
+        <Text style={styles.mainHeading} minPresenceAhead={40}>{trUpper('Projeler')}</Text>
         {projects.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
               <Text style={styles.itemDate}>
@@ -496,9 +496,9 @@ export default function PDFCreativeTemplate({
     if (certificates.length === 0) return null
     return (
       <View style={styles.mainSection}>
-        <Text style={styles.mainHeading}>{trUpper('Sertifikalar')}</Text>
+        <Text style={styles.mainHeading} minPresenceAhead={40}>{trUpper('Sertifikalar')}</Text>
         {certificates.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.name}
@@ -522,9 +522,9 @@ export default function PDFCreativeTemplate({
     if (volunteer.length === 0) return null
     return (
       <View style={styles.mainSection}>
-        <Text style={styles.mainHeading}>{trUpper('Gönüllülük')}</Text>
+        <Text style={styles.mainHeading} minPresenceAhead={40}>{trUpper('Gönüllülük')}</Text>
         {volunteer.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.role || 'Rol'}
@@ -552,9 +552,9 @@ export default function PDFCreativeTemplate({
     if (publications.length === 0) return null
     return (
       <View style={styles.mainSection}>
-        <Text style={styles.mainHeading}>{trUpper('Yayınlar')}</Text>
+        <Text style={styles.mainHeading} minPresenceAhead={40}>{trUpper('Yayınlar')}</Text>
         {publications.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.name}
@@ -581,8 +581,8 @@ export default function PDFCreativeTemplate({
         {customSections.map(
           (section) =>
             section.title && (
-              <View key={section.id} style={styles.mainSection}>
-                <Text style={styles.mainHeading}>{trUpper(section.title)}</Text>
+              <View key={section.id} style={styles.mainSection} wrap={false}>
+                <Text style={styles.mainHeading} minPresenceAhead={40}>{trUpper(section.title)}</Text>
                 {section.fields.map((field) => (
                   <View key={field.id} style={styles.customFieldRow}>
                     {field.label && (

@@ -14,6 +14,7 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
+import ConfirmDialog from '@/components/ConfirmDialog'
 import ResumeMiniPreview from '@/components/ResumeMiniPreview'
 import { Button } from '@/components/ui/button'
 import {
@@ -55,6 +56,10 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<{
+    id: string
+    name: string
+  } | null>(null)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -80,12 +85,18 @@ export default function Dashboard() {
     }
   }, [isAuthenticated])
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Bu CV'yi silmek istediğine emin misin?")) return
+  const handleRequestDelete = (id: string, name: string) => {
+    setConfirmDelete({ id, name })
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!confirmDelete) return
+    const { id } = confirmDelete
     setDeletingId(id)
     try {
       await deleteResume(id)
       setResumes((prev) => prev.filter((r) => r.id !== id))
+      setConfirmDelete(null)
       toast.success('CV silindi')
     } catch (err) {
       toast.error('CV silinemedi: ' + normalizeError(err).message)
@@ -93,6 +104,9 @@ export default function Dashboard() {
       setDeletingId(null)
     }
   }
+
+  const deleteLoading =
+    confirmDelete !== null && deletingId === confirmDelete.id
 
   if (isRestoring) {
     return (
@@ -131,17 +145,35 @@ export default function Dashboard() {
       )}
 
       {!loading && !error && resumes.length > 0 && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 sm:gap-x-10 sm:gap-y-12 lg:grid-cols-3 lg:gap-x-12 lg:gap-y-14">
           {resumes.map((r) => (
             <ResumeCard
               key={r.id}
               resume={r}
-              onDelete={handleDelete}
+              onDelete={handleRequestDelete}
               isDeleting={deletingId === r.id}
             />
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmDelete !== null}
+        title="CV'yi silmek istediğinize emin misiniz?"
+        description={
+          confirmDelete
+            ? `"${confirmDelete.name}" adlı CV kalıcı olarak silinecek. Bu işlem geri alınamaz.`
+            : ''
+        }
+        confirmLabel="Evet, sil"
+        cancelLabel="Vazgeç"
+        variant="destructive"
+        loading={deleteLoading}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          if (!deleteLoading) setConfirmDelete(null)
+        }}
+      />
     </div>
   )
 }
@@ -164,22 +196,30 @@ function DashboardHeader({
   onCreate,
 }: DashboardHeaderProps) {
   return (
-    <header className="mb-10 overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-primary/10 via-background to-accent/5 p-6 shadow-sm sm:mb-12 sm:p-8">
+    <header className="mb-10 sm:mb-12">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0 flex-1">
           {email && (
-            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              {email}
-            </p>
+            <div className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.15em] text-muted-foreground/80">
+              <span className="h-1.5 w-1.5 rounded-full bg-brand-gradient" />
+              <span className="truncate">{email}</span>
+            </div>
           )}
-          <h1 className="mt-1 text-3xl font-bold tracking-tight sm:text-4xl">
-            CV’lerim
-          </h1>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              CV’lerim
+            </h1>
+            {!loading && count > 0 && (
+              <span className="inline-flex h-7 min-w-[1.75rem] items-center justify-center rounded-full bg-primary/10 px-2 text-xs font-semibold tabular-nums text-primary ring-1 ring-inset ring-primary/15">
+                {count}
+              </span>
+            )}
+          </div>
           <p className="mt-2 text-sm text-muted-foreground sm:text-[15px]">
             {loading
               ? 'Yükleniyor…'
               : count > 0
-                ? `${count} CV kayıtlı · son düzenlemeye göre sıralı`
+                ? 'Son düzenlemeye göre sıralı'
                 : 'Henüz CV oluşturmadın — ilk CV’nle başlayalım'}
           </p>
         </div>
@@ -188,6 +228,7 @@ function DashboardHeader({
           Yeni CV Oluştur
         </Button>
       </div>
+      <div className="mt-8 h-px w-full bg-gradient-to-r from-transparent via-border/80 to-transparent" />
     </header>
   )
 }
@@ -198,7 +239,7 @@ function DashboardHeader({
 
 interface ResumeCardProps {
   resume: ResumeSummary
-  onDelete: (id: string) => void
+  onDelete: (id: string, name: string) => void
   isDeleting: boolean
 }
 
@@ -235,7 +276,7 @@ function ResumeCard({ resume, onDelete, isDeleting }: ResumeCardProps) {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/0 via-transparent to-transparent opacity-0 transition-opacity group-hover:from-black/20 group-hover:opacity-100" />
         <span className="absolute left-1.5 top-1.5 inline-flex items-center gap-1 rounded-full bg-white/95 px-1.5 py-0.5 text-[9px] font-medium text-foreground shadow-sm backdrop-blur-sm sm:left-3 sm:top-3 sm:px-2.5 sm:py-1 sm:text-[10px]">
           <Sparkles className="h-2.5 w-2.5 text-primary sm:h-3 sm:w-3" />
-          <span className="max-w-[70px] truncate sm:max-w-none">{templateMeta.name}</span>
+          <span className="max-w-[88px] truncate sm:max-w-none">{templateMeta.name}</span>
         </span>
       </Link>
 
@@ -281,7 +322,7 @@ function ResumeCard({ resume, onDelete, isDeleting }: ResumeCardProps) {
           </Link>
           <button
             type="button"
-            onClick={() => onDelete(resume.id)}
+            onClick={() => onDelete(resume.id, name)}
             disabled={isDeleting}
             aria-label={`${name} — sil`}
             title="Sil"
@@ -356,7 +397,7 @@ function StatChip({
 
 function SkeletonGrid() {
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 sm:gap-x-10 sm:gap-y-12 lg:grid-cols-3 lg:gap-x-12 lg:gap-y-14">
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
@@ -430,11 +471,20 @@ function GuestGate({
         farklı cihazlardan erişebilirsin.
       </p>
       <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-        <Button size="lg" onClick={onLogin}>
-          <LogIn className="h-4 w-4" />
+        <Button
+          size="lg"
+          onClick={onLogin}
+          className="h-12 w-56 text-base sm:h-14 sm:w-60 sm:text-lg [&_svg:not([class*='size-'])]:size-5"
+        >
+          <LogIn className="h-5 w-5" />
           Giriş Yap
         </Button>
-        <Button size="lg" variant="outline" onClick={onRegister}>
+        <Button
+          size="lg"
+          variant="outline"
+          onClick={onRegister}
+          className="h-12 w-56 text-base sm:h-14 sm:w-60 sm:text-lg"
+        >
           Hesap Oluştur
         </Button>
       </div>

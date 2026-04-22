@@ -132,7 +132,7 @@ export default function Home() {
         </svg>
 
         <div
-          className="absolute left-1/2 top-[820px] h-[360px] w-[720px] -translate-x-1/2 rounded-full bg-primary opacity-[0.05] blur-3xl"
+          className="absolute left-1/2 top-[820px] h-[360px] w-[min(720px,90vw)] -translate-x-1/2 rounded-full bg-primary opacity-[0.05] blur-3xl"
         />
 
         <div

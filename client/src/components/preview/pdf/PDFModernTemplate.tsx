@@ -255,7 +255,7 @@ function SectionHeading({
 }) {
   return (
     <View style={styles.sectionHeadingWrap}>
-      <Text style={styles.sectionHeading}>{children}</Text>
+      <Text style={styles.sectionHeading} minPresenceAhead={40}>{children}</Text>
       <View style={styles.sectionAccent} />
     </View>
   )
@@ -359,7 +359,7 @@ export default function PDFModernTemplate({ resume }: PDFModernTemplateProps) {
       <View style={styles.section}>
         <SectionHeading styles={styles}>Deneyim</SectionHeading>
         {work.map((item) => (
-          <View key={item.id} style={styles.timelineItem}>
+          <View key={item.id} style={styles.timelineItem} wrap={false}>
             <View style={styles.timelineDot} />
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
@@ -398,7 +398,7 @@ export default function PDFModernTemplate({ resume }: PDFModernTemplateProps) {
       <View style={styles.section}>
         <SectionHeading styles={styles}>Eğitim</SectionHeading>
         {education.map((item) => (
-          <View key={item.id} style={styles.timelineItem}>
+          <View key={item.id} style={styles.timelineItem} wrap={false}>
             <View style={styles.timelineDot} />
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
@@ -425,7 +425,7 @@ export default function PDFModernTemplate({ resume }: PDFModernTemplateProps) {
       <View style={styles.section}>
         <SectionHeading styles={styles}>Yetenekler</SectionHeading>
         {visibleSkills.map((skill) => (
-          <View key={skill.id} style={styles.skillRow}>
+          <View key={skill.id} style={styles.skillRow} wrap={false}>
             {skill.name && (
               <Text style={styles.skillName}>
                 {skill.name}
@@ -454,7 +454,7 @@ export default function PDFModernTemplate({ resume }: PDFModernTemplateProps) {
       <View style={styles.section}>
         <SectionHeading styles={styles}>Projeler</SectionHeading>
         {projects.map((item) => (
-          <View key={item.id} style={styles.timelineItem}>
+          <View key={item.id} style={styles.timelineItem} wrap={false}>
             <View style={styles.timelineDot} />
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
@@ -500,7 +500,7 @@ export default function PDFModernTemplate({ resume }: PDFModernTemplateProps) {
       <View style={styles.section}>
         <SectionHeading styles={styles}>Sertifikalar</SectionHeading>
         {certificates.map((item) => (
-          <View key={item.id} style={styles.timelineItem}>
+          <View key={item.id} style={styles.timelineItem} wrap={false}>
             <View style={styles.timelineDot} />
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>{item.name}</Text>
@@ -522,7 +522,7 @@ export default function PDFModernTemplate({ resume }: PDFModernTemplateProps) {
       <View style={styles.section}>
         <SectionHeading styles={styles}>Gönüllülük</SectionHeading>
         {volunteer.map((item) => (
-          <View key={item.id} style={styles.timelineItem}>
+          <View key={item.id} style={styles.timelineItem} wrap={false}>
             <View style={styles.timelineDot} />
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>{item.role || 'Rol'}</Text>
@@ -548,7 +548,7 @@ export default function PDFModernTemplate({ resume }: PDFModernTemplateProps) {
       <View style={styles.section}>
         <SectionHeading styles={styles}>Yayınlar</SectionHeading>
         {publications.map((item) => (
-          <View key={item.id} style={styles.timelineItem}>
+          <View key={item.id} style={styles.timelineItem} wrap={false}>
             <View style={styles.timelineDot} />
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>{item.name}</Text>
@@ -571,7 +571,7 @@ export default function PDFModernTemplate({ resume }: PDFModernTemplateProps) {
         {customSections.map(
           (section) =>
             section.title && (
-              <View key={section.id} style={styles.section}>
+              <View key={section.id} style={styles.section} wrap={false}>
                 <SectionHeading styles={styles}>{section.title}</SectionHeading>
                 {section.fields.map((field) => (
                   <View key={field.id} style={styles.customFieldRow}>

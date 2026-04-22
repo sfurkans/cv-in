@@ -24,7 +24,7 @@ export default function Templates() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
       <header className="mx-auto max-w-2xl text-center">
         <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-brand-gradient" />
@@ -40,42 +40,74 @@ export default function Templates() {
         </p>
       </header>
 
-      <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {TEMPLATE_LIST.map((template) => (
+      <div className="mt-16 grid gap-x-8 gap-y-10 sm:grid-cols-2 sm:gap-x-10 sm:gap-y-12 lg:grid-cols-3 lg:gap-x-12 lg:gap-y-14">
+        {TEMPLATE_LIST.map((template, index) => (
           <article
             key={template.id}
-            className="group flex flex-col rounded-2xl border border-border/60 bg-card p-4 transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
+            className="group relative flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10"
           >
-            <TemplateThumbnail
-              templateId={template.id}
-              className="shadow-md transition-transform group-hover:scale-[1.02]"
-            />
-            <div className="mt-5 flex-1 px-1">
-              <h2 className="text-lg font-semibold tracking-tight">
-                {template.name}
-              </h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {template.description}
-              </p>
+            {/* Üst gradient aksan çizgisi — sadece hover'da */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+            {/* Thumbnail alanı — dekoratif arkaplan */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-muted/40 via-muted/15 to-background px-7 pb-11 pt-9">
+              {/* Nokta deseni */}
+              <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px]" />
+
+              {/* Numara rozeti */}
+              <div className="absolute right-5 top-5 z-10 rounded-full border border-border/60 bg-background/90 px-3 py-1.5 font-mono text-[11px] font-medium tracking-[0.15em] text-muted-foreground shadow-sm backdrop-blur">
+                {String(index + 1).padStart(2, '0')} / {String(TEMPLATE_LIST.length).padStart(2, '0')}
+              </div>
+
+              {/* Glow — hover'da beliren yumuşak ışık */}
+              <div className="pointer-events-none absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />
+
+              {/* Thumbnail */}
+              <div className="relative mx-auto max-w-[260px] transition-transform duration-500 ease-out group-hover:-translate-y-0.5 group-hover:scale-[1.03]">
+                <TemplateThumbnail
+                  templateId={template.id}
+                  className="shadow-lg shadow-foreground/10 ring-1 ring-foreground/5 transition-shadow duration-300 group-hover:shadow-xl group-hover:shadow-primary/15"
+                />
+              </div>
             </div>
-            <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-              <Button
-                onClick={() => handleStart(template.id, false)}
-                size="sm"
-                className="flex-1"
-              >
-                Bu şablonla başla
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-              <Button
-                onClick={() => handleStart(template.id, true)}
-                size="sm"
-                variant="outline"
-                className="flex-1"
-              >
-                <Sparkles className="h-3.5 w-3.5" />
-                Örnekle dene
-              </Button>
+
+            {/* İçerik */}
+            <div className="flex flex-1 flex-col gap-6 p-7">
+              <div>
+                <div className="flex items-baseline justify-between gap-3">
+                  <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+                    {template.name}
+                  </h2>
+                  <span className="shrink-0 text-[11px] font-medium uppercase tracking-[0.15em] text-muted-foreground/60">
+                    Şablon
+                  </span>
+                </div>
+                <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
+                  {template.description}
+                </p>
+              </div>
+
+              {/* İnce ayırıcı — mt-auto ile butonları kartın tabanına sabitler */}
+              <div className="mt-auto h-px w-full bg-gradient-to-r from-transparent via-border to-transparent" />
+
+              {/* Aksiyonlar */}
+              <div className="flex gap-2.5">
+                <Button
+                  onClick={() => handleStart(template.id, false)}
+                  className="h-11 flex-1 text-[15px] shadow-sm shadow-primary/20 [&_svg:not([class*='size-'])]:size-4"
+                >
+                  Bu şablonla başla
+                  <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                </Button>
+                <Button
+                  onClick={() => handleStart(template.id, true)}
+                  variant="outline"
+                  className="h-11 flex-1 text-[15px] [&_svg:not([class*='size-'])]:size-4"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Örnekle dene
+                </Button>
+              </div>
             </div>
           </article>
         ))}

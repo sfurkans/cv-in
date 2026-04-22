@@ -281,7 +281,7 @@ export default function PDFColorAccentTemplate({
   const SectionHeading = ({ children }: { children: ReactNode }) => (
     <View style={styles.headingRow}>
       <View style={styles.headingBar} />
-      <Text style={styles.sectionHeading}>{children}</Text>
+      <Text style={styles.sectionHeading} minPresenceAhead={40}>{children}</Text>
     </View>
   )
 
@@ -341,7 +341,7 @@ export default function PDFColorAccentTemplate({
       <View style={styles.section}>
         <SectionHeading>DENEYİM</SectionHeading>
         {work.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.position || 'Pozisyon'}
@@ -382,7 +382,7 @@ export default function PDFColorAccentTemplate({
       <View style={styles.section}>
         <SectionHeading>EĞİTİM</SectionHeading>
         {education.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.institution || 'Okul'}
@@ -408,7 +408,7 @@ export default function PDFColorAccentTemplate({
       <View style={styles.section}>
         <SectionHeading>YETENEKLER</SectionHeading>
         {visibleSkills.map((skill) => (
-          <View key={skill.id} style={styles.skillGroup}>
+          <View key={skill.id} style={styles.skillGroup} wrap={false}>
             {(skill.name || skill.level) && (
               <Text style={styles.skillName}>
                 {skill.name}
@@ -439,7 +439,7 @@ export default function PDFColorAccentTemplate({
       <View style={styles.section}>
         <SectionHeading>PROJELER</SectionHeading>
         {projects.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
               <Text style={styles.itemDateMuted}>
@@ -483,7 +483,7 @@ export default function PDFColorAccentTemplate({
       <View style={styles.section}>
         <SectionHeading>SERTİFİKALAR</SectionHeading>
         {certificates.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.name}
@@ -509,7 +509,7 @@ export default function PDFColorAccentTemplate({
       <View style={styles.section}>
         <SectionHeading>GÖNÜLLÜLÜK</SectionHeading>
         {volunteer.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.role || 'Rol'}
@@ -539,7 +539,7 @@ export default function PDFColorAccentTemplate({
       <View style={styles.section}>
         <SectionHeading>YAYINLAR</SectionHeading>
         {publications.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.name}
@@ -566,7 +566,7 @@ export default function PDFColorAccentTemplate({
         {customSections.map(
           (section) =>
             section.title && (
-              <View key={section.id} style={styles.section}>
+              <View key={section.id} style={styles.section} wrap={false}>
                 <SectionHeading>{section.title.toUpperCase()}</SectionHeading>
                 {section.fields.map((f) => (
                   <View key={f.id} style={styles.customRow}>

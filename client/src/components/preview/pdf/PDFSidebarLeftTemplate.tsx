@@ -249,7 +249,7 @@ export default function PDFSidebarLeftTemplate({
     <Document>
       <Page size="A4" style={styles.page}>
         {/* Sidebar */}
-        <View style={styles.sidebar}>
+        <View style={styles.sidebar} wrap={false}>
           {basics.photo && (
             <Image src={resolvePhotoUrl(basics.photo)} style={styles.photo} />
           )}
@@ -332,7 +332,7 @@ export default function PDFSidebarLeftTemplate({
         <View style={styles.main}>
           {basics.summary && (
             <View>
-              <Text style={styles.mainHeading}>ÖZET</Text>
+              <Text style={styles.mainHeading} minPresenceAhead={40}>ÖZET</Text>
               <Text style={styles.summary}>{basics.summary}</Text>
             </View>
           )}
@@ -348,9 +348,9 @@ export default function PDFSidebarLeftTemplate({
     if (work.length === 0) return null
     return (
       <View style={styles.sectionMain}>
-        <Text style={styles.mainHeading}>DENEYİM</Text>
+        <Text style={styles.mainHeading} minPresenceAhead={40}>DENEYİM</Text>
         {work.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.position || 'Pozisyon'}
@@ -387,9 +387,9 @@ export default function PDFSidebarLeftTemplate({
     if (education.length === 0) return null
     return (
       <View style={styles.sectionMain}>
-        <Text style={styles.mainHeading}>EĞİTİM</Text>
+        <Text style={styles.mainHeading} minPresenceAhead={40}>EĞİTİM</Text>
         {education.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.institution || 'Okul'}
@@ -413,9 +413,9 @@ export default function PDFSidebarLeftTemplate({
     if (projects.length === 0) return null
     return (
       <View style={styles.sectionMain}>
-        <Text style={styles.mainHeading}>PROJELER</Text>
+        <Text style={styles.mainHeading} minPresenceAhead={40}>PROJELER</Text>
         {projects.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
               <Text style={styles.itemDate}>
@@ -436,9 +436,9 @@ export default function PDFSidebarLeftTemplate({
     if (certificates.length === 0) return null
     return (
       <View style={styles.sectionMain}>
-        <Text style={styles.mainHeading}>SERTİFİKALAR</Text>
+        <Text style={styles.mainHeading} minPresenceAhead={40}>SERTİFİKALAR</Text>
         {certificates.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.name}
@@ -462,9 +462,9 @@ export default function PDFSidebarLeftTemplate({
     if (volunteer.length === 0) return null
     return (
       <View style={styles.sectionMain}>
-        <Text style={styles.mainHeading}>GÖNÜLLÜLÜK</Text>
+        <Text style={styles.mainHeading} minPresenceAhead={40}>GÖNÜLLÜLÜK</Text>
         {volunteer.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.role || 'Rol'}
@@ -490,9 +490,9 @@ export default function PDFSidebarLeftTemplate({
     if (publications.length === 0) return null
     return (
       <View style={styles.sectionMain}>
-        <Text style={styles.mainHeading}>YAYINLAR</Text>
+        <Text style={styles.mainHeading} minPresenceAhead={40}>YAYINLAR</Text>
         {publications.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.name}
@@ -519,8 +519,8 @@ export default function PDFSidebarLeftTemplate({
         {customSections.map(
           (section) =>
             section.title && (
-              <View key={section.id} style={styles.sectionMain}>
-                <Text style={styles.mainHeading}>
+              <View key={section.id} style={styles.sectionMain} wrap={false}>
+                <Text style={styles.mainHeading} minPresenceAhead={40}>
                   {section.title.toUpperCase()}
                 </Text>
                 {section.fields.map((f) => (

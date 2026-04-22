@@ -14,7 +14,7 @@ export function LogoMark({ className }: LogoMarkProps) {
     >
       <path
         d="M 10 8 L 19 8 L 24 13 L 24 24 L 10 24 Z"
-        stroke="white"
+        stroke="currentColor"
         strokeWidth="2"
         strokeLinejoin="round"
         strokeLinecap="round"
@@ -22,7 +22,7 @@ export function LogoMark({ className }: LogoMarkProps) {
       />
       <path
         d="M 19 8 L 19 13 L 24 13"
-        stroke="white"
+        stroke="currentColor"
         strokeWidth="2"
         strokeLinejoin="round"
         strokeLinecap="round"
@@ -33,7 +33,7 @@ export function LogoMark({ className }: LogoMarkProps) {
         y1="17"
         x2="21"
         y2="17"
-        stroke="white"
+        stroke="currentColor"
         strokeWidth="1.4"
         strokeLinecap="round"
       />
@@ -42,7 +42,7 @@ export function LogoMark({ className }: LogoMarkProps) {
         y1="20"
         x2="18.5"
         y2="20"
-        stroke="white"
+        stroke="currentColor"
         strokeWidth="1.4"
         strokeLinecap="round"
       />

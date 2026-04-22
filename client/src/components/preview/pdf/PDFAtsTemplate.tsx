@@ -188,7 +188,7 @@ export default function PDFAtsTemplate({ resume }: PDFAtsTemplateProps) {
 
         {basics.summary && (
           <View style={styles.section}>
-            <Text style={styles.sectionHeading}>ÖZET</Text>
+            <Text style={styles.sectionHeading} minPresenceAhead={40}>ÖZET</Text>
             <Text style={styles.itemBody}>{basics.summary}</Text>
           </View>
         )}
@@ -204,9 +204,9 @@ export default function PDFAtsTemplate({ resume }: PDFAtsTemplateProps) {
     if (work.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>DENEYİM</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>DENEYİM</Text>
         {work.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <Text style={styles.itemTitle}>
               {item.position || 'Pozisyon'}
               {item.company && ` | ${item.company}`}
@@ -238,9 +238,9 @@ export default function PDFAtsTemplate({ resume }: PDFAtsTemplateProps) {
     if (education.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>EĞİTİM</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>EĞİTİM</Text>
         {education.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <Text style={styles.itemTitle}>{item.institution || 'Okul'}</Text>
             {(item.degree || item.field) && (
               <Text style={styles.itemBody}>
@@ -260,7 +260,7 @@ export default function PDFAtsTemplate({ resume }: PDFAtsTemplateProps) {
     if (visibleSkills.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>YETENEKLER</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>YETENEKLER</Text>
         {visibleSkills.map((skill) => {
           const keywords = skill.keywords.join(', ')
           const levelTxt =
@@ -287,9 +287,9 @@ export default function PDFAtsTemplate({ resume }: PDFAtsTemplateProps) {
     if (projects.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>PROJELER</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>PROJELER</Text>
         {projects.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
             <Text style={styles.itemDate}>
               {formatDateRange(item.startDate, item.endDate)}
@@ -313,7 +313,7 @@ export default function PDFAtsTemplate({ resume }: PDFAtsTemplateProps) {
       .filter(Boolean)
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>DİLLER</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>DİLLER</Text>
         <Text style={styles.itemBody}>{items.join(', ')}</Text>
       </View>
     )
@@ -323,7 +323,7 @@ export default function PDFAtsTemplate({ resume }: PDFAtsTemplateProps) {
     if (certificates.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>SERTİFİKALAR</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>SERTİFİKALAR</Text>
         <View style={styles.bulletList}>
           {certificates.map((item) => (
             <Text key={item.id} style={styles.bullet}>
@@ -342,9 +342,9 @@ export default function PDFAtsTemplate({ resume }: PDFAtsTemplateProps) {
     if (volunteer.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>GÖNÜLLÜLÜK</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>GÖNÜLLÜLÜK</Text>
         {volunteer.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <Text style={styles.itemTitle}>
               {item.role || 'Rol'}
               {item.organization && ` | ${item.organization}`}
@@ -365,7 +365,7 @@ export default function PDFAtsTemplate({ resume }: PDFAtsTemplateProps) {
     if (publications.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>YAYINLAR</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>YAYINLAR</Text>
         <View style={styles.bulletList}>
           {publications.map((item) => (
             <Text key={item.id} style={styles.bullet}>
@@ -387,8 +387,8 @@ export default function PDFAtsTemplate({ resume }: PDFAtsTemplateProps) {
         {customSections.map(
           (section) =>
             section.title && (
-              <View key={section.id} style={styles.section}>
-                <Text style={styles.sectionHeading}>
+              <View key={section.id} style={styles.section} wrap={false}>
+                <Text style={styles.sectionHeading} minPresenceAhead={40}>
                   {section.title.toUpperCase()}
                 </Text>
                 {section.fields.map((f) => (

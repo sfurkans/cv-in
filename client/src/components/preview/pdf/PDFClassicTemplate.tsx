@@ -321,7 +321,7 @@ export default function PDFClassicTemplate({
         {/* Summary */}
         {basics.summary && (
           <View style={styles.section}>
-            <Text style={styles.sectionHeading}>{trUpper('Özet')}</Text>
+            <Text style={styles.sectionHeading} minPresenceAhead={40}>{trUpper('Özet')}</Text>
             <Text style={styles.itemBody}>{basics.summary}</Text>
           </View>
         )}
@@ -338,9 +338,9 @@ export default function PDFClassicTemplate({
     if (work.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>{trUpper('Deneyim')}</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>{trUpper('Deneyim')}</Text>
         {work.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.position || 'Pozisyon'}
@@ -379,9 +379,9 @@ export default function PDFClassicTemplate({
     if (education.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>{trUpper('Eğitim')}</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>{trUpper('Eğitim')}</Text>
         {education.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.institution || 'Okul'}
@@ -405,9 +405,9 @@ export default function PDFClassicTemplate({
     if (visibleSkills.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>{trUpper('Yetenekler')}</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>{trUpper('Yetenekler')}</Text>
         {visibleSkills.map((skill) => (
-          <View key={skill.id} style={styles.skillsGroup}>
+          <View key={skill.id} style={styles.skillsGroup} wrap={false}>
             {(skill.name || skill.level) && (
               <Text style={styles.skillName}>
                 {skill.name}
@@ -439,9 +439,9 @@ export default function PDFClassicTemplate({
     if (projects.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>{trUpper('Projeler')}</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>{trUpper('Projeler')}</Text>
         {projects.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
               <Text style={styles.itemDate}>
@@ -462,7 +462,7 @@ export default function PDFClassicTemplate({
     if (languages.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>{trUpper('Diller')}</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>{trUpper('Diller')}</Text>
         <View style={styles.languageRow}>
           {languages.map((item) => (
             <Text key={item.id} style={styles.languageItem}>
@@ -484,9 +484,9 @@ export default function PDFClassicTemplate({
     if (certificates.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>{trUpper('Sertifikalar')}</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>{trUpper('Sertifikalar')}</Text>
         {certificates.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.name}
@@ -510,9 +510,9 @@ export default function PDFClassicTemplate({
     if (volunteer.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>{trUpper('Gönüllülük')}</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>{trUpper('Gönüllülük')}</Text>
         {volunteer.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.role || 'Rol'}
@@ -540,9 +540,9 @@ export default function PDFClassicTemplate({
     if (publications.length === 0) return null
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>{trUpper('Yayınlar')}</Text>
+        <Text style={styles.sectionHeading} minPresenceAhead={40}>{trUpper('Yayınlar')}</Text>
         {publications.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.name}
@@ -569,8 +569,8 @@ export default function PDFClassicTemplate({
         {customSections.map(
           (section) =>
             section.title && (
-              <View key={section.id} style={styles.section}>
-                <Text style={styles.sectionHeading}>{trUpper(section.title)}</Text>
+              <View key={section.id} style={styles.section} wrap={false}>
+                <Text style={styles.sectionHeading} minPresenceAhead={40}>{trUpper(section.title)}</Text>
                 {section.fields.map((field) => (
                   <View key={field.id} style={styles.customFieldRow}>
                     {field.label && (

@@ -185,7 +185,7 @@ export default function PDFTerminalTemplate({
   }
 
   const SectionHeading = ({ children }: { children: string }) => (
-    <Text style={styles.sectionHeading}>
+    <Text style={styles.sectionHeading} minPresenceAhead={40}>
       <Text style={styles.accent}>## </Text>
       <Text style={styles.func}>{children}</Text>
       <Text style={styles.comment}>()</Text>
@@ -254,7 +254,7 @@ export default function PDFTerminalTemplate({
       <View style={styles.section}>
         <SectionHeading>experience</SectionHeading>
         {work.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <Text style={styles.itemRow}>
               <Text style={styles.comment}>
                 [{formatDateRange(item.startDate, item.endDate) || '—'}]{' '}
@@ -296,7 +296,7 @@ export default function PDFTerminalTemplate({
       <View style={styles.section}>
         <SectionHeading>education</SectionHeading>
         {education.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <Text style={styles.itemRow}>
               <Text style={styles.comment}>
                 [{formatDateRange(item.startDate, item.endDate) || '—'}]{' '}
@@ -322,7 +322,7 @@ export default function PDFTerminalTemplate({
       <View style={styles.section}>
         <SectionHeading>skills</SectionHeading>
         {visibleSkills.map((skill) => (
-          <View key={skill.id} style={{ marginBottom: 3 }}>
+          <View key={skill.id} style={{ marginBottom: 3 }} wrap={false}>
             {(skill.name || skill.level) && (
               <Text style={styles.skillLine}>
                 <Text style={styles.keyword}>const </Text>
@@ -361,7 +361,7 @@ export default function PDFTerminalTemplate({
       <View style={styles.section}>
         <SectionHeading>projects</SectionHeading>
         {projects.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <Text style={styles.itemRow}>
               <Text style={styles.comment}>
                 [{formatDateRange(item.startDate, item.endDate) || '—'}]{' '}
@@ -415,7 +415,7 @@ export default function PDFTerminalTemplate({
       <View style={styles.section}>
         <SectionHeading>certifications</SectionHeading>
         {certificates.map((item) => (
-          <View key={item.id} style={{ marginBottom: 2 }}>
+          <View key={item.id} style={{ marginBottom: 2 }} wrap={false}>
             <Text style={styles.bulletRow}>
               <Text style={styles.accent}>→ </Text>
               <Text style={styles.func}>{item.name}</Text>
@@ -452,7 +452,7 @@ export default function PDFTerminalTemplate({
       <View style={styles.section}>
         <SectionHeading>volunteering</SectionHeading>
         {volunteer.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <Text style={styles.itemRow}>
               <Text style={styles.comment}>
                 [{formatDateRange(item.startDate, item.endDate) || '—'}]{' '}
@@ -482,7 +482,7 @@ export default function PDFTerminalTemplate({
       <View style={styles.section}>
         <SectionHeading>publications</SectionHeading>
         {publications.map((item) => (
-          <View key={item.id} style={{ marginBottom: 2 }}>
+          <View key={item.id} style={{ marginBottom: 2 }} wrap={false}>
             <Text style={styles.bulletRow}>
               <Text style={styles.accent}>→ </Text>
               <Text style={styles.func}>{item.name}</Text>
@@ -520,7 +520,7 @@ export default function PDFTerminalTemplate({
         {customSections.map(
           (section) =>
             section.title && (
-              <View key={section.id} style={styles.section}>
+              <View key={section.id} style={styles.section} wrap={false}>
                 <SectionHeading>
                   {asIdent(section.title) || 'custom'}
                 </SectionHeading>

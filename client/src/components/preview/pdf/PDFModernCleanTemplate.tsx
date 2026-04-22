@@ -267,7 +267,7 @@ export default function PDFModernCleanTemplate({
   const SectionHeading = ({ children }: { children: ReactNode }) => (
     <View style={styles.headingRow}>
       <View style={styles.headingDot} />
-      <Text style={styles.sectionHeading}>{children}</Text>
+      <Text style={styles.sectionHeading} minPresenceAhead={40}>{children}</Text>
     </View>
   )
 
@@ -323,7 +323,7 @@ export default function PDFModernCleanTemplate({
       <View style={styles.section}>
         <SectionHeading>Deneyim</SectionHeading>
         {work.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.position || 'Pozisyon'}
@@ -361,7 +361,7 @@ export default function PDFModernCleanTemplate({
       <View style={styles.section}>
         <SectionHeading>Eğitim</SectionHeading>
         {education.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.institution || 'Okul'}
@@ -387,7 +387,7 @@ export default function PDFModernCleanTemplate({
       <View style={styles.section}>
         <SectionHeading>Yetenekler</SectionHeading>
         {visibleSkills.map((skill) => (
-          <View key={skill.id} style={styles.skillsGroup}>
+          <View key={skill.id} style={styles.skillsGroup} wrap={false}>
             {(skill.name || skill.level) && (
               <Text style={styles.skillName}>
                 {skill.name}
@@ -414,7 +414,7 @@ export default function PDFModernCleanTemplate({
       <View style={styles.section}>
         <SectionHeading>Projeler</SectionHeading>
         {projects.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
               <Text style={styles.itemDate}>
@@ -458,7 +458,7 @@ export default function PDFModernCleanTemplate({
       <View style={styles.section}>
         <SectionHeading>Sertifikalar</SectionHeading>
         {certificates.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.name}
@@ -484,7 +484,7 @@ export default function PDFModernCleanTemplate({
       <View style={styles.section}>
         <SectionHeading>Gönüllülük</SectionHeading>
         {volunteer.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>{item.role || 'Rol'}</Text>
               <Text style={styles.itemDate}>
@@ -509,7 +509,7 @@ export default function PDFModernCleanTemplate({
       <View style={styles.section}>
         <SectionHeading>Yayınlar</SectionHeading>
         {publications.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.name}
@@ -536,7 +536,7 @@ export default function PDFModernCleanTemplate({
         {customSections.map(
           (section) =>
             section.title && (
-              <View key={section.id} style={styles.section}>
+              <View key={section.id} style={styles.section} wrap={false}>
                 <SectionHeading>{section.title}</SectionHeading>
                 {section.fields.map((f) => (
                   <View key={f.id} style={styles.customRow}>

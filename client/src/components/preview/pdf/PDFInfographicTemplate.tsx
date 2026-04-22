@@ -362,7 +362,7 @@ export default function PDFInfographicTemplate({
   const SectionHeading = ({ children }: { children: ReactNode }) => (
     <View style={styles.headingRow}>
       <View style={styles.headingBox} />
-      <Text style={styles.sectionHeading}>{children}</Text>
+      <Text style={styles.sectionHeading} minPresenceAhead={40}>{children}</Text>
     </View>
   )
 
@@ -421,7 +421,7 @@ export default function PDFInfographicTemplate({
         <View style={styles.timelineWrap}>
           <View style={styles.timelineLine} />
           {work.map((item) => (
-            <View key={item.id} style={{ ...styles.itemBlock, position: 'relative' }}>
+            <View key={item.id} style={{ ...styles.itemBlock, position: 'relative' }} wrap={false}>
               <View style={styles.timelineDot} />
               <View style={{ paddingLeft: 6 }}>
                 <View style={styles.itemHeader}>
@@ -463,7 +463,7 @@ export default function PDFInfographicTemplate({
       <View style={styles.section}>
         <SectionHeading>EĞİTİM</SectionHeading>
         {education.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.institution || 'Okul'}
@@ -494,7 +494,7 @@ export default function PDFInfographicTemplate({
               ? SKILL_LEVEL_PERCENT[skill.level] ?? 50
               : null
             return (
-              <View key={skill.id} style={styles.skillCell}>
+              <View key={skill.id} style={styles.skillCell} wrap={false}>
                 <View style={styles.skillHeader}>
                   <Text style={styles.skillName}>
                     {skill.name || 'Yetenek'}
@@ -541,7 +541,7 @@ export default function PDFInfographicTemplate({
       <View style={styles.section}>
         <SectionHeading>PROJELER</SectionHeading>
         {projects.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
               <Text style={styles.itemDate}>
@@ -602,7 +602,7 @@ export default function PDFInfographicTemplate({
         <SectionHeading>SERTİFİKALAR</SectionHeading>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           {certificates.map((item) => (
-            <View key={item.id} style={styles.certCard}>
+            <View key={item.id} style={styles.certCard} wrap={false}>
               <Text style={styles.certName}>{item.name}</Text>
               {item.issuer && (
                 <Text style={styles.certIssuer}>{item.issuer}</Text>
@@ -624,7 +624,7 @@ export default function PDFInfographicTemplate({
       <View style={styles.section}>
         <SectionHeading>GÖNÜLLÜLÜK</SectionHeading>
         {volunteer.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.role || 'Rol'}
@@ -654,7 +654,7 @@ export default function PDFInfographicTemplate({
       <View style={styles.section}>
         <SectionHeading>YAYINLAR</SectionHeading>
         {publications.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
+          <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
                 {item.name}
@@ -683,7 +683,7 @@ export default function PDFInfographicTemplate({
         {customSections.map(
           (section) =>
             section.title && (
-              <View key={section.id} style={styles.section}>
+              <View key={section.id} style={styles.section} wrap={false}>
                 <SectionHeading>
                   {section.title.toUpperCase()}
                 </SectionHeading>

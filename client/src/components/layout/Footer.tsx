@@ -38,7 +38,7 @@ export default function Footer() {
         <Link
           to="/"
           aria-label="Cv-İn ana sayfa"
-          className="inline-flex items-center gap-2 transition-opacity hover:opacity-80"
+          className="inline-flex items-center gap-2 text-primary transition-opacity hover:opacity-80"
         >
           <LogoMark className="h-7 w-7" />
           <span className="text-brand-gradient text-base font-bold tracking-tight">
