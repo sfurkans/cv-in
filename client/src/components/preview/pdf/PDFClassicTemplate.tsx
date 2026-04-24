@@ -1,6 +1,5 @@
 import {
   Document,
-  Image,
   Page,
   StyleSheet,
   Text,
@@ -10,7 +9,6 @@ import {
 import type { ReactNode } from 'react'
 import { Fragment } from 'react'
 
-import { resolvePhotoUrl } from '@/lib/photoUrl'
 import { trUpper } from '@/lib/trUpper'
 import {
   DEFAULT_SECTION_ORDER,
@@ -82,23 +80,11 @@ function createStyles(
       lineHeight: 1.4,
     },
     header: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
       marginBottom: sectionGap,
       paddingBottom: 10,
       borderBottomWidth: 1,
       borderBottomColor: primary,
       borderBottomStyle: 'solid',
-    },
-    photo: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
-      marginRight: 12,
-      objectFit: 'cover',
-    },
-    headerInfo: {
-      flex: 1,
     },
     name: {
       fontSize: 20,
@@ -188,23 +174,6 @@ function createStyles(
       fontWeight: 'normal',
       color: '#777777',
     },
-    skillChipRow: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 3,
-    },
-    skillChip: {
-      fontSize: 8,
-      color: '#444444',
-      backgroundColor: '#f3f4f6',
-      borderWidth: 0.5,
-      borderColor: '#d1d5db',
-      borderStyle: 'solid',
-      paddingHorizontal: 4,
-      paddingVertical: 1,
-      marginRight: 3,
-      marginBottom: 3,
-    },
     languageRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
@@ -291,30 +260,25 @@ export default function PDFClassicTemplate({
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
-          {basics.photo && (
-            <Image src={resolvePhotoUrl(basics.photo)} style={styles.photo} />
-          )}
-          <View style={styles.headerInfo}>
-            <Text style={styles.name}>
-              {basics.name || 'Adınız Soyadınız'}
-            </Text>
-            {basics.label && <Text style={styles.label}>{basics.label}</Text>}
-            <View style={styles.contactRow}>
-              {basics.email && (
-                <Text style={styles.contactItem}>{basics.email}</Text>
-              )}
-              {basics.phone && (
-                <Text style={styles.contactItem}>{basics.phone}</Text>
-              )}
-              {basics.profiles.map((profile, i) => (
-                <Text
-                  key={`${profile.network}-${i}`}
-                  style={styles.contactItem}
-                >
-                  {profile.network}: {profile.url}
-                </Text>
-              ))}
-            </View>
+          <Text style={styles.name}>
+            {basics.name || 'Adınız Soyadınız'}
+          </Text>
+          {basics.label && <Text style={styles.label}>{basics.label}</Text>}
+          <View style={styles.contactRow}>
+            {basics.email && (
+              <Text style={styles.contactItem}>{basics.email}</Text>
+            )}
+            {basics.phone && (
+              <Text style={styles.contactItem}>{basics.phone}</Text>
+            )}
+            {basics.profiles.map((profile, i) => (
+              <Text
+                key={`${profile.network}-${i}`}
+                style={styles.contactItem}
+              >
+                {profile.network}: {profile.url}
+              </Text>
+            ))}
           </View>
         </View>
 
@@ -419,16 +383,11 @@ export default function PDFClassicTemplate({
                 )}
               </Text>
             )}
-            <View style={styles.skillChipRow}>
-              {skill.keywords.map((keyword, i) => (
-                <Text
-                  key={`${skill.id}-${keyword}-${i}`}
-                  style={styles.skillChip}
-                >
-                  {keyword}
-                </Text>
-              ))}
-            </View>
+            {skill.keywords.length > 0 && (
+              <Text style={styles.itemBody}>
+                {skill.keywords.join(', ')}
+              </Text>
+            )}
           </View>
         ))}
       </View>

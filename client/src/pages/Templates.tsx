@@ -1,4 +1,4 @@
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight, ShieldCheck, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import TemplateThumbnail from '@/components/preview/templates/TemplateThumbnail'
@@ -58,6 +58,14 @@ export default function Templates() {
               <div className="absolute right-5 top-5 z-10 rounded-full border border-border/60 bg-background/90 px-3 py-1.5 font-mono text-[11px] font-medium tracking-[0.15em] text-muted-foreground shadow-sm backdrop-blur">
                 {String(index + 1).padStart(2, '0')} / {String(TEMPLATE_LIST.length).padStart(2, '0')}
               </div>
+
+              {/* ATS rozeti */}
+              {template.ats && (
+                <div className="absolute left-5 top-5 z-10 flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 shadow-sm backdrop-blur dark:text-emerald-400">
+                  <ShieldCheck className="h-3 w-3" />
+                  ATS Uyumlu
+                </div>
+              )}
 
               {/* Glow — hover'da beliren yumuşak ışık */}
               <div className="pointer-events-none absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />

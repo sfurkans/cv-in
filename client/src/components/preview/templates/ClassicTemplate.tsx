@@ -1,7 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { Fragment } from 'react'
 
-import { resolvePhotoUrl } from '@/lib/photoUrl'
 import {
   DEFAULT_SECTION_ORDER,
   type FontFamily,
@@ -116,17 +115,10 @@ export default function ClassicTemplate({ resume }: ClassicTemplateProps) {
     >
       {/* Header */}
       <header
-        className={`${sectionGap} flex items-start gap-4 border-b pb-4`}
+        className={`${sectionGap} border-b pb-4`}
         style={{ borderColor: 'var(--primary-color)' }}
       >
-        {basics.photo && (
-          <img
-            src={resolvePhotoUrl(basics.photo)}
-            alt={basics.name}
-            className="h-20 w-20 shrink-0 rounded-full border border-gray-200 object-cover"
-          />
-        )}
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0">
           <h1
             className="text-xl font-bold tracking-tight"
             style={{ color: 'var(--text-color)' }}
@@ -255,16 +247,11 @@ export default function ClassicTemplate({ resume }: ClassicTemplateProps) {
                   )}
                 </div>
               )}
-              <div className="flex flex-wrap gap-1.5">
-                {skill.keywords.map((keyword, i) => (
-                  <span
-                    key={`${skill.id}-${keyword}-${i}`}
-                    className="rounded-sm border border-gray-300 bg-gray-50 px-1.5 py-0.5 text-[9px] text-gray-700"
-                  >
-                    {keyword}
-                  </span>
-                ))}
-              </div>
+              {skill.keywords.length > 0 && (
+                <p className="text-gray-700">
+                  {skill.keywords.join(', ')}
+                </p>
+              )}
             </div>
           ))}
         </div>

@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react'
+import { Check, ShieldCheck } from 'lucide-react'
 
 import TemplateThumbnail from '@/components/preview/templates/TemplateThumbnail'
 import { TEMPLATE_LIST } from '@/components/preview/templates'
@@ -39,6 +39,12 @@ export default function TemplateSelector() {
                   templateId={template.id}
                   className="transition-transform group-hover:scale-[1.01]"
                 />
+                {template.ats && (
+                  <span className="absolute left-2 top-2 z-10 flex items-center gap-1 rounded-sm border border-emerald-500/30 bg-emerald-500/90 px-1.5 py-0.5 text-[9px] font-semibold text-white shadow-sm">
+                    <ShieldCheck className="h-2.5 w-2.5" />
+                    ATS
+                  </span>
+                )}
                 {isActive && (
                   <span className="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
                     <Check className="h-3 w-3" />

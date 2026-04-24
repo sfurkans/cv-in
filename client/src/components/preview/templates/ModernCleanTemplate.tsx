@@ -1,7 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { Fragment } from 'react'
 
-import { resolvePhotoUrl } from '@/lib/photoUrl'
 import {
   SKILL_LEVEL_LABELS,
   formatDateRange,
@@ -82,31 +81,18 @@ export default function ModernCleanTemplate({
         } as CSSProperties
       }
     >
-      <header className="flex items-center gap-6">
-        {basics.photo && (
-          <img
-            src={resolvePhotoUrl(basics.photo)}
-            alt={basics.name}
-            className="h-[26mm] w-[26mm] shrink-0 rounded-full object-cover"
-          />
+      <header>
+        <h1
+          className="text-[30px] font-bold leading-[1.05] tracking-tight break-words"
+          style={{ color: 'var(--text-color)' }}
+        >
+          {basics.name || 'Adınız Soyadınız'}
+        </h1>
+        {basics.label && (
+          <p className="mt-1 text-[14px] font-medium text-gray-500 break-words">
+            {basics.label}
+          </p>
         )}
-        <div className="min-w-0 flex-1">
-          <h1
-            className="text-[30px] font-bold leading-[1.05] tracking-tight break-words"
-            style={{ color: 'var(--text-color)' }}
-          >
-            {basics.name || 'Adınız Soyadınız'}
-          </h1>
-          {basics.label && (
-            <p className="mt-1 text-[14px] font-medium text-gray-500 break-words">
-              {basics.label}
-            </p>
-          )}
-          <div
-            className="mt-3 h-[3px] w-16 rounded-full"
-            style={{ backgroundColor: 'var(--primary-color)' }}
-          />
-        </div>
       </header>
 
       {(basics.email ||
@@ -476,13 +462,9 @@ export default function ModernCleanTemplate({
 function CleanHeading({ children }: { children: ReactNode }) {
   return (
     <h2
-      className="flex items-center gap-2 text-[15px] font-bold tracking-tight"
+      className="text-[15px] font-bold tracking-tight"
       style={{ color: 'var(--text-color)' }}
     >
-      <span
-        className="inline-block h-[7px] w-[7px] rounded-full"
-        style={{ backgroundColor: 'var(--primary-color)' }}
-      />
       {children}
     </h2>
   )

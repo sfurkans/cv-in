@@ -1,6 +1,5 @@
 import {
   Document,
-  Image,
   Page,
   StyleSheet,
   Text,
@@ -10,7 +9,6 @@ import {
 import type { ReactNode } from 'react'
 import { Fragment } from 'react'
 
-import { resolvePhotoUrl } from '@/lib/photoUrl'
 import {
   SKILL_LEVEL_LABELS,
   formatDateRange,
@@ -55,19 +53,7 @@ function createStyles(
       lineHeight: 1.5,
     },
     header: {
-      flexDirection: 'row',
-      alignItems: 'center',
       marginBottom: 12,
-    },
-    photo: {
-      width: 70,
-      height: 70,
-      borderRadius: 35,
-      marginRight: 16,
-      objectFit: 'cover',
-    },
-    headerInfo: {
-      flex: 1,
     },
     name: {
       fontSize: 24,
@@ -81,12 +67,6 @@ function createStyles(
       color: '#777777',
       fontWeight: 'bold',
       marginBottom: 5,
-    },
-    accentBar: {
-      width: 34,
-      height: 2,
-      backgroundColor: primary,
-      marginTop: 2,
     },
     contactRow: {
       flexDirection: 'row',
@@ -103,22 +83,11 @@ function createStyles(
     section: {
       marginBottom: sectionGap,
     },
-    headingRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 6,
-    },
-    headingDot: {
-      width: 5,
-      height: 5,
-      borderRadius: 2.5,
-      backgroundColor: primary,
-      marginRight: 5,
-    },
     sectionHeading: {
       fontSize: 12.5,
       fontWeight: 'bold',
       color: text,
+      marginBottom: 6,
     },
     itemBlock: {
       marginBottom: 10,
@@ -265,26 +234,17 @@ export default function PDFModernCleanTemplate({
   }
 
   const SectionHeading = ({ children }: { children: ReactNode }) => (
-    <View style={styles.headingRow}>
-      <View style={styles.headingDot} />
-      <Text style={styles.sectionHeading} minPresenceAhead={40}>{children}</Text>
-    </View>
+    <Text style={styles.sectionHeading} minPresenceAhead={40}>{children}</Text>
   )
 
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          {basics.photo && (
-            <Image src={resolvePhotoUrl(basics.photo)} style={styles.photo} />
-          )}
-          <View style={styles.headerInfo}>
-            <Text style={styles.name}>
-              {basics.name || 'Adınız Soyadınız'}
-            </Text>
-            {basics.label && <Text style={styles.label}>{basics.label}</Text>}
-            <View style={styles.accentBar} />
-          </View>
+          <Text style={styles.name}>
+            {basics.name || 'Adınız Soyadınız'}
+          </Text>
+          {basics.label && <Text style={styles.label}>{basics.label}</Text>}
         </View>
 
         {(basics.email || basics.phone || basics.profiles.length > 0) && (
