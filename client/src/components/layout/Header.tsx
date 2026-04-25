@@ -159,7 +159,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={handleLogin}
-                className={cn(linkBase, linkInactive, 'hidden md:inline-flex')}
+                className={cn(linkBase, linkInactive, 'hidden md:inline-flex text-green-600')}
               >
                 Giriş Yap
               </button>
@@ -216,7 +216,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={handleLogin}
-                className={cn(linkBase, linkInactive)}
+                className={cn(linkBase, linkInactive, 'text-green-600')}
               >
                 Giriş Yap
               </button>
