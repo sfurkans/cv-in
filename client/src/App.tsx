@@ -1,6 +1,6 @@
 import { Loader2 } from 'lucide-react'
-import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { lazy, Suspense, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 
 import Layout from '@/components/layout/Layout'
 import Home from '@/pages/Home'
@@ -13,6 +13,14 @@ import { useAuthBootstrap } from '@/hooks/useAuthBootstrap'
 const Builder = lazy(() => import('@/pages/Builder'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
 const Templates = lazy(() => import('@/pages/Templates'))
+
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+  return null
+}
 
 function PageLoader() {
   return (
@@ -27,6 +35,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route element={<Layout />}>

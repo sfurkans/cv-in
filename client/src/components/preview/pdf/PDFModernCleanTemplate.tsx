@@ -22,6 +22,7 @@ import {
   type Spacing,
 } from '@/types/resume'
 
+import PDFSection from './PDFSection'
 import './fonts'
 
 interface PDFModernCleanTemplateProps {
@@ -264,7 +265,7 @@ export default function PDFModernCleanTemplate({
         )}
 
         {basics.summary && (
-          <View style={styles.section}>
+          <View style={styles.section} wrap={false}>
             <SectionHeading>Özet</SectionHeading>
             <Text style={styles.summary}>{basics.summary}</Text>
           </View>
@@ -278,11 +279,12 @@ export default function PDFModernCleanTemplate({
   )
 
   function renderExperience(): ReactNode {
-    if (work.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>Deneyim</SectionHeading>
-        {work.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={work}
+        heading={<SectionHeading>Deneyim</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
@@ -310,17 +312,18 @@ export default function PDFModernCleanTemplate({
               </View>
             )}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderEducation(): ReactNode {
-    if (education.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>Eğitim</SectionHeading>
-        {education.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={education}
+        heading={<SectionHeading>Eğitim</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
@@ -336,17 +339,18 @@ export default function PDFModernCleanTemplate({
               </Text>
             )}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderSkills(): ReactNode {
-    if (visibleSkills.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>Yetenekler</SectionHeading>
-        {visibleSkills.map((skill) => (
+      <PDFSection
+        style={styles.section}
+        items={visibleSkills}
+        heading={<SectionHeading>Yetenekler</SectionHeading>}
+        renderItem={(skill) => (
           <View key={skill.id} style={styles.skillsGroup} wrap={false}>
             {(skill.name || skill.level) && (
               <Text style={styles.skillName}>
@@ -363,17 +367,18 @@ export default function PDFModernCleanTemplate({
               {skill.keywords.join(' · ')}
             </Text>
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderProjects(): ReactNode {
-    if (projects.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>Projeler</SectionHeading>
-        {projects.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={projects}
+        heading={<SectionHeading>Projeler</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
@@ -386,15 +391,15 @@ export default function PDFModernCleanTemplate({
             )}
             {item.url && <Text style={styles.url}>{item.url}</Text>}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderLanguages(): ReactNode {
     if (languages.length === 0) return null
     return (
-      <View style={styles.section}>
+      <View style={styles.section} wrap={false}>
         <SectionHeading>Diller</SectionHeading>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           {languages.map((l) => (
@@ -413,11 +418,12 @@ export default function PDFModernCleanTemplate({
   }
 
   function renderCertificates(): ReactNode {
-    if (certificates.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>Sertifikalar</SectionHeading>
-        {certificates.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={certificates}
+        heading={<SectionHeading>Sertifikalar</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
@@ -433,17 +439,18 @@ export default function PDFModernCleanTemplate({
             </View>
             {item.url && <Text style={styles.url}>{item.url}</Text>}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderVolunteer(): ReactNode {
-    if (volunteer.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>Gönüllülük</SectionHeading>
-        {volunteer.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={volunteer}
+        heading={<SectionHeading>Gönüllülük</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>{item.role || 'Rol'}</Text>
@@ -458,17 +465,18 @@ export default function PDFModernCleanTemplate({
               <Text style={styles.itemBody}>{item.summary}</Text>
             )}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderPublications(): ReactNode {
-    if (publications.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>Yayınlar</SectionHeading>
-        {publications.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={publications}
+        heading={<SectionHeading>Yayınlar</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
@@ -484,8 +492,8 @@ export default function PDFModernCleanTemplate({
             </View>
             {item.url && <Text style={styles.url}>{item.url}</Text>}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 

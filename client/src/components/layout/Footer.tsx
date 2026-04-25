@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 import { LogoMark } from '@/components/brand/Logo'
 
@@ -18,6 +18,8 @@ const aboutLinks = [
 
 export default function Footer() {
   const year = new Date().getFullYear()
+  const location = useLocation()
+  if (location.pathname.startsWith('/builder')) return null
 
   return (
     <footer className="relative mt-16 overflow-hidden">

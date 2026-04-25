@@ -339,7 +339,7 @@ export default function PDFModernTemplate({ resume }: PDFModernTemplateProps) {
 
         {/* Summary */}
         {basics.summary && (
-          <View style={styles.section}>
+          <View style={styles.section} wrap={false}>
             <SectionHeading styles={styles}>Hakkımda</SectionHeading>
             <Text style={styles.itemBody}>{basics.summary}</Text>
           </View>
@@ -355,119 +355,139 @@ export default function PDFModernTemplate({ resume }: PDFModernTemplateProps) {
 
   function renderExperience(): ReactNode {
     if (work.length === 0) return null
-    return (
-      <View style={styles.section}>
-        <SectionHeading styles={styles}>Deneyim</SectionHeading>
-        {work.map((item) => (
-          <View key={item.id} style={styles.timelineItem} wrap={false}>
-            <View style={styles.timelineDot} />
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTitle}>
-                {item.position || 'Pozisyon'}
-              </Text>
-              <Text style={styles.itemDate}>
-                {formatDateRange(item.startDate, item.endDate)}
-              </Text>
-            </View>
-            {item.company && (
-              <Text style={styles.itemCompany}>{item.company}</Text>
-            )}
-            {item.summary && (
-              <Text style={styles.itemBody}>{item.summary}</Text>
-            )}
-            {item.highlights.some((h) => h.trim()) && (
-              <View style={styles.bulletList}>
-                {item.highlights
-                  .filter((h) => h.trim())
-                  .map((highlight, i) => (
-                    <Text key={i} style={styles.bullet}>
-                      • {highlight}
-                    </Text>
-                  ))}
-              </View>
-            )}
+    const renderItem = (item: (typeof work)[0]) => (
+      <View key={item.id} style={styles.timelineItem} wrap={false}>
+        <View style={styles.timelineDot} />
+        <View style={styles.itemHeader}>
+          <Text style={styles.itemTitle}>
+            {item.position || 'Pozisyon'}
+          </Text>
+          <Text style={styles.itemDate}>
+            {formatDateRange(item.startDate, item.endDate)}
+          </Text>
+        </View>
+        {item.company && (
+          <Text style={styles.itemCompany}>{item.company}</Text>
+        )}
+        {item.summary && (
+          <Text style={styles.itemBody}>{item.summary}</Text>
+        )}
+        {item.highlights.some((h) => h.trim()) && (
+          <View style={styles.bulletList}>
+            {item.highlights
+              .filter((h) => h.trim())
+              .map((highlight, i) => (
+                <Text key={i} style={styles.bullet}>
+                  • {highlight}
+                </Text>
+              ))}
           </View>
-        ))}
+        )}
+      </View>
+    )
+    const [first, ...rest] = work
+    return (
+      <View style={styles.section} wrap={false}>
+        <View wrap={false}>
+          <SectionHeading styles={styles}>Deneyim</SectionHeading>
+          {renderItem(first)}
+        </View>
+        {rest.map(renderItem)}
       </View>
     )
   }
 
   function renderEducation(): ReactNode {
     if (education.length === 0) return null
+    const renderItem = (item: (typeof education)[0]) => (
+      <View key={item.id} style={styles.timelineItem} wrap={false}>
+        <View style={styles.timelineDot} />
+        <View style={styles.itemHeader}>
+          <Text style={styles.itemTitle}>
+            {item.institution || 'Okul'}
+          </Text>
+          <Text style={styles.itemDate}>
+            {formatDateRange(item.startDate, item.endDate)}
+          </Text>
+        </View>
+        {(item.degree || item.field) && (
+          <Text style={styles.itemCompany}>
+            {[item.degree, item.field].filter(Boolean).join(' — ')}
+          </Text>
+        )}
+      </View>
+    )
+    const [first, ...rest] = education
     return (
-      <View style={styles.section}>
-        <SectionHeading styles={styles}>Eğitim</SectionHeading>
-        {education.map((item) => (
-          <View key={item.id} style={styles.timelineItem} wrap={false}>
-            <View style={styles.timelineDot} />
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTitle}>
-                {item.institution || 'Okul'}
-              </Text>
-              <Text style={styles.itemDate}>
-                {formatDateRange(item.startDate, item.endDate)}
-              </Text>
-            </View>
-            {(item.degree || item.field) && (
-              <Text style={styles.itemCompany}>
-                {[item.degree, item.field].filter(Boolean).join(' — ')}
-              </Text>
-            )}
-          </View>
-        ))}
+      <View style={styles.section} wrap={false}>
+        <View wrap={false}>
+          <SectionHeading styles={styles}>Eğitim</SectionHeading>
+          {renderItem(first)}
+        </View>
+        {rest.map(renderItem)}
       </View>
     )
   }
 
   function renderSkills(): ReactNode {
     if (visibleSkills.length === 0) return null
-    return (
-      <View style={styles.section}>
-        <SectionHeading styles={styles}>Yetenekler</SectionHeading>
-        {visibleSkills.map((skill) => (
-          <View key={skill.id} style={styles.skillRow} wrap={false}>
-            {skill.name && (
-              <Text style={styles.skillName}>
-                {skill.name}
-                {skill.level && SKILL_LEVEL_LABELS[skill.level] && (
-                  <Text style={styles.skillLevel}>
-                    {' ('}
-                    {SKILL_LEVEL_LABELS[skill.level]}
-                    {')'}
-                  </Text>
-                )}
-                {': '}
+    const renderItem = (skill: (typeof visibleSkills)[0]) => (
+      <View key={skill.id} style={styles.skillRow} wrap={false}>
+        {skill.name && (
+          <Text style={styles.skillName}>
+            {skill.name}
+            {skill.level && SKILL_LEVEL_LABELS[skill.level] && (
+              <Text style={styles.skillLevel}>
+                {' ('}
+                {SKILL_LEVEL_LABELS[skill.level]}
+                {')'}
               </Text>
             )}
-            <Text style={styles.skillKeywords}>
-              {skill.keywords.join(', ')}
-            </Text>
-          </View>
-        ))}
+            {': '}
+          </Text>
+        )}
+        <Text style={styles.skillKeywords}>
+          {skill.keywords.join(', ')}
+        </Text>
+      </View>
+    )
+    const [first, ...rest] = visibleSkills
+    return (
+      <View style={styles.section} wrap={false}>
+        <View wrap={false}>
+          <SectionHeading styles={styles}>Yetenekler</SectionHeading>
+          {renderItem(first)}
+        </View>
+        {rest.map(renderItem)}
       </View>
     )
   }
 
   function renderProjects(): ReactNode {
     if (projects.length === 0) return null
+    const renderItem = (item: (typeof projects)[0]) => (
+      <View key={item.id} style={styles.timelineItem} wrap={false}>
+        <View style={styles.timelineDot} />
+        <View style={styles.itemHeader}>
+          <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
+          <Text style={styles.itemDate}>
+            {formatDateRange(item.startDate, item.endDate)}
+          </Text>
+        </View>
+        {item.description && (
+          <Text style={styles.itemBody}>{item.description}</Text>
+        )}
+        {item.url && <Text style={styles.urlText}>{item.url}</Text>}
+      </View>
+    )
+    const [first, ...rest] = projects
     return (
-      <View style={styles.section}>
-        <SectionHeading styles={styles}>Projeler</SectionHeading>
-        {projects.map((item) => (
-          <View key={item.id} style={styles.timelineItem} wrap={false}>
-            <View style={styles.timelineDot} />
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
-              <Text style={styles.itemDate}>
-                {formatDateRange(item.startDate, item.endDate)}
-              </Text>
-            </View>
-            {item.description && (
-              <Text style={styles.itemBody}>{item.description}</Text>
-            )}
-            {item.url && <Text style={styles.urlText}>{item.url}</Text>}
-          </View>
-        ))}
+      <View style={styles.section} wrap={false}>
+        <View wrap={false}>
+          <SectionHeading styles={styles}>Projeler</SectionHeading>
+          {renderItem(first)}
+        </View>
+        {rest.map(renderItem)}
       </View>
     )
   }
@@ -475,7 +495,7 @@ export default function PDFModernTemplate({ resume }: PDFModernTemplateProps) {
   function renderLanguages(): ReactNode {
     if (languages.length === 0) return null
     return (
-      <View style={styles.section}>
+      <View style={styles.section} wrap={false}>
         <SectionHeading styles={styles}>Diller</SectionHeading>
         <View style={styles.languageRow}>
           {languages.map((item) => (
@@ -496,70 +516,85 @@ export default function PDFModernTemplate({ resume }: PDFModernTemplateProps) {
 
   function renderCertificates(): ReactNode {
     if (certificates.length === 0) return null
+    const renderItem = (item: (typeof certificates)[0]) => (
+      <View key={item.id} style={styles.timelineItem} wrap={false}>
+        <View style={styles.timelineDot} />
+        <View style={styles.itemHeader}>
+          <Text style={styles.itemTitle}>{item.name}</Text>
+          <Text style={styles.itemDate}>{formatMonth(item.date)}</Text>
+        </View>
+        {item.issuer && (
+          <Text style={styles.itemCompany}>{item.issuer}</Text>
+        )}
+        {item.url && <Text style={styles.urlText}>{item.url}</Text>}
+      </View>
+    )
+    const [first, ...rest] = certificates
     return (
-      <View style={styles.section}>
-        <SectionHeading styles={styles}>Sertifikalar</SectionHeading>
-        {certificates.map((item) => (
-          <View key={item.id} style={styles.timelineItem} wrap={false}>
-            <View style={styles.timelineDot} />
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTitle}>{item.name}</Text>
-              <Text style={styles.itemDate}>{formatMonth(item.date)}</Text>
-            </View>
-            {item.issuer && (
-              <Text style={styles.itemCompany}>{item.issuer}</Text>
-            )}
-            {item.url && <Text style={styles.urlText}>{item.url}</Text>}
-          </View>
-        ))}
+      <View style={styles.section} wrap={false}>
+        <View wrap={false}>
+          <SectionHeading styles={styles}>Sertifikalar</SectionHeading>
+          {renderItem(first)}
+        </View>
+        {rest.map(renderItem)}
       </View>
     )
   }
 
   function renderVolunteer(): ReactNode {
     if (volunteer.length === 0) return null
+    const renderItem = (item: (typeof volunteer)[0]) => (
+      <View key={item.id} style={styles.timelineItem} wrap={false}>
+        <View style={styles.timelineDot} />
+        <View style={styles.itemHeader}>
+          <Text style={styles.itemTitle}>{item.role || 'Rol'}</Text>
+          <Text style={styles.itemDate}>
+            {formatDateRange(item.startDate, item.endDate)}
+          </Text>
+        </View>
+        {item.organization && (
+          <Text style={styles.itemCompany}>{item.organization}</Text>
+        )}
+        {item.summary && (
+          <Text style={styles.itemBody}>{item.summary}</Text>
+        )}
+      </View>
+    )
+    const [first, ...rest] = volunteer
     return (
-      <View style={styles.section}>
-        <SectionHeading styles={styles}>Gönüllülük</SectionHeading>
-        {volunteer.map((item) => (
-          <View key={item.id} style={styles.timelineItem} wrap={false}>
-            <View style={styles.timelineDot} />
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTitle}>{item.role || 'Rol'}</Text>
-              <Text style={styles.itemDate}>
-                {formatDateRange(item.startDate, item.endDate)}
-              </Text>
-            </View>
-            {item.organization && (
-              <Text style={styles.itemCompany}>{item.organization}</Text>
-            )}
-            {item.summary && (
-              <Text style={styles.itemBody}>{item.summary}</Text>
-            )}
-          </View>
-        ))}
+      <View style={styles.section} wrap={false}>
+        <View wrap={false}>
+          <SectionHeading styles={styles}>Gönüllülük</SectionHeading>
+          {renderItem(first)}
+        </View>
+        {rest.map(renderItem)}
       </View>
     )
   }
 
   function renderPublications(): ReactNode {
     if (publications.length === 0) return null
+    const renderItem = (item: (typeof publications)[0]) => (
+      <View key={item.id} style={styles.timelineItem} wrap={false}>
+        <View style={styles.timelineDot} />
+        <View style={styles.itemHeader}>
+          <Text style={styles.itemTitle}>{item.name}</Text>
+          <Text style={styles.itemDate}>{formatMonth(item.date)}</Text>
+        </View>
+        {item.publisher && (
+          <Text style={styles.itemCompany}>{item.publisher}</Text>
+        )}
+        {item.url && <Text style={styles.urlText}>{item.url}</Text>}
+      </View>
+    )
+    const [first, ...rest] = publications
     return (
-      <View style={styles.section}>
-        <SectionHeading styles={styles}>Yayınlar</SectionHeading>
-        {publications.map((item) => (
-          <View key={item.id} style={styles.timelineItem} wrap={false}>
-            <View style={styles.timelineDot} />
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTitle}>{item.name}</Text>
-              <Text style={styles.itemDate}>{formatMonth(item.date)}</Text>
-            </View>
-            {item.publisher && (
-              <Text style={styles.itemCompany}>{item.publisher}</Text>
-            )}
-            {item.url && <Text style={styles.urlText}>{item.url}</Text>}
-          </View>
-        ))}
+      <View style={styles.section} wrap={false}>
+        <View wrap={false}>
+          <SectionHeading styles={styles}>Yayınlar</SectionHeading>
+          {renderItem(first)}
+        </View>
+        {rest.map(renderItem)}
       </View>
     )
   }

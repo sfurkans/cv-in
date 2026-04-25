@@ -49,10 +49,22 @@ export interface Project {
   endDate: string
 }
 
+export type CefrSkillKey =
+  | 'listening'
+  | 'reading'
+  | 'spokenInteraction'
+  | 'spokenProduction'
+  | 'writing'
+
+export type CefrLevels = Record<CefrSkillKey, string>
+
 export interface Language {
   id: string
   name: string
   proficiency: string
+  // Europass için opsiyonel 5 alt-beceri (CEFR). Yoksa proficiency tek seviye
+  // olarak tüm şablonlarda kullanılır; diğer şablonlar cefr alanını okumaz.
+  cefr?: CefrLevels
 }
 
 export interface Certificate {
@@ -102,6 +114,7 @@ export type TemplateId =
   | 'modern-clean'
   | 'terminal'
   | 'infographic'
+  | 'europass'
 
 export type SectionId =
   | 'experience'

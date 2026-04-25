@@ -25,6 +25,7 @@ import {
   type SectionId,
 } from '@/types/resume'
 
+import PDFSection from './PDFSection'
 import './fonts'
 
 interface PDFInfographicTemplateProps {
@@ -39,12 +40,16 @@ function createStyles(
   pagePadding: number,
   sectionGap: number
 ) {
+  // 2+ sayfalarda içeriğin üstten boşluğu. 1. sayfada header `-topBleed`
+  // margin ile bu padding'i iptal ederek kenardan kenara bleed görünür.
+  const topBleed = pagePadding + 20
   return StyleSheet.create({
     page: {
       fontFamily,
       fontSize: 9.5,
       color: '#333333',
       padding: 0,
+      paddingTop: topBleed,
       lineHeight: 1.4,
     },
     header: {
@@ -54,6 +59,7 @@ function createStyles(
       paddingHorizontal: pagePadding,
       paddingVertical: 20,
       color: '#ffffff',
+      marginTop: -topBleed,
     },
     photo: {
       width: 78,
@@ -72,7 +78,7 @@ function createStyles(
       fontSize: 22,
       fontWeight: 'bold',
       color: '#ffffff',
-      marginBottom: 2,
+      marginBottom: 16,
     },
     label: {
       fontSize: 11,
@@ -380,17 +386,17 @@ export default function PDFInfographicTemplate({
             {basics.label && <Text style={styles.label}>{basics.label}</Text>}
             <View style={styles.contactRow}>
               {basics.email && (
-                <Text style={styles.contactItem}>◆ {basics.email}</Text>
+                <Text style={styles.contactItem}>• {basics.email}</Text>
               )}
               {basics.phone && (
-                <Text style={styles.contactItem}>◆ {basics.phone}</Text>
+                <Text style={styles.contactItem}>• {basics.phone}</Text>
               )}
               {basics.profiles.map((p, i) => (
                 <Text
                   key={`${p.network}-${i}`}
                   style={styles.contactItem}
                 >
-                  ◆ {p.network}: {p.url || p.username}
+                  • {p.network}: {p.url || p.username}
                 </Text>
               ))}
             </View>
@@ -399,7 +405,7 @@ export default function PDFInfographicTemplate({
 
         <View style={styles.body}>
           {basics.summary && (
-            <View style={styles.section}>
+            <View style={styles.section} wrap={false}>
               <SectionHeading>ÖZET</SectionHeading>
               <Text style={styles.summaryText}>{basics.summary}</Text>
             </View>
@@ -414,55 +420,54 @@ export default function PDFInfographicTemplate({
   )
 
   function renderExperience(): ReactNode {
-    if (work.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>DENEYİM</SectionHeading>
-        <View style={styles.timelineWrap}>
-          <View style={styles.timelineLine} />
-          {work.map((item) => (
-            <View key={item.id} style={{ ...styles.itemBlock, position: 'relative' }} wrap={false}>
-              <View style={styles.timelineDot} />
-              <View style={{ paddingLeft: 6 }}>
-                <View style={styles.itemHeader}>
-                  <Text style={styles.itemTitle}>
-                    {item.position || 'Pozisyon'}
-                    {item.company && (
-                      <Text style={styles.itemCompany}> @ {item.company}</Text>
-                    )}
-                  </Text>
-                  <Text style={styles.itemDate}>
-                    {formatDateRange(item.startDate, item.endDate)}
-                  </Text>
-                </View>
-                {item.summary && (
-                  <Text style={styles.itemBody}>{item.summary}</Text>
-                )}
-                {item.highlights.some((h) => h.trim()) && (
-                  <View style={styles.bulletList}>
-                    {item.highlights
-                      .filter((h) => h.trim())
-                      .map((h, i) => (
-                        <Text key={i} style={styles.bullet}>
-                          • {h}
-                        </Text>
-                      ))}
-                  </View>
-                )}
+      <PDFSection
+        style={styles.section}
+        items={work}
+        heading={<SectionHeading>DENEYİM</SectionHeading>}
+        renderItem={(item) => (
+          <View key={item.id} style={{ ...styles.itemBlock, position: 'relative', paddingLeft: 12 }} wrap={false}>
+            <View style={styles.timelineDot} />
+            <View style={{ paddingLeft: 6 }}>
+              <View style={styles.itemHeader}>
+                <Text style={styles.itemTitle}>
+                  {item.position || 'Pozisyon'}
+                  {item.company && (
+                    <Text style={styles.itemCompany}> @ {item.company}</Text>
+                  )}
+                </Text>
+                <Text style={styles.itemDate}>
+                  {formatDateRange(item.startDate, item.endDate)}
+                </Text>
               </View>
+              {item.summary && (
+                <Text style={styles.itemBody}>{item.summary}</Text>
+              )}
+              {item.highlights.some((h) => h.trim()) && (
+                <View style={styles.bulletList}>
+                  {item.highlights
+                    .filter((h) => h.trim())
+                    .map((h, i) => (
+                      <Text key={i} style={styles.bullet}>
+                        • {h}
+                      </Text>
+                    ))}
+                </View>
+              )}
             </View>
-          ))}
-        </View>
-      </View>
+          </View>
+        )}
+      />
     )
   }
 
   function renderEducation(): ReactNode {
-    if (education.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>EĞİTİM</SectionHeading>
-        {education.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={education}
+        heading={<SectionHeading>EĞİTİM</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
@@ -478,15 +483,15 @@ export default function PDFInfographicTemplate({
               </Text>
             )}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderSkills(): ReactNode {
     if (visibleSkills.length === 0) return null
     return (
-      <View style={styles.section}>
+      <View style={styles.section} wrap={false}>
         <SectionHeading>YETENEKLER</SectionHeading>
         <View style={styles.skillsGrid}>
           {visibleSkills.map((skill) => {
@@ -536,11 +541,12 @@ export default function PDFInfographicTemplate({
   }
 
   function renderProjects(): ReactNode {
-    if (projects.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>PROJELER</SectionHeading>
-        {projects.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={projects}
+        heading={<SectionHeading>PROJELER</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
@@ -553,15 +559,15 @@ export default function PDFInfographicTemplate({
             )}
             {item.url && <Text style={styles.url}>{item.url}</Text>}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderLanguages(): ReactNode {
     if (languages.length === 0) return null
     return (
-      <View style={styles.section}>
+      <View style={styles.section} wrap={false}>
         <SectionHeading>DİLLER</SectionHeading>
         <View style={styles.langGrid}>
           {languages.map((l) => {
@@ -598,7 +604,7 @@ export default function PDFInfographicTemplate({
   function renderCertificates(): ReactNode {
     if (certificates.length === 0) return null
     return (
-      <View style={styles.section}>
+      <View style={styles.section} wrap={false}>
         <SectionHeading>SERTİFİKALAR</SectionHeading>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           {certificates.map((item) => (
@@ -619,11 +625,12 @@ export default function PDFInfographicTemplate({
   }
 
   function renderVolunteer(): ReactNode {
-    if (volunteer.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>GÖNÜLLÜLÜK</SectionHeading>
-        {volunteer.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={volunteer}
+        heading={<SectionHeading>GÖNÜLLÜLÜK</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
@@ -643,17 +650,18 @@ export default function PDFInfographicTemplate({
               <Text style={styles.itemBody}>{item.summary}</Text>
             )}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderPublications(): ReactNode {
-    if (publications.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>YAYINLAR</SectionHeading>
-        {publications.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={publications}
+        heading={<SectionHeading>YAYINLAR</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={styles.itemBlock} wrap={false}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemTitle}>
@@ -671,8 +679,8 @@ export default function PDFInfographicTemplate({
             </View>
             {item.url && <Text style={styles.url}>{item.url}</Text>}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 

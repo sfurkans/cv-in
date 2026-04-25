@@ -62,7 +62,7 @@ export default function ColorAccentTemplate({
 
   return (
     <div
-      className={`flex h-[297mm] w-[210mm] flex-col overflow-hidden bg-white ${fontClass} text-[11px] leading-snug text-gray-800 shadow-sm`}
+      className={`flex min-h-[297mm] w-[210mm] flex-col bg-white ${fontClass} text-[11px] leading-snug text-gray-800 shadow-sm`}
       style={
         {
           '--primary-color': theme.primaryColor,
@@ -76,7 +76,7 @@ export default function ColorAccentTemplate({
         style={{ backgroundColor: 'var(--primary-color)' }}
       />
 
-      <div className="flex-1 overflow-hidden p-8">
+      <div className="flex-1 p-8">
         {/* Header */}
         <header className={`${sectionGap} flex items-center gap-5`}>
           {basics.photo && (

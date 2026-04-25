@@ -26,7 +26,56 @@ export default function TemplateThumbnail({
       {templateId === 'modern-clean' && <ModernCleanThumb />}
       {templateId === 'terminal' && <TerminalThumb />}
       {templateId === 'infographic' && <InfographicThumb />}
+      {templateId === 'europass' && <EuropassThumb />}
     </div>
+  )
+}
+
+function EuropassThumb() {
+  return (
+    <svg viewBox="0 0 200 280" className="h-full w-full">
+      <rect width="200" height="280" fill="#fff" />
+      <rect x="0" y="0" width="200" height="60" fill="#003399" />
+      <rect x="14" y="14" width="32" height="32" fill="#fff" opacity="0.35" />
+      <rect x="54" y="16" width="40" height="3" rx="0" fill="#fff" opacity="0.7" />
+      <rect x="54" y="24" width="110" height="8" rx="0" fill="#fff" />
+      <rect x="54" y="36" width="70" height="3" rx="0" fill="#fff" opacity="0.9" />
+      <rect x="54" y="44" width="90" height="2.5" rx="0" fill="#fff" opacity="0.75" />
+      <rect x="54" y="50" width="80" height="2.5" rx="0" fill="#fff" opacity="0.75" />
+      <rect x="14" y="74" width="48" height="4" rx="0" fill="#003399" />
+      <rect x="14" y="80" width="172" height="0.8" fill="#003399" />
+      <rect x="14" y="88" width="170" height="2.5" rx="0" fill="#9ca3af" />
+      <rect x="14" y="94" width="150" height="2.5" rx="0" fill="#9ca3af" />
+      <rect x="14" y="108" width="52" height="4" rx="0" fill="#003399" />
+      <rect x="14" y="114" width="172" height="0.8" fill="#003399" />
+      <rect x="14" y="122" width="26" height="2.5" rx="0" fill="#6b7280" />
+      <rect x="48" y="122" width="60" height="3" rx="0" fill="#111827" />
+      <rect x="48" y="128" width="80" height="2.5" rx="0" fill="#6b7280" />
+      <rect x="48" y="134" width="130" height="2.5" rx="0" fill="#9ca3af" />
+      <rect x="14" y="146" width="26" height="2.5" rx="0" fill="#6b7280" />
+      <rect x="48" y="146" width="64" height="3" rx="0" fill="#111827" />
+      <rect x="48" y="152" width="74" height="2.5" rx="0" fill="#6b7280" />
+      <rect x="14" y="168" width="34" height="4" rx="0" fill="#003399" />
+      <rect x="14" y="174" width="172" height="0.8" fill="#003399" />
+      {/* CEFR tablosu */}
+      <rect x="14" y="184" width="172" height="8" fill="#003399" />
+      <rect x="14" y="192" width="32" height="8" fill="#fff" stroke="#d1d5db" strokeWidth="0.3" />
+      <rect x="46" y="192" width="28" height="8" fill="#fff" stroke="#d1d5db" strokeWidth="0.3" />
+      <rect x="74" y="192" width="28" height="8" fill="#fff" stroke="#d1d5db" strokeWidth="0.3" />
+      <rect x="102" y="192" width="28" height="8" fill="#fff" stroke="#d1d5db" strokeWidth="0.3" />
+      <rect x="130" y="192" width="28" height="8" fill="#fff" stroke="#d1d5db" strokeWidth="0.3" />
+      <rect x="158" y="192" width="28" height="8" fill="#fff" stroke="#d1d5db" strokeWidth="0.3" />
+      <rect x="14" y="200" width="32" height="8" fill="#fff" stroke="#d1d5db" strokeWidth="0.3" />
+      <rect x="46" y="200" width="28" height="8" fill="#fff" stroke="#d1d5db" strokeWidth="0.3" />
+      <rect x="74" y="200" width="28" height="8" fill="#fff" stroke="#d1d5db" strokeWidth="0.3" />
+      <rect x="102" y="200" width="28" height="8" fill="#fff" stroke="#d1d5db" strokeWidth="0.3" />
+      <rect x="130" y="200" width="28" height="8" fill="#fff" stroke="#d1d5db" strokeWidth="0.3" />
+      <rect x="158" y="200" width="28" height="8" fill="#fff" stroke="#d1d5db" strokeWidth="0.3" />
+      <rect x="14" y="222" width="44" height="4" rx="0" fill="#003399" />
+      <rect x="14" y="228" width="172" height="0.8" fill="#003399" />
+      <rect x="14" y="236" width="170" height="2.5" rx="0" fill="#9ca3af" />
+      <rect x="14" y="242" width="140" height="2.5" rx="0" fill="#9ca3af" />
+    </svg>
   )
 }
 

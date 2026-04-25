@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import ResumePreview from '@/components/preview/ResumePreview'
 
@@ -6,19 +6,17 @@ import PDFExportButton from './PDFExportButton'
 import SaveButton from './SaveButton'
 import SyncStatusIndicator from './SyncStatusIndicator'
 
-// A4 sayfa 96dpi'da ~794×1123 px. Bu, ResumePreview içindeki
-// template'lerin fix genişliği (210mm).
+// A4 @ 96dpi — ResumePreview template'lerinin sabit genişliği 210mm'ye denk.
 const A4_WIDTH = 794
 const A4_HEIGHT = 1123
-const SIDE_PADDING = 24 // px — iki yan p-6 toplam = 48 (24×2)
+const SIDE_PADDING = 24
 
 export default function PreviewPanel() {
   const scrollRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(1)
+  const [contentHeight, setContentHeight] = useState(A4_HEIGHT)
 
-  // Container genişliğini gözlemleyip scale hesapla.
-  // Eğer container A4 genişliğini (+padding) sığdıramıyorsa küçült;
-  // sığdırabiliyorsa %100 göster (desktop).
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
@@ -27,6 +25,19 @@ export default function PreviewPanel() {
       const available = entry.contentRect.width - SIDE_PADDING * 2
       const next = Math.min(1, available / A4_WIDTH)
       setScale(Math.max(0.25, next))
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  // Content natural yüksekliğini izle; transform'un layout'a etkisi yok, bu
+  // yüzden scaled wrapper'ın height'ını içeriğe göre elle hesaplıyoruz.
+  useLayoutEffect(() => {
+    const el = contentRef.current
+    if (!el) return
+    const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return
+      setContentHeight(entry.contentRect.height)
     })
     observer.observe(el)
     return () => observer.disconnect()
@@ -53,23 +64,22 @@ export default function PreviewPanel() {
             paddingBottom: SIDE_PADDING,
           }}
         >
-          {/* Visual placeholder takes scaled box; inner element does real work */}
           <div
             style={{
               width: A4_WIDTH * scale,
-              height: A4_HEIGHT * scale,
+              height: contentHeight * scale,
               position: 'relative',
             }}
           >
             <div
+              ref={contentRef}
               style={{
-                width: A4_WIDTH,
-                height: A4_HEIGHT,
-                transform: `scale(${scale})`,
-                transformOrigin: 'top left',
                 position: 'absolute',
                 top: 0,
                 left: 0,
+                width: A4_WIDTH,
+                transform: `scale(${scale})`,
+                transformOrigin: 'top left',
               }}
             >
               <ResumePreview />

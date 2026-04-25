@@ -61,7 +61,7 @@ export default function InfographicTemplate({
 
   return (
     <div
-      className={`h-[297mm] w-[210mm] overflow-hidden bg-white ${fontClass} text-[11px] leading-snug text-gray-800 shadow-sm`}
+      className={`min-h-[297mm] w-[210mm] bg-white ${fontClass} text-[11px] leading-snug text-gray-800 shadow-sm`}
       style={
         {
           '--primary-color': theme.primaryColor,

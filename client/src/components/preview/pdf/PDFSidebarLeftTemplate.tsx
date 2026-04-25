@@ -37,18 +37,28 @@ function createStyles(
   text: string,
   sectionGap: number
 ) {
+  // 2+ sayfalarda main'in üst boşluğu. Sidebar absolute → 1. sayfada içerik
+  // var, 2+ sayfalarda fixed background layer kırmızı kolonu sağlıyor. Page
+  // flex-row değil normal akış: main marginLeft ile sidebar genişliği kadar
+  // offset alıyor. Aksi halde uzun sidebar main'i 2. sayfaya itiyordu.
+  const sidePadding = 18
+  const sidebarWidth = 185
+  const topBleed = sidePadding + 20
   return StyleSheet.create({
     page: {
       fontFamily,
       fontSize: 9,
       color: '#333333',
-      flexDirection: 'row',
       lineHeight: 1.4,
+      paddingTop: topBleed,
     },
     // Sidebar
     sidebar: {
-      width: 185,
-      padding: 18,
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: sidebarWidth,
+      padding: sidePadding,
       backgroundColor: primary,
       color: '#ffffff',
     },
@@ -119,8 +129,9 @@ function createStyles(
     },
     // Main
     main: {
-      flex: 1,
+      marginLeft: sidebarWidth,
       padding: 22,
+      marginTop: -topBleed,
     },
     sectionMain: {
       marginBottom: sectionGap,
@@ -248,8 +259,22 @@ export default function PDFSidebarLeftTemplate({
   return (
     <Document>
       <Page size="A4" style={styles.page}>
+        {/* Sidebar background — fixed ile her sayfada kenardan kenara kırmızı
+            kolon. Sidebar içeriği absolute ve sadece 1. sayfada; 2+ sayfalarda
+            bu layer kolonu görünür tutuyor. */}
+        <View
+          fixed
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            width: 185,
+            backgroundColor: primary,
+          }}
+        />
         {/* Sidebar */}
-        <View style={styles.sidebar} wrap={false}>
+        <View style={styles.sidebar}>
           {basics.photo && (
             <Image src={resolvePhotoUrl(basics.photo)} style={styles.photo} />
           )}
@@ -331,8 +356,8 @@ export default function PDFSidebarLeftTemplate({
         {/* Main */}
         <View style={styles.main}>
           {basics.summary && (
-            <View>
-              <Text style={styles.mainHeading} minPresenceAhead={40}>ÖZET</Text>
+            <View wrap={false}>
+              <Text style={styles.mainHeading}>ÖZET</Text>
               <Text style={styles.summary}>{basics.summary}</Text>
             </View>
           )}
@@ -346,168 +371,196 @@ export default function PDFSidebarLeftTemplate({
 
   function renderExperience(): ReactNode {
     if (work.length === 0) return null
-    return (
-      <View style={styles.sectionMain}>
-        <Text style={styles.mainHeading} minPresenceAhead={40}>DENEYİM</Text>
-        {work.map((item) => (
-          <View key={item.id} style={styles.itemBlock} wrap={false}>
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTitle}>
-                {item.position || 'Pozisyon'}
-                {item.company && (
-                  <Text style={styles.itemTitleMuted}>
-                    {' — '}
-                    {item.company}
-                  </Text>
-                )}
+    const renderItem = (item: (typeof work)[0]) => (
+      <View key={item.id} style={styles.itemBlock} wrap={false}>
+        <View style={styles.itemHeader}>
+          <Text style={styles.itemTitle}>
+            {item.position || 'Pozisyon'}
+            {item.company && (
+              <Text style={styles.itemTitleMuted}>
+                {' — '}
+                {item.company}
               </Text>
-              <Text style={styles.itemDate}>
-                {formatDateRange(item.startDate, item.endDate)}
-              </Text>
-            </View>
-            {item.summary && <Text style={styles.itemBody}>{item.summary}</Text>}
-            {item.highlights.some((h) => h.trim()) && (
-              <View style={styles.bulletList}>
-                {item.highlights
-                  .filter((h) => h.trim())
-                  .map((h, i) => (
-                    <Text key={i} style={styles.bullet}>
-                      • {h}
-                    </Text>
-                  ))}
-              </View>
             )}
+          </Text>
+          <Text style={styles.itemDate}>
+            {formatDateRange(item.startDate, item.endDate)}
+          </Text>
+        </View>
+        {item.summary && <Text style={styles.itemBody}>{item.summary}</Text>}
+        {item.highlights.some((h) => h.trim()) && (
+          <View style={styles.bulletList}>
+            {item.highlights
+              .filter((h) => h.trim())
+              .map((h, i) => (
+                <Text key={i} style={styles.bullet}>
+                  • {h}
+                </Text>
+              ))}
           </View>
-        ))}
+        )}
+      </View>
+    )
+    const [first, ...rest] = work
+    return (
+      <View style={styles.sectionMain} wrap={false}>
+        <View wrap={false}>
+          <Text style={styles.mainHeading}>DENEYİM</Text>
+          {renderItem(first)}
+        </View>
+        {rest.map(renderItem)}
       </View>
     )
   }
 
   function renderEducation(): ReactNode {
     if (education.length === 0) return null
+    const renderItem = (item: (typeof education)[0]) => (
+      <View key={item.id} style={styles.itemBlock} wrap={false}>
+        <View style={styles.itemHeader}>
+          <Text style={styles.itemTitle}>{item.institution || 'Okul'}</Text>
+          <Text style={styles.itemDate}>
+            {formatDateRange(item.startDate, item.endDate)}
+          </Text>
+        </View>
+        {(item.degree || item.field) && (
+          <Text style={styles.itemBody}>
+            {[item.degree, item.field].filter(Boolean).join(' — ')}
+          </Text>
+        )}
+      </View>
+    )
+    const [first, ...rest] = education
     return (
-      <View style={styles.sectionMain}>
-        <Text style={styles.mainHeading} minPresenceAhead={40}>EĞİTİM</Text>
-        {education.map((item) => (
-          <View key={item.id} style={styles.itemBlock} wrap={false}>
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTitle}>
-                {item.institution || 'Okul'}
-              </Text>
-              <Text style={styles.itemDate}>
-                {formatDateRange(item.startDate, item.endDate)}
-              </Text>
-            </View>
-            {(item.degree || item.field) && (
-              <Text style={styles.itemBody}>
-                {[item.degree, item.field].filter(Boolean).join(' — ')}
-              </Text>
-            )}
-          </View>
-        ))}
+      <View style={styles.sectionMain} wrap={false}>
+        <View wrap={false}>
+          <Text style={styles.mainHeading}>EĞİTİM</Text>
+          {renderItem(first)}
+        </View>
+        {rest.map(renderItem)}
       </View>
     )
   }
 
   function renderProjects(): ReactNode {
     if (projects.length === 0) return null
+    const renderItem = (item: (typeof projects)[0]) => (
+      <View key={item.id} style={styles.itemBlock} wrap={false}>
+        <View style={styles.itemHeader}>
+          <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
+          <Text style={styles.itemDate}>
+            {formatDateRange(item.startDate, item.endDate)}
+          </Text>
+        </View>
+        {item.description && (
+          <Text style={styles.itemBody}>{item.description}</Text>
+        )}
+        {item.url && <Text style={styles.urlText}>{item.url}</Text>}
+      </View>
+    )
+    const [first, ...rest] = projects
     return (
-      <View style={styles.sectionMain}>
-        <Text style={styles.mainHeading} minPresenceAhead={40}>PROJELER</Text>
-        {projects.map((item) => (
-          <View key={item.id} style={styles.itemBlock} wrap={false}>
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTitle}>{item.name || 'Proje'}</Text>
-              <Text style={styles.itemDate}>
-                {formatDateRange(item.startDate, item.endDate)}
-              </Text>
-            </View>
-            {item.description && (
-              <Text style={styles.itemBody}>{item.description}</Text>
-            )}
-            {item.url && <Text style={styles.urlText}>{item.url}</Text>}
-          </View>
-        ))}
+      <View style={styles.sectionMain} wrap={false}>
+        <View wrap={false}>
+          <Text style={styles.mainHeading}>PROJELER</Text>
+          {renderItem(first)}
+        </View>
+        {rest.map(renderItem)}
       </View>
     )
   }
 
   function renderCertificates(): ReactNode {
     if (certificates.length === 0) return null
-    return (
-      <View style={styles.sectionMain}>
-        <Text style={styles.mainHeading} minPresenceAhead={40}>SERTİFİKALAR</Text>
-        {certificates.map((item) => (
-          <View key={item.id} style={styles.itemBlock} wrap={false}>
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTitle}>
-                {item.name}
-                {item.issuer && (
-                  <Text style={styles.itemTitleMuted}>
-                    {' — '}
-                    {item.issuer}
-                  </Text>
-                )}
+    const renderItem = (item: (typeof certificates)[0]) => (
+      <View key={item.id} style={styles.itemBlock} wrap={false}>
+        <View style={styles.itemHeader}>
+          <Text style={styles.itemTitle}>
+            {item.name}
+            {item.issuer && (
+              <Text style={styles.itemTitleMuted}>
+                {' — '}
+                {item.issuer}
               </Text>
-              <Text style={styles.itemDate}>{formatMonth(item.date)}</Text>
-            </View>
-            {item.url && <Text style={styles.urlText}>{item.url}</Text>}
-          </View>
-        ))}
+            )}
+          </Text>
+          <Text style={styles.itemDate}>{formatMonth(item.date)}</Text>
+        </View>
+        {item.url && <Text style={styles.urlText}>{item.url}</Text>}
+      </View>
+    )
+    const [first, ...rest] = certificates
+    return (
+      <View style={styles.sectionMain} wrap={false}>
+        <View wrap={false}>
+          <Text style={styles.mainHeading}>SERTİFİKALAR</Text>
+          {renderItem(first)}
+        </View>
+        {rest.map(renderItem)}
       </View>
     )
   }
 
   function renderVolunteer(): ReactNode {
     if (volunteer.length === 0) return null
+    const renderItem = (item: (typeof volunteer)[0]) => (
+      <View key={item.id} style={styles.itemBlock} wrap={false}>
+        <View style={styles.itemHeader}>
+          <Text style={styles.itemTitle}>
+            {item.role || 'Rol'}
+            {item.organization && (
+              <Text style={styles.itemTitleMuted}>
+                {' — '}
+                {item.organization}
+              </Text>
+            )}
+          </Text>
+          <Text style={styles.itemDate}>
+            {formatDateRange(item.startDate, item.endDate)}
+          </Text>
+        </View>
+        {item.summary && <Text style={styles.itemBody}>{item.summary}</Text>}
+      </View>
+    )
+    const [first, ...rest] = volunteer
     return (
-      <View style={styles.sectionMain}>
-        <Text style={styles.mainHeading} minPresenceAhead={40}>GÖNÜLLÜLÜK</Text>
-        {volunteer.map((item) => (
-          <View key={item.id} style={styles.itemBlock} wrap={false}>
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTitle}>
-                {item.role || 'Rol'}
-                {item.organization && (
-                  <Text style={styles.itemTitleMuted}>
-                    {' — '}
-                    {item.organization}
-                  </Text>
-                )}
-              </Text>
-              <Text style={styles.itemDate}>
-                {formatDateRange(item.startDate, item.endDate)}
-              </Text>
-            </View>
-            {item.summary && <Text style={styles.itemBody}>{item.summary}</Text>}
-          </View>
-        ))}
+      <View style={styles.sectionMain} wrap={false}>
+        <View wrap={false}>
+          <Text style={styles.mainHeading}>GÖNÜLLÜLÜK</Text>
+          {renderItem(first)}
+        </View>
+        {rest.map(renderItem)}
       </View>
     )
   }
 
   function renderPublications(): ReactNode {
     if (publications.length === 0) return null
-    return (
-      <View style={styles.sectionMain}>
-        <Text style={styles.mainHeading} minPresenceAhead={40}>YAYINLAR</Text>
-        {publications.map((item) => (
-          <View key={item.id} style={styles.itemBlock} wrap={false}>
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTitle}>
-                {item.name}
-                {item.publisher && (
-                  <Text style={styles.itemTitleMuted}>
-                    {' — '}
-                    {item.publisher}
-                  </Text>
-                )}
+    const renderItem = (item: (typeof publications)[0]) => (
+      <View key={item.id} style={styles.itemBlock} wrap={false}>
+        <View style={styles.itemHeader}>
+          <Text style={styles.itemTitle}>
+            {item.name}
+            {item.publisher && (
+              <Text style={styles.itemTitleMuted}>
+                {' — '}
+                {item.publisher}
               </Text>
-              <Text style={styles.itemDate}>{formatMonth(item.date)}</Text>
-            </View>
-            {item.url && <Text style={styles.urlText}>{item.url}</Text>}
-          </View>
-        ))}
+            )}
+          </Text>
+          <Text style={styles.itemDate}>{formatMonth(item.date)}</Text>
+        </View>
+        {item.url && <Text style={styles.urlText}>{item.url}</Text>}
+      </View>
+    )
+    const [first, ...rest] = publications
+    return (
+      <View style={styles.sectionMain} wrap={false}>
+        <View wrap={false}>
+          <Text style={styles.mainHeading}>YAYINLAR</Text>
+          {renderItem(first)}
+        </View>
+        {rest.map(renderItem)}
       </View>
     )
   }
@@ -520,7 +573,7 @@ export default function PDFSidebarLeftTemplate({
           (section) =>
             section.title && (
               <View key={section.id} style={styles.sectionMain} wrap={false}>
-                <Text style={styles.mainHeading} minPresenceAhead={40}>
+                <Text style={styles.mainHeading}>
                   {section.title.toUpperCase()}
                 </Text>
                 {section.fields.map((f) => (

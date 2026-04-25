@@ -11,6 +11,7 @@ import ColorAccentTemplate from './ColorAccentTemplate'
 import ModernCleanTemplate from './ModernCleanTemplate'
 import TerminalTemplate from './TerminalTemplate'
 import InfographicTemplate from './InfographicTemplate'
+import EuropassTemplate from './EuropassTemplate'
 
 export { default as ClassicTemplate } from './ClassicTemplate'
 export { default as CreativeTemplate } from './CreativeTemplate'
@@ -21,6 +22,7 @@ export { default as ColorAccentTemplate } from './ColorAccentTemplate'
 export { default as ModernCleanTemplate } from './ModernCleanTemplate'
 export { default as TerminalTemplate } from './TerminalTemplate'
 export { default as InfographicTemplate } from './InfographicTemplate'
+export { default as EuropassTemplate } from './EuropassTemplate'
 
 export interface TemplateProps {
   resume: Resume
@@ -97,6 +99,13 @@ export const TEMPLATES: Record<TemplateId, TemplateMeta> = {
     description: 'Yetenek çubukları ve görsel özet — tasarımcı portföyü hissi.',
     ats: false,
     Component: InfographicTemplate,
+  },
+  europass: {
+    id: 'europass',
+    name: 'Europass',
+    description: 'AB standardı şablon — CEFR dil tablosu, ATS dostu, resmi başvurular için.',
+    ats: true,
+    Component: EuropassTemplate,
   },
 }
 

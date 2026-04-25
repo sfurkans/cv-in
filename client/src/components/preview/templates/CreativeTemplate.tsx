@@ -116,7 +116,7 @@ export default function CreativeTemplate({ resume }: CreativeTemplateProps) {
 
   return (
     <div
-      className={`flex h-[297mm] w-[210mm] overflow-hidden bg-white ${fontClass} text-[17px] leading-snug shadow-sm`}
+      className={`flex min-h-[297mm] w-[210mm] bg-white ${fontClass} text-[17px] leading-snug shadow-sm`}
       style={
         {
           '--primary-color': theme.primaryColor,
@@ -220,7 +220,7 @@ export default function CreativeTemplate({ resume }: CreativeTemplateProps) {
 
       {/* Sağ ana içerik */}
       <main
-        className={`flex-1 overflow-hidden ${spacing.mainPad}`}
+        className={`flex-1 ${spacing.mainPad}`}
         style={{ color: 'var(--text-color)' }}
       >
         {/* Summary */}

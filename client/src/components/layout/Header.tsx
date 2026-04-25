@@ -14,8 +14,6 @@ type NavItem = {
 }
 
 const navItems: NavItem[] = [
-  { path: '/', label: 'Ana Sayfa' },
-  { path: '/templates', label: 'Şablonlar' },
   { path: '/dashboard', label: "CV'lerim" },
 ]
 
@@ -32,7 +30,6 @@ export default function Header() {
   const [hidden, setHidden] = useState(false)
   const [manualHidden, setManualHidden] = useState(false)
 
-  const user = useAuthStore((s) => s.user)
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const logout = useAuthStore((s) => s.logout)
   const openAuthModal = useAuthModalStore((s) => s.openModal)
@@ -75,6 +72,8 @@ export default function Header() {
     setMenuOpen(false)
   }
 
+  if (isBuilder) return null
+
   return (
     <>
     <header
@@ -110,21 +109,6 @@ export default function Header() {
             </Link>
           </div>
 
-          <nav className="absolute inset-y-0 left-1/2 hidden -translate-x-1/2 items-center gap-12 md:flex lg:gap-20">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.path === '/'}
-                className={({ isActive }) =>
-                  cn(linkBase, isActive ? linkActive : linkInactive)
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-
           <div className="ml-auto flex flex-none items-center gap-5 lg:gap-7">
             {isBuilder && (
               <button
@@ -146,20 +130,26 @@ export default function Header() {
             <button
               type="button"
               onClick={handleNewResume}
-              className={cn(linkBase, linkInactive, 'hidden sm:inline-flex')}
+              className={cn(linkBase, linkInactive, 'hidden sm:inline-flex text-green-600')}
             >
               Yeni CV
             </button>
 
+            <NavLink
+              to="/dashboard"
+              className={({ isActive }) =>
+                cn(linkBase, isActive ? linkActive : linkInactive, 'hidden md:inline-flex')
+              }
+            >
+              CV'lerim
+            </NavLink>
+
             {isAuthenticated ? (
               <div className="hidden items-center gap-5 md:flex lg:gap-7">
-                <span className="text-base font-medium text-primary/70">
-                  {user?.email}
-                </span>
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className={cn(linkBase, linkInactive)}
+                  className={cn(linkBase, linkInactive, 'text-red-600')}
                   title="Çıkış yap"
                 >
                   Çıkış
@@ -190,6 +180,14 @@ export default function Header() {
       {menuOpen && (
         <nav className="md:hidden">
           <div className="flex w-full flex-col items-start gap-5 px-4 py-5 sm:px-6">
+            <button
+              type="button"
+              onClick={handleNewResume}
+              className={cn(linkBase, linkInactive, 'text-green-600')}
+            >
+              Yeni CV
+            </button>
+
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
@@ -207,18 +205,13 @@ export default function Header() {
             <span aria-hidden className="h-px w-12 bg-primary/20" />
 
             {isAuthenticated ? (
-              <>
-                <div className="px-1 text-base font-medium text-primary/70">
-                  {user?.email}
-                </div>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className={cn(linkBase, linkInactive)}
-                >
-                  Çıkış Yap
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className={cn(linkBase, linkInactive, 'text-red-600')}
+              >
+                Çıkış Yap
+              </button>
             ) : (
               <button
                 type="button"
@@ -228,14 +221,6 @@ export default function Header() {
                 Giriş Yap
               </button>
             )}
-
-            <button
-              type="button"
-              onClick={handleNewResume}
-              className={cn(linkBase, linkInactive, 'sm:hidden')}
-            >
-              Yeni CV
-            </button>
           </div>
         </nav>
       )}

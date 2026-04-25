@@ -60,8 +60,10 @@ export function useBuilderRouteSync(
   }, [urlId])
 
   // store remoteId → URL
+  // Yalnızca "yeni CV" case'inde (urlId yoksa) URL'i store'un remoteId'sine
+  // yaz. urlId varsa URL kaynak doğrudur; effect1 store'u URL'e uydurur.
   useEffect(() => {
-    if (remoteId && remoteId !== urlId) {
+    if (!urlId && remoteId) {
       navigate(`/builder/${remoteId}`, { replace: true })
     }
   }, [remoteId, urlId, navigate])

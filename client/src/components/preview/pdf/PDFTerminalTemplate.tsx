@@ -23,6 +23,7 @@ import {
   type SectionId,
 } from '@/types/resume'
 
+import PDFSection from './PDFSection'
 import './fonts'
 
 interface PDFTerminalTemplateProps {
@@ -231,7 +232,7 @@ export default function PDFTerminalTemplate({
         ))}
 
         {basics.summary && (
-          <View style={styles.section}>
+          <View style={styles.section} wrap={false}>
             <SectionHeading>özet</SectionHeading>
             <Text style={{ color: FG, fontSize: 9.5 }}>{basics.summary}</Text>
           </View>
@@ -249,11 +250,12 @@ export default function PDFTerminalTemplate({
   )
 
   function renderExperience(): ReactNode {
-    if (work.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>experience</SectionHeading>
-        {work.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={work}
+        heading={<SectionHeading>experience</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={styles.itemBlock} wrap={false}>
             <Text style={styles.itemRow}>
               <Text style={styles.comment}>
@@ -285,17 +287,18 @@ export default function PDFTerminalTemplate({
               </View>
             )}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderEducation(): ReactNode {
-    if (education.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>education</SectionHeading>
-        {education.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={education}
+        heading={<SectionHeading>education</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={styles.itemBlock} wrap={false}>
             <Text style={styles.itemRow}>
               <Text style={styles.comment}>
@@ -311,17 +314,18 @@ export default function PDFTerminalTemplate({
               </Text>
             )}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderSkills(): ReactNode {
-    if (visibleSkills.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>skills</SectionHeading>
-        {visibleSkills.map((skill) => (
+      <PDFSection
+        style={styles.section}
+        items={visibleSkills}
+        heading={<SectionHeading>skills</SectionHeading>}
+        renderItem={(skill) => (
           <View key={skill.id} style={{ marginBottom: 3 }} wrap={false}>
             {(skill.name || skill.level) && (
               <Text style={styles.skillLine}>
@@ -350,17 +354,18 @@ export default function PDFTerminalTemplate({
               <Text style={styles.dim}>]</Text>
             </Text>
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderProjects(): ReactNode {
-    if (projects.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>projects</SectionHeading>
-        {projects.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={projects}
+        heading={<SectionHeading>projects</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={styles.itemBlock} wrap={false}>
             <Text style={styles.itemRow}>
               <Text style={styles.comment}>
@@ -379,15 +384,15 @@ export default function PDFTerminalTemplate({
               </Text>
             )}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderLanguages(): ReactNode {
     if (languages.length === 0) return null
     return (
-      <View style={styles.section}>
+      <View style={styles.section} wrap={false}>
         <SectionHeading>languages</SectionHeading>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           {languages.map((l) => (
@@ -410,11 +415,12 @@ export default function PDFTerminalTemplate({
   }
 
   function renderCertificates(): ReactNode {
-    if (certificates.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>certifications</SectionHeading>
-        {certificates.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={certificates}
+        heading={<SectionHeading>certifications</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={{ marginBottom: 2 }} wrap={false}>
             <Text style={styles.bulletRow}>
               <Text style={styles.accent}>→ </Text>
@@ -441,17 +447,18 @@ export default function PDFTerminalTemplate({
               </Text>
             )}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderVolunteer(): ReactNode {
-    if (volunteer.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>volunteering</SectionHeading>
-        {volunteer.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={volunteer}
+        heading={<SectionHeading>volunteering</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={styles.itemBlock} wrap={false}>
             <Text style={styles.itemRow}>
               <Text style={styles.comment}>
@@ -471,17 +478,18 @@ export default function PDFTerminalTemplate({
               <Text style={styles.itemSummary}>{item.summary}</Text>
             )}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 
   function renderPublications(): ReactNode {
-    if (publications.length === 0) return null
     return (
-      <View style={styles.section}>
-        <SectionHeading>publications</SectionHeading>
-        {publications.map((item) => (
+      <PDFSection
+        style={styles.section}
+        items={publications}
+        heading={<SectionHeading>publications</SectionHeading>}
+        renderItem={(item) => (
           <View key={item.id} style={{ marginBottom: 2 }} wrap={false}>
             <Text style={styles.bulletRow}>
               <Text style={styles.accent}>→ </Text>
@@ -508,8 +516,8 @@ export default function PDFTerminalTemplate({
               </Text>
             )}
           </View>
-        ))}
-      </View>
+        )}
+      />
     )
   }
 

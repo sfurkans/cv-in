@@ -73,7 +73,7 @@ export default function ModernCleanTemplate({
 
   return (
     <div
-      className={`h-[297mm] w-[210mm] overflow-hidden bg-white ${pad} ${fontClass} text-[11px] leading-relaxed text-gray-700 shadow-sm`}
+      className={`min-h-[297mm] w-[210mm] bg-white ${pad} ${fontClass} text-[11px] leading-relaxed text-gray-700 shadow-sm`}
       style={
         {
           '--primary-color': theme.primaryColor,

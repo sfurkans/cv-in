@@ -83,7 +83,7 @@ export default function TerminalTemplate({ resume }: TerminalTemplateProps) {
 
   return (
     <div
-      className={`h-[297mm] w-[210mm] overflow-hidden font-mono text-[10.5px] leading-[1.55] shadow-sm ${pad}`}
+      className={`min-h-[297mm] w-[210mm] font-mono text-[10.5px] leading-[1.55] shadow-sm ${pad}`}
       style={
         {
           backgroundColor: BG,

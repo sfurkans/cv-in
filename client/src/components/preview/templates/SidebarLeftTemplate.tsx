@@ -59,7 +59,7 @@ export default function SidebarLeftTemplate({ resume }: SidebarLeftTemplateProps
 
   return (
     <div
-      className={`flex h-[297mm] w-[210mm] overflow-hidden bg-white ${fontClass} text-[10.5px] leading-snug text-gray-800 shadow-sm`}
+      className={`flex min-h-[297mm] w-[210mm] bg-white ${fontClass} text-[10.5px] leading-snug text-gray-800 shadow-sm`}
       style={
         {
           '--primary-color': theme.primaryColor,

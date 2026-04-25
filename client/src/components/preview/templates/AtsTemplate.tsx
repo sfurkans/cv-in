@@ -59,7 +59,7 @@ export default function AtsTemplate({ resume }: AtsTemplateProps) {
 
   return (
     <div
-      className={`h-[297mm] w-[210mm] overflow-hidden bg-white ${wrapperPadding} ${fontClass} text-[11px] leading-relaxed text-black shadow-sm`}
+      className={`min-h-[297mm] w-[210mm] bg-white ${wrapperPadding} ${fontClass} text-[11px] leading-relaxed text-black shadow-sm`}
     >
       {/* Header — metin only */}
       <header className={sectionGap}>

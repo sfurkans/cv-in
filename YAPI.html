@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cv-İn — Proje Yapısı ve Dosya Rehberi</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface-2: #1c2128;
+    --border: #30363d;
+    --border-subtle: #21262d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #a78bfa;
+    --accent-2: #5eead4;
+    --code-bg: rgba(110, 118, 129, 0.18);
+    --code-text: #ffa657;
+    --folder: #79c0ff;
+    --file: #c9d1d9;
+    --test: #d2a8ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 15px;
+  }
+  .wrap {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 40px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  header.site {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  header.site h1 {
+    font-size: 2.4rem;
+    color: transparent;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  header.site p {
+    color: var(--muted);
+    font-size: 1.05rem;
+  }
+  header.site .links {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .nav-link {
+    display: inline-block;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .nav-link:hover {
+    background: var(--surface);
+    border-color: var(--accent);
+  }
+  aside.toc {
+    position: sticky;
+    top: 24px;
+    align-self: start;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+  aside.toc h2 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  aside.toc ul { list-style: none; }
+  aside.toc ul ul { padding-left: 12px; margin-top: 4px; border-left: 1px solid var(--border-subtle); }
+  aside.toc a {
+    display: block;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.88rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-bottom: 2px;
+    transition: all 0.15s;
+  }
+  aside.toc a:hover { color: var(--text); background: var(--surface); }
+  aside.toc a.group { color: var(--text); font-weight: 500; }
+  main.content { min-width: 0; }
+  section.group {
+    margin-bottom: 48px;
+    scroll-margin-top: 20px;
+  }
+  section.group > h2 {
+    font-size: 1.7rem;
+    color: var(--accent);
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  section.group > .lead {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+  }
+  details.dir {
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+  details.dir:hover { border-color: var(--border); }
+  details.dir[open] {
+    background: var(--surface-2);
+    border-color: var(--border);
+  }
+  details.dir > summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--folder);
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.95rem;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  details.dir > summary::before {
+    content: "▸";
+    display: inline-block;
+    color: var(--muted);
+    transition: transform 0.2s;
+    font-size: 0.8rem;
+  }
+  details.dir[open] > summary::before { transform: rotate(90deg); }
+  details.dir > summary .count {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 0.8rem;
+    font-family: inherit;
+  }
+  details.dir > summary .desc {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 0.85rem;
+    font-family: -apple-system, system-ui, sans-serif;
+    margin-left: auto;
+  }
+  details.dir > .body { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border-subtle); }
+  ul.files { list-style: none; }
+  ul.files li {
+    padding: 8px 0 8px 18px;
+    position: relative;
+    border-bottom: 1px dashed var(--border-subtle);
+    display: grid;
+    grid-template-columns: minmax(180px, 260px) 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  ul.files li:last-child { border-bottom: none; }
+  ul.files li::before {
+    content: "•";
+    position: absolute;
+    left: 4px;
+    top: 8px;
+    color: var(--accent);
+  }
+  ul.files .fname {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.88rem;
+    color: var(--file);
+    word-break: break-all;
+  }
+  ul.files .fname.test { color: var(--test); }
+  ul.files .fname .badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
+    background: rgba(210, 168, 255, 0.15);
+    color: var(--test);
+    border: 1px solid rgba(210, 168, 255, 0.3);
+    font-family: inherit;
+    vertical-align: 1px;
+  }
+  ul.files .fdesc {
+    color: var(--text);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+  ul.files .fdesc code {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85em;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .stat .num {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat .label {
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  details.tree-box {
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    transition: border-color 0.2s;
+  }
+  details.tree-box:hover { border-color: var(--border); }
+  details.tree-box[open] {
+    background: var(--surface-2);
+    border-color: var(--border);
+  }
+  details.tree-box > summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--folder);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.92rem;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  details.tree-box > summary::before {
+    content: "▸";
+    display: inline-block;
+    color: var(--muted);
+    transition: transform 0.2s;
+    font-size: 0.8rem;
+  }
+  details.tree-box[open] > summary::before { transform: rotate(90deg); }
+  details.tree-box > summary .hint {
+    margin-left: auto;
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 0.8rem;
+    font-family: -apple-system, system-ui, sans-serif;
+  }
+  pre.tree {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border-subtle);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: var(--file);
+    white-space: pre;
+    overflow-x: auto;
+  }
+  pre.tree .d { color: var(--folder); font-weight: 500; }
+  pre.tree .c { color: var(--muted); font-style: italic; }
+  pre.tree .t { color: var(--test); }
+  .legend {
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .legend .item { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+  footer.site {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding-top: 32px;
+    margin-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  @media (max-width: 900px) {
+    .wrap { grid-template-columns: 1fr; }
+    aside.toc { position: static; max-height: none; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+    ul.files li { grid-template-columns: 1fr; gap: 4px; }
+    ul.files .fdesc { padding-left: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="site">
+  <h1>Cv-İn Proje Yapısı</h1>
+  <p>Tüm dosyaların ne işe yaradığına dair Türkçe rehber</p>
+  <div class="links">
+    <a class="nav-link" href="PLAN.html">Yapım Aşamaları</a>
+    <a class="nav-link" href="TANITIM.html">Proje Tanıtımı</a>
+    <a class="nav-link" href="README.md">README</a>
+    <a class="nav-link" href="CHANGELOG.md">CHANGELOG</a>
+    <a class="nav-link" href="TODO.md">TODO</a>
+  </div>
+</header>
+
+<aside class="toc">
+  <h2>İçindekiler</h2>
+  <ul>
+    <li><a href="#tree" class="group">Proje Ağacı</a></li>
+    <li><a href="#root" class="group">Kök Dizin</a></li>
+    <li>
+      <a href="#client" class="group">Frontend (client/)</a>
+      <ul>
+        <li><a href="#client-config">Config</a></li>
+        <li><a href="#client-public">public/</a></li>
+        <li><a href="#client-src-root">src/ kökü</a></li>
+        <li><a href="#client-components">components/</a></li>
+        <li><a href="#client-pages">pages/</a></li>
+        <li><a href="#client-hooks">hooks/</a></li>
+        <li><a href="#client-lib">lib/</a></li>
+        <li><a href="#client-schemas">schemas/</a></li>
+        <li><a href="#client-store">store/</a></li>
+        <li><a href="#client-types">types/</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#server" class="group">Backend (server/)</a>
+      <ul>
+        <li><a href="#server-config">Config</a></li>
+        <li><a href="#server-prisma">prisma/</a></li>
+        <li><a href="#server-src">src/</a></li>
+        <li><a href="#server-test">test/</a></li>
+      </ul>
+    </li>
+  </ul>
+</aside>
+
+<main class="content">
+
+<div class="stats">
+  <div class="stat"><div class="num">~170</div><div class="label">Kaynak Dosya</div></div>
+  <div class="stat"><div class="num">9</div><div class="label">CV Şablonu</div></div>
+  <div class="stat"><div class="num">5</div><div class="label">Sayfa</div></div>
+  <div class="stat"><div class="num">245</div><div class="label">Test</div></div>
+  <div class="stat"><div class="num">3</div><div class="label">Zustand Store</div></div>
+</div>
+
+<details class="tree-box" open id="tree">
+  <summary>Proje Ağacı <span class="hint">(tıkla göster / gizle)</span></summary>
+<pre class="tree">
+cv-builder/
+│
+├── README.md
+├── CHANGELOG.md
+├── TODO.md
+├── PLAN.html
+├── TANITIM.html
+├── YAPI.html
+├── .gitignore
+│
+├── <span class="d">client/</span>                                  <span class="c"># React + Vite frontend</span>
+│   ├── index.html
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── tsconfig.app.json
+│   ├── tsconfig.node.json
+│   ├── vite.config.ts
+│   ├── eslint.config.js
+│   ├── .prettierrc
+│   ├── components.json                      <span class="c"># shadcn config</span>
+│   ├── .env.example
+│   ├── .gitignore
+│   │
+│   ├── <span class="d">public/</span>
+│   │   ├── favicon.svg
+│   │   ├── icons.svg
+│   │   └── <span class="d">fonts/</span>
+│   │       ├── NotoSans-Regular.ttf
+│   │       ├── NotoSans-Bold.ttf
+│   │       ├── NotoSansMono-Regular.ttf
+│   │       ├── NotoSansMono-Bold.ttf
+│   │       ├── NotoSerif-Regular.ttf
+│   │       └── NotoSerif-Bold.ttf
+│   │
+│   └── <span class="d">src/</span>
+│       ├── App.tsx
+│       ├── main.tsx
+│       ├── index.css
+│       │
+│       ├── <span class="d">components/</span>
+│       │   ├── ErrorBoundary.tsx
+│       │   ├── OfflineBanner.tsx
+│       │   ├── ResumeMiniPreview.tsx
+│       │   ├── Toaster.tsx
+│       │   │
+│       │   ├── <span class="d">auth/</span>
+│       │   │   ├── AuthModal.tsx
+│       │   │   ├── <span class="t">AuthModal.test.tsx</span>
+│       │   │   ├── GlobalAuthModal.tsx
+│       │   │   ├── LoginForm.tsx
+│       │   │   └── RegisterForm.tsx
+│       │   │
+│       │   ├── <span class="d">brand/</span>
+│       │   │   └── Logo.tsx
+│       │   │
+│       │   ├── <span class="d">builder/</span>
+│       │   │   ├── BuilderMobileNav.tsx
+│       │   │   ├── BuilderSidebar.tsx
+│       │   │   ├── FormPanel.tsx
+│       │   │   ├── PDFExportButton.tsx
+│       │   │   ├── PreviewPanel.tsx
+│       │   │   ├── SaveButton.tsx
+│       │   │   ├── SyncStatusIndicator.tsx
+│       │   │   │
+│       │   │   ├── <span class="d">design/</span>
+│       │   │   │   ├── DesignPanel.tsx
+│       │   │   │   ├── JsonImportExport.tsx
+│       │   │   │   ├── TemplateSelector.tsx
+│       │   │   │   └── ThemePicker.tsx
+│       │   │   │
+│       │   │   ├── <span class="d">dnd/</span>
+│       │   │   │   ├── SortableItem.tsx
+│       │   │   │   └── SortableList.tsx
+│       │   │   │
+│       │   │   └── <span class="d">forms/</span>
+│       │   │       ├── PersonalInfoForm.tsx
+│       │   │       ├── ExperienceForm.tsx
+│       │   │       ├── EducationForm.tsx
+│       │   │       ├── SkillsForm.tsx
+│       │   │       ├── ProjectsForm.tsx
+│       │   │       ├── LanguagesForm.tsx
+│       │   │       ├── CertificatesForm.tsx
+│       │   │       ├── VolunteerForm.tsx
+│       │   │       ├── PublicationsForm.tsx
+│       │   │       ├── CustomSectionsForm.tsx
+│       │   │       ├── PhotoUpload.tsx
+│       │   │       └── SocialLinksInput.tsx
+│       │   │
+│       │   ├── <span class="d">layout/</span>
+│       │   │   ├── Layout.tsx
+│       │   │   ├── Header.tsx
+│       │   │   └── Footer.tsx
+│       │   │
+│       │   ├── <span class="d">preview/</span>
+│       │   │   ├── ResumePreview.tsx
+│       │   │   │
+│       │   │   ├── <span class="d">templates/</span>               <span class="c"># HTML/Tailwind canlı preview</span>
+│       │   │   │   ├── index.ts
+│       │   │   │   ├── ClassicTemplate.tsx
+│       │   │   │   ├── ModernTemplate.tsx
+│       │   │   │   ├── CreativeTemplate.tsx
+│       │   │   │   ├── SidebarLeftTemplate.tsx
+│       │   │   │   ├── AtsTemplate.tsx
+│       │   │   │   ├── ColorAccentTemplate.tsx
+│       │   │   │   ├── ModernCleanTemplate.tsx
+│       │   │   │   ├── TerminalTemplate.tsx
+│       │   │   │   ├── InfographicTemplate.tsx
+│       │   │   │   └── TemplateThumbnail.tsx
+│       │   │   │
+│       │   │   └── <span class="d">pdf/</span>                     <span class="c"># @react-pdf export</span>
+│       │   │       ├── index.ts
+│       │   │       ├── fonts.ts
+│       │   │       ├── PDFClassicTemplate.tsx
+│       │   │       ├── PDFModernTemplate.tsx
+│       │   │       ├── PDFCreativeTemplate.tsx
+│       │   │       ├── PDFSidebarLeftTemplate.tsx
+│       │   │       ├── PDFAtsTemplate.tsx
+│       │   │       ├── PDFColorAccentTemplate.tsx
+│       │   │       ├── PDFModernCleanTemplate.tsx
+│       │   │       ├── PDFTerminalTemplate.tsx
+│       │   │       └── PDFInfographicTemplate.tsx
+│       │   │
+│       │   └── <span class="d">ui/</span>                           <span class="c"># shadcn primitives</span>
+│       │       ├── button.tsx
+│       │       ├── input.tsx
+│       │       ├── label.tsx
+│       │       ├── textarea.tsx
+│       │       ├── card.tsx
+│       │       └── badge.tsx
+│       │
+│       ├── <span class="d">hooks/</span>
+│       │   ├── useAuthBootstrap.ts
+│       │   ├── useAutosave.ts
+│       │   ├── useBuilderRouteSync.ts
+│       │   ├── useOnlineStatus.ts
+│       │   ├── <span class="t">useOnlineStatus.test.ts</span>
+│       │   └── useResumeValidation.ts
+│       │
+│       ├── <span class="d">lib/</span>
+│       │   ├── apiClient.ts
+│       │   ├── authToken.ts
+│       │   ├── jsonIO.ts
+│       │   ├── <span class="t">jsonIO.test.ts</span>
+│       │   ├── photoUrl.ts
+│       │   ├── <span class="t">photoUrl.test.ts</span>
+│       │   ├── resumeFormat.ts
+│       │   ├── sampleResume.ts
+│       │   ├── sectionCompletion.ts
+│       │   ├── slugify.ts
+│       │   ├── sync.ts
+│       │   ├── <span class="t">sync.test.ts</span>
+│       │   ├── templateStyles.ts
+│       │   ├── toast.ts
+│       │   ├── <span class="t">toast.test.ts</span>
+│       │   ├── trUpper.ts
+│       │   ├── utils.ts
+│       │   ├── validateResume.ts
+│       │   ├── <span class="t">validateResume.test.ts</span>
+│       │   │
+│       │   └── <span class="d">api/</span>
+│       │       ├── auth.ts
+│       │       ├── resumes.ts
+│       │       ├── schemas.ts
+│       │       └── <span class="t">schemas.test.ts</span>
+│       │
+│       ├── <span class="d">pages/</span>
+│       │   ├── Home.tsx
+│       │   ├── Builder.tsx
+│       │   ├── Dashboard.tsx
+│       │   ├── Templates.tsx
+│       │   └── NotFound.tsx
+│       │
+│       ├── <span class="d">schemas/</span>                         <span class="c"># Zod form şemaları</span>
+│       │   ├── index.ts
+│       │   ├── common.ts
+│       │   ├── basicsSchema.ts
+│       │   ├── <span class="t">basicsSchema.test.ts</span>
+│       │   ├── workSchema.ts
+│       │   ├── educationSchema.ts
+│       │   ├── skillSchema.ts
+│       │   ├── projectSchema.ts
+│       │   ├── languageSchema.ts
+│       │   ├── certificateSchema.ts
+│       │   ├── volunteerSchema.ts
+│       │   ├── publicationSchema.ts
+│       │   ├── customSectionSchema.ts
+│       │   └── <span class="t">sections.test.ts</span>
+│       │
+│       ├── <span class="d">store/</span>                           <span class="c"># Zustand</span>
+│       │   ├── resumeStore.ts
+│       │   ├── <span class="t">resumeStore.test.ts</span>
+│       │   ├── authStore.ts
+│       │   ├── <span class="t">authStore.test.ts</span>
+│       │   └── authModalStore.ts
+│       │
+│       ├── <span class="d">test/</span>
+│       │   └── <span class="t">setup.ts</span>
+│       │
+│       └── <span class="d">types/</span>
+│           ├── resume.ts
+│           └── auth.ts
+│
+└── <span class="d">server/</span>                                  <span class="c"># Express + Prisma backend</span>
+    ├── package.json
+    ├── tsconfig.json
+    ├── prisma.config.ts
+    ├── vitest.config.ts
+    ├── .env
+    ├── .env.example
+    ├── .env.test
+    ├── .gitignore
+    │
+    ├── <span class="d">prisma/</span>
+    │   ├── schema.prisma
+    │   └── <span class="d">migrations/</span>
+    │       ├── migration_lock.toml
+    │       ├── <span class="d">20260414124526_init/</span>
+    │       │   └── migration.sql
+    │       └── <span class="d">20260421091146_add_user_auth/</span>
+    │           └── migration.sql
+    │
+    ├── <span class="d">scripts/</span>
+    │   └── seed-furkan-cv.json
+    │
+    ├── <span class="d">src/</span>
+    │   ├── server.ts                        <span class="c"># entry point (listen)</span>
+    │   ├── app.ts                           <span class="c"># Express factory + middleware zinciri</span>
+    │   │
+    │   ├── <span class="d">config/</span>
+    │   │   └── env.ts
+    │   │
+    │   ├── <span class="d">controllers/</span>
+    │   │   ├── authController.ts
+    │   │   └── resumeController.ts
+    │   │
+    │   ├── <span class="d">services/</span>
+    │   │   ├── authService.ts
+    │   │   └── resumeService.ts
+    │   │
+    │   ├── <span class="d">routes/</span>
+    │   │   ├── health.ts
+    │   │   ├── auth.ts
+    │   │   └── resumes.ts
+    │   │
+    │   ├── <span class="d">middleware/</span>
+    │   │   ├── error.ts
+    │   │   ├── requireAuth.ts
+    │   │   ├── upload.ts
+    │   │   └── validate.ts
+    │   │
+    │   ├── <span class="d">schemas/</span>
+    │   │   ├── auth.ts
+    │   │   └── resume.ts
+    │   │
+    │   └── <span class="d">lib/</span>
+    │       ├── auth.ts                      <span class="c"># bcrypt + JWT</span>
+    │       └── prisma.ts
+    │
+    └── <span class="d">test/</span>
+        ├── <span class="t">setup.ts</span>
+        ├── <span class="t">helpers.ts</span>
+        ├── <span class="t">auth.test.ts</span>
+        ├── <span class="t">resumes.test.ts</span>
+        └── <span class="t">upload.test.ts</span>
+</pre>
+</details>
+
+<div class="legend">
+  <span class="item"><span class="swatch" style="background:var(--folder)"></span> klasör</span>
+  <span class="item"><span class="swatch" style="background:var(--file)"></span> kaynak dosya</span>
+  <span class="item"><span class="swatch" style="background:var(--test)"></span> test dosyası</span>
+  <span class="item"><span class="swatch" style="background:var(--code-text)"></span> kod / path</span>
+</div>
+
+<!-- ================================================================= -->
+<section class="group" id="root">
+  <h2>Kök Dizin</h2>
+  <p class="lead">Proje kökünde sadece dokümantasyon ve konfigürasyon dosyaları var. Gerçek kod <code>client/</code> ve <code>server/</code> alt projelerinde.</p>
+
+  <details class="dir" open>
+    <summary>cv-builder/ <span class="count">(6 dosya)</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname">README.md</span><span class="fdesc">Proje tanıtımı — özellikler, stack, kurulum adımları, env tablosu, proje yapısı, komutlar.</span></li>
+        <li><span class="fname">CHANGELOG.md</span><span class="fdesc">Phase bazlı değişiklik günlüğü (<code>Keep a Changelog</code> formatı). Versiyon yerine Phase 0 → 12 + polish.</span></li>
+        <li><span class="fname">TODO.md</span><span class="fdesc">Backlog: 25 madde, 5 kategori (güvenlik, fonksiyonel, kod kalitesi, tip/veri, UX). Yeni iş yapınca buradaki maddeyi işaretlersin.</span></li>
+        <li><span class="fname">PLAN.html</span><span class="fdesc">Orijinal 10 phase'lik yapım rehberi. Projenin nasıl başlatılıp geliştirildiğinin tarihsel belgesi.</span></li>
+        <li><span class="fname">TANITIM.html</span><span class="fdesc">Proje tanıtım sayfası (ürün özellikleri + ekran görüntüleri odaklı).</span></li>
+        <li><span class="fname">.gitignore</span><span class="fdesc">Git'in izlemeyeceği dosyalar (node_modules, dist, .env, uploads, .claude).</span></li>
+      </ul>
+    </div>
+  </details>
+</section>
+
+<!-- ================================================================= -->
+<section class="group" id="client">
+  <h2>Frontend — client/</h2>
+  <p class="lead">React 19 + Vite + TypeScript + Tailwind v4 + shadcn/ui + Zustand tabanlı SPA. Tüm UI, state yönetimi, form'lar, CV şablonları, PDF üretimi burada.</p>
+
+  <!-- Config -->
+  <details class="dir" open id="client-config">
+    <summary>client/ <span class="count">(11 config)</span> <span class="desc">kök-level ayarlar</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname">package.json</span><span class="fdesc">Frontend bağımlılıkları (React 19, Vite 8, Tailwind 4, Zustand, react-hook-form, Zod, react-pdf, dnd-kit, axios, Sentry, lucide) + npm script'leri.</span></li>
+        <li><span class="fname">tsconfig.json</span><span class="fdesc">Kök TypeScript config — <code>tsconfig.app.json</code> ve <code>tsconfig.node.json</code>'a referans verir.</span></li>
+        <li><span class="fname">tsconfig.app.json</span><span class="fdesc">Uygulama kodu için TS ayarları (strict, <code>@/*</code> path alias, ES2022 target, React JSX).</span></li>
+        <li><span class="fname">tsconfig.node.json</span><span class="fdesc">Vite config dosyaları için ayrı TS config (Node env).</span></li>
+        <li><span class="fname">vite.config.ts</span><span class="fdesc">Vite kurulumu: React plugin, Tailwind plugin, <code>@/</code> → <code>./src</code> alias, Vitest setup.</span></li>
+        <li><span class="fname">eslint.config.js</span><span class="fdesc">ESLint flat config — TypeScript + React Hooks + Prettier entegrasyonu.</span></li>
+        <li><span class="fname">.prettierrc</span><span class="fdesc">Prettier format kuralları (semi false, single quote, 2 space).</span></li>
+        <li><span class="fname">components.json</span><span class="fdesc">shadcn/ui config — component oluştururken nereye yazılacağını söyler (<code>components/ui</code>).</span></li>
+        <li><span class="fname">index.html</span><span class="fdesc">SPA giriş HTML. Meta tags (SEO, Open Graph, Twitter Card), favicon, <code>&lt;div id="root"&gt;</code> + <code>main.tsx</code> script.</span></li>
+        <li><span class="fname">.env.example</span><span class="fdesc">Env şablonu: <code>VITE_API_URL</code> (default <code>localhost:4000/api</code>), <code>VITE_SENTRY_DSN</code> (opsiyonel).</span></li>
+        <li><span class="fname">.gitignore</span><span class="fdesc">Client'a özel ignore — node_modules, dist, .env local.</span></li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- public -->
+  <details class="dir" open id="client-public">
+    <summary>client/public/ <span class="count">(8 asset)</span> <span class="desc">statik dosyalar</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname">favicon.svg</span><span class="fdesc">Tarayıcı sekmesinde görünen Cv-İn marka ikonu.</span></li>
+        <li><span class="fname">icons.svg</span><span class="fdesc">SVG sprite dosyası (şu an aktif kullanım yok, lucide-react kullanılıyor).</span></li>
+        <li><span class="fname">fonts/NotoSans-Regular.ttf</span><span class="fdesc">PDF export için Noto Sans normal — Türkçe karakterleri (ş, ğ, ü, ö, ç, ı) destekler.</span></li>
+        <li><span class="fname">fonts/NotoSans-Bold.ttf</span><span class="fdesc">Noto Sans kalın varyant, PDF'te bold başlıklar için.</span></li>
+        <li><span class="fname">fonts/NotoSansMono-Regular.ttf</span><span class="fdesc">Terminal template'inin monospace PDF rendering'i için.</span></li>
+        <li><span class="fname">fonts/NotoSansMono-Bold.ttf</span><span class="fdesc">Mono bold varyant.</span></li>
+        <li><span class="fname">fonts/NotoSerif-Regular.ttf</span><span class="fdesc">Serif fontFamily seçilen theme'ler için.</span></li>
+        <li><span class="fname">fonts/NotoSerif-Bold.ttf</span><span class="fdesc">Serif bold varyant.</span></li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- src root -->
+  <details class="dir" open id="client-src-root">
+    <summary>client/src/ <span class="count">(3 giriş dosyası)</span> <span class="desc">uygulama bootstrap'i</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname">main.tsx</span><span class="fdesc"><strong>Gerçek giriş noktası.</strong> React DOM render, <code>StrictMode</code>, <code>ErrorBoundary</code> sargısı ve <code>Sentry.init()</code> (DSN varsa) burada. Uygulama buradan başlar.</span></li>
+        <li><span class="fname">App.tsx</span><span class="fdesc">React Router kurulumu. <code>Builder</code>, <code>Dashboard</code>, <code>Templates</code> sayfaları <code>React.lazy</code> ile ayrı chunk'larda (Home sayfa yükü 2.2MB → 232KB). <code>useAuthBootstrap</code> ile session restore.</span></li>
+        <li><span class="fname">index.css</span><span class="fdesc">Tailwind v4 import + shadcn color tokens + <code>:root</code> ve <code>.dark</code> CSS değişkenleri (primary=violet, accent=teal) + <code>bg-brand-gradient</code> ve <code>text-brand-gradient</code> utility'leri.</span></li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- components -->
+  <section id="client-components">
+  <details class="dir" open>
+    <summary>client/src/components/ <span class="count">(56 dosya)</span> <span class="desc">tüm UI bileşenleri</span></summary>
+    <div class="body">
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:4px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">Kök seviye</h4>
+      <ul class="files">
+        <li><span class="fname">ErrorBoundary.tsx</span><span class="fdesc">Class component. Tüm uygulamayı sarar, uncaught React hatalarını yakalar, <code>Sentry.captureException</code>'a bildirir, kullanıcıya "Tekrar Dene / Ana Sayfa" fallback UI gösterir.</span></li>
+        <li><span class="fname">OfflineBanner.tsx</span><span class="fdesc">Internet bağlantısı koptuğunda ekranın üstünde "Offline" banner'ı gösterir. <code>useOnlineStatus</code> hook'unu dinler.</span></li>
+        <li><span class="fname">ResumeMiniPreview.tsx</span><span class="fdesc">Dashboard kartlarında gösterilen küçük CV önizlemesi. A4 template'i <code>scale</code> ile thumbnail boyuta indirip iframe'sız render eder.</span></li>
+        <li><span class="fname">Toaster.tsx</span><span class="fdesc"><code>toast</code> store'unu dinleyip ekranın sağ altında mesaj kartları gösterir. Auto-dismiss + icon (success/error/info).</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">auth/ — kimlik doğrulama UI'sı</h4>
+      <ul class="files">
+        <li><span class="fname">AuthModal.tsx</span><span class="fdesc">Tablı modal (Giriş / Kayıt). ESC tuşu + dışına tıklayınca kapanır, <code>body</code> scroll lock.</span></li>
+        <li><span class="fname test">AuthModal.test.tsx <span class="badge">test</span></span><span class="fdesc">9 integration testi — tab değiştirme, başarılı register/login, şifre uyuşmazlığı, API hataları.</span></li>
+        <li><span class="fname">GlobalAuthModal.tsx</span><span class="fdesc"><code>Layout</code> seviyesinde mount edilir. <code>authModalStore</code>'u dinleyip modal açık mı kapalı mı karar verir — böylece herhangi bir component <code>openAuthModal()</code> çağırarak modal'ı tetikleyebilir.</span></li>
+        <li><span class="fname">LoginForm.tsx</span><span class="fdesc">Giriş formu: react-hook-form + Zod. <code>authStore.login</code> çağırır, başarıda <code>onSuccess</code> callback'i tetikler (örn: otomatik kaydet).</span></li>
+        <li><span class="fname">RegisterForm.tsx</span><span class="fdesc">Kayıt formu — email, şifre, şifre tekrarı. Min 8 karakter kontrolü, eşleşme kontrolü client'ta.</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">brand/ — marka görselleri</h4>
+      <ul class="files">
+        <li><span class="fname">Logo.tsx</span><span class="fdesc">Cv-İn logosu — iki export: <code>LogoMark</code> (sadece ikon, Header'da kullanılır) ve kelime mark.</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">builder/ — CV düzenleme ekranı</h4>
+      <ul class="files">
+        <li><span class="fname">BuilderMobileNav.tsx</span><span class="fdesc">Mobile'de section chip'leri (yatay kaydırılabilir nav). Desktop sidebar'ın mobil karşılığı.</span></li>
+        <li><span class="fname">BuilderSidebar.tsx</span><span class="fdesc">Desktop sol sidebar. Section'ları listeler, <code>@dnd-kit</code> ile sürükle-bırak sıralama, her section için hata sayısı + tamamlık yüzdesi progress bar.</span></li>
+        <li><span class="fname">FormPanel.tsx</span><span class="fdesc">Orta panel. <code>activeSection</code> prop'una göre ilgili form component'ini render eder (dispatcher).</span></li>
+        <li><span class="fname">PDFExportButton.tsx</span><span class="fdesc">react-pdf <code>PDFDownloadLink</code> ile PDF indirme butonu. Template'e göre <code>PDF_TEMPLATES</code>'ten component seçer, dosya adını CV sahibinin isminden üretir.</span></li>
+        <li><span class="fname">PreviewPanel.tsx</span><span class="fdesc">Sağ panel. 794×1123px (A4 @ 96dpi) canvas, container genişliğine göre <code>scale</code> hesaplar. Üstte SyncStatusIndicator + SaveButton + PDFExportButton.</span></li>
+        <li><span class="fname">SaveButton.tsx</span><span class="fdesc">Manuel kaydet butonu. Auth yoksa AuthModal açar, başarı sonrası otomatik kaydet callback'i ile devam eder.</span></li>
+        <li><span class="fname">SyncStatusIndicator.tsx</span><span class="fdesc">"Kaydedildi / Kaydediliyor / Hata" etiket + relatif zaman ("3 saniye önce").</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">builder/design/ — tasarım paneli</h4>
+      <ul class="files">
+        <li><span class="fname">DesignPanel.tsx</span><span class="fdesc">"Tasarım" tab'ının konteyner'ı. İçinde TemplateSelector, ThemePicker, JsonImportExport bulunur.</span></li>
+        <li><span class="fname">TemplateSelector.tsx</span><span class="fdesc">9 template'i grid halinde gösterir (<code>TemplateThumbnail</code> kullanır). Tıklayınca <code>setTemplateId</code> çağırır.</span></li>
+        <li><span class="fname">ThemePicker.tsx</span><span class="fdesc">Renk paleti preset'leri, native color picker, fontFamily (sans/serif/mono), spacing (compact/normal/relaxed).</span></li>
+        <li><span class="fname">JsonImportExport.tsx</span><span class="fdesc">CV'yi JSON olarak indir + JSON dosyasından yükle. Yüklerken Zod ile validate eder.</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">builder/dnd/ — sürükle-bırak helper'ları</h4>
+      <ul class="files">
+        <li><span class="fname">SortableItem.tsx</span><span class="fdesc">@dnd-kit <code>useSortable</code> sarmalı. İçine verilen children'ı sürüklenebilir yapar, drag handle'ı ayrı prop.</span></li>
+        <li><span class="fname">SortableList.tsx</span><span class="fdesc"><code>DndContext</code> + <code>SortableContext</code> sarmalı. Liste için drag-end event'ini yönetir, <code>onReorder</code> callback'i çağırır.</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">builder/forms/ — CV form'ları (12 bölüm)</h4>
+      <ul class="files">
+        <li><span class="fname">PersonalInfoForm.tsx</span><span class="fdesc">Ad, ünvan (label), email, telefon, özet, fotoğraf, sosyal linkler. CV'nin en üstü.</span></li>
+        <li><span class="fname">ExperienceForm.tsx</span><span class="fdesc">Dinamik iş deneyimi listesi (şirket, pozisyon, tarihler, özet, highlights). Ekle/sil/sürükle.</span></li>
+        <li><span class="fname">EducationForm.tsx</span><span class="fdesc">Eğitim listesi (kurum, derece, alan, tarihler).</span></li>
+        <li><span class="fname">SkillsForm.tsx</span><span class="fdesc">Yetenek kategorisi + chip tarzı anahtar kelime input (Enter'a basınca chip oluşur).</span></li>
+        <li><span class="fname">ProjectsForm.tsx</span><span class="fdesc">Proje listesi (ad, açıklama, URL, tarihler).</span></li>
+        <li><span class="fname">LanguagesForm.tsx</span><span class="fdesc">Dil + yeterlilik seviyesi (A1/A2/B1/B2/C1/C2 veya başlangıç/orta/akıcı).</span></li>
+        <li><span class="fname">CertificatesForm.tsx</span><span class="fdesc">Sertifika (ad, veren kurum, tarih, doğrulama URL'si).</span></li>
+        <li><span class="fname">VolunteerForm.tsx</span><span class="fdesc">Gönüllülük (kuruluş, rol, tarihler, özet).</span></li>
+        <li><span class="fname">PublicationsForm.tsx</span><span class="fdesc">Yayın (ad, yayıncı, tarih, URL).</span></li>
+        <li><span class="fname">CustomSectionsForm.tsx</span><span class="fdesc">Kullanıcı tanımlı bölümler. Başlık + istediği kadar <code>label/value</code> field'ı (Hobiler, Ödüller, Referanslar için kullanılabilir).</span></li>
+        <li><span class="fname">PhotoUpload.tsx</span><span class="fdesc">Fotoğraf yükleme — file picker, önizleme, backend'e <code>FormData</code> POST. Guest mode'da base64 fallback.</span></li>
+        <li><span class="fname">SocialLinksInput.tsx</span><span class="fdesc">LinkedIn/GitHub/Website vb. için dinamik input listesi. Platform dropdown + URL alanı.</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">layout/ — sayfa iskeleti</h4>
+      <ul class="files">
+        <li><span class="fname">Layout.tsx</span><span class="fdesc">Tüm sayfaları saran root layout: OfflineBanner → Header → <code>&lt;Outlet /&gt;</code> → Footer → Toaster → GlobalAuthModal.</span></li>
+        <li><span class="fname">Header.tsx</span><span class="fdesc">Sticky top nav (glass efekt, violet bg). Logo + sayfalar + Yeni CV butonu + login/logout. Scroll-down'da gizlenir, builder'da manuel toggle butonu var.</span></li>
+        <li><span class="fname">Footer.tsx</span><span class="fdesc">Alt bilgi — marka + copyright.</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">preview/ — canlı önizleme</h4>
+      <ul class="files">
+        <li><span class="fname">ResumePreview.tsx</span><span class="fdesc">Store'dan resume'u okur. <code>resume.templateId</code>'ye göre <code>TEMPLATES</code>'ten Component seçip <code>resume</code> prop'u ile render eder.</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">preview/templates/ — HTML şablonlar (live preview)</h4>
+      <ul class="files">
+        <li><span class="fname">index.ts</span><span class="fdesc"><code>TEMPLATES</code> map — 9 template'in <code>{id, name, description, Component}</code> metadata'sı. Dispatcher olarak iş görür.</span></li>
+        <li><span class="fname">ClassicTemplate.tsx</span><span class="fdesc">Tek sütun, sade, ATS dostu varsayılan. "İlk template" (Phase 3'te yazılmıştı).</span></li>
+        <li><span class="fname">ModernTemplate.tsx</span><span class="fdesc">Timeline çizgili, büyük tipografi, sade.</span></li>
+        <li><span class="fname">CreativeTemplate.tsx</span><span class="fdesc">İki sütun, renkli sidebar, çarpıcı görsel kimlik.</span></li>
+        <li><span class="fname">SidebarLeftTemplate.tsx</span><span class="fdesc">Sabit 72mm sol sidebar (foto + iletişim + yetenek), sağ kolon iş deneyimi. Phase 12c.</span></li>
+        <li><span class="fname">AtsTemplate.tsx</span><span class="fdesc">Renksiz, grafiksiz, pure text. ATS taramalarına optimize — theme.primaryColor'ı yok sayar, foto/grafik render etmez. Phase 12d.</span></li>
+        <li><span class="fname">ColorAccentTemplate.tsx</span><span class="fdesc">Üst renk bandı + accent çizgiler. Tek marka rengi dominant. Phase 12e.</span></li>
+        <li><span class="fname">ModernCleanTemplate.tsx</span><span class="fdesc">Ferah whitespace, büyük sans-serif başlıklar. Phase 12f.</span></li>
+        <li><span class="fname">TerminalTemplate.tsx</span><span class="fdesc">Dark bg + monospace + shell prompt estetiği. theme.fontFamily'i yok sayar (her zaman mono). Phase 12g.</span></li>
+        <li><span class="fname">InfographicTemplate.tsx</span><span class="fdesc">Skill bar + timeline + gradient header. Tasarımcı portföyü hissi. Phase 12h.</span></li>
+        <li><span class="fname">TemplateThumbnail.tsx</span><span class="fdesc">Her template için placeholder SVG thumbnail — <code>TemplateSelector</code>'da gösterilir.</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">preview/pdf/ — PDF şablonlar (@react-pdf)</h4>
+      <ul class="files">
+        <li><span class="fname">index.ts</span><span class="fdesc"><code>PDF_TEMPLATES</code> map. Her HTML template'in PDF karşılığının dispatcher'ı.</span></li>
+        <li><span class="fname">fonts.ts</span><span class="fdesc"><code>Font.register()</code> ile Noto Sans/Mono/Serif TTF dosyalarını react-pdf'e kaydeder. Türkçe karakter sorununun çözümü.</span></li>
+        <li><span class="fname">PDFClassicTemplate.tsx</span><span class="fdesc">Classic'in PDF karşılığı — HTML değil, react-pdf primitive'leri (<code>Document/Page/View/Text</code>).</span></li>
+        <li><span class="fname">PDFModernTemplate.tsx</span><span class="fdesc">Modern'in PDF karşılığı.</span></li>
+        <li><span class="fname">PDFCreativeTemplate.tsx</span><span class="fdesc">Creative'in PDF karşılığı.</span></li>
+        <li><span class="fname">PDFSidebarLeftTemplate.tsx</span><span class="fdesc">SidebarLeft PDF.</span></li>
+        <li><span class="fname">PDFAtsTemplate.tsx</span><span class="fdesc">ATS PDF.</span></li>
+        <li><span class="fname">PDFColorAccentTemplate.tsx</span><span class="fdesc">ColorAccent PDF.</span></li>
+        <li><span class="fname">PDFModernCleanTemplate.tsx</span><span class="fdesc">ModernClean PDF.</span></li>
+        <li><span class="fname">PDFTerminalTemplate.tsx</span><span class="fdesc">Terminal PDF.</span></li>
+        <li><span class="fname">PDFInfographicTemplate.tsx</span><span class="fdesc">Infographic PDF.</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">ui/ — shadcn primitive'leri</h4>
+      <ul class="files">
+        <li><span class="fname">button.tsx</span><span class="fdesc">shadcn Button — cva ile variant sistemi (default/outline/ghost/destructive/link) + size (sm/default/lg/icon).</span></li>
+        <li><span class="fname">input.tsx</span><span class="fdesc">Text input (Tailwind focus ring + border).</span></li>
+        <li><span class="fname">label.tsx</span><span class="fdesc">Form label (<code>htmlFor</code> için).</span></li>
+        <li><span class="fname">textarea.tsx</span><span class="fdesc">Çok satırlı text input (summary gibi).</span></li>
+        <li><span class="fname">card.tsx</span><span class="fdesc">Kart container (Header/Content/Footer parçalı).</span></li>
+        <li><span class="fname">badge.tsx</span><span class="fdesc">Küçük etiket (status, kategori).</span></li>
+      </ul>
+
+    </div>
+  </details>
+  </section>
+
+  <!-- pages -->
+  <details class="dir" open id="client-pages">
+    <summary>client/src/pages/ <span class="count">(5 sayfa)</span> <span class="desc">route'lara bağlı sayfalar</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname">Home.tsx</span><span class="fdesc">Landing page. 3 CTA (Boş CV / Örnek CV / Kayıt Ol) + özellikler section (<code>Eye, Layers, Download...</code> ikonlarıyla) + alt CTA. Brand-gradient wave SVG dekorları. <strong>Eager loaded</strong> (ilk açılan sayfa).</span></li>
+        <li><span class="fname">Builder.tsx</span><span class="fdesc">Ana editor — desktop'ta 3 sütun (sidebar / form / preview), mobile'de 2 tab (İçerik / Önizleme). <code>useAutosave</code> + <code>useBuilderRouteSync</code> hook'ları burada. <strong>Lazy loaded</strong>.</span></li>
+        <li><span class="fname">Dashboard.tsx</span><span class="fdesc">Kullanıcının CV kartları. Grid layout, her kartta mini preview + stat chip'leri + Düzenle/Sil. Giriş yoksa GuestGate gösterilir. <strong>Lazy loaded</strong>.</span></li>
+        <li><span class="fname">Templates.tsx</span><span class="fdesc">9 template'in galerisi. <strong>Lazy loaded</strong>.</span></li>
+        <li><span class="fname">NotFound.tsx</span><span class="fdesc">Bilinmeyen URL'ler için 404 sayfası — brand-gradient icon + "Ana Sayfaya Dön" + "Yeni CV Oluştur" CTA'ları.</span></li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- hooks -->
+  <details class="dir" open id="client-hooks">
+    <summary>client/src/hooks/ <span class="count">(6 hook)</span> <span class="desc">özel React hook'ları</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname">useAuthBootstrap.ts</span><span class="fdesc">App mount'ta bir kez çalışır. <code>/auth/me</code> çağırıp session'ı geri yükler. 401 custom event dinleyicisi (otomatik logout + toast).</span></li>
+        <li><span class="fname">useAutosave.ts</span><span class="fdesc">Resume değiştikçe 2 saniye debounce ile <code>saveResume</code>'u tetikler. İlk mount'ta remoteId yoksa ve anlamlı içerik varsa migration push (guest → auth geçişi).</span></li>
+        <li><span class="fname">useBuilderRouteSync.ts</span><span class="fdesc"><code>/builder/:id</code> URL ile store <code>remoteId</code>'sini çift yönlü senkronize eder. URL'de id değişirse backend'den fetch, store'da oluşursa URL'i replace eder.</span></li>
+        <li><span class="fname">useOnlineStatus.ts</span><span class="fdesc"><code>navigator.onLine</code> değerini reactive state'e bağlar. <code>online</code>/<code>offline</code> event'lerini dinler.</span></li>
+        <li><span class="fname test">useOnlineStatus.test.ts <span class="badge">test</span></span><span class="fdesc">Hook testi — event tetikleyip state değişimini doğrular.</span></li>
+        <li><span class="fname">useResumeValidation.ts</span><span class="fdesc">Her section için Zod schema'sını çalıştırır, hata sayısını döndürür. Sidebar'daki kırmızı badge'i beslenir.</span></li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- lib -->
+  <details class="dir" open id="client-lib">
+    <summary>client/src/lib/ <span class="count">(23 dosya)</span> <span class="desc">yardımcı fonksiyonlar + API client</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname">apiClient.ts</span><span class="fdesc">Axios instance. <code>baseURL</code> (env'den), request interceptor (Bearer token ekler), response interceptor (401'de <code>auth:unauthorized</code> custom event dispatch).</span></li>
+        <li><span class="fname">authToken.ts</span><span class="fdesc">localStorage'da JWT saklama helper'ları — <code>getToken</code>, <code>setToken</code>, <code>clearToken</code>.</span></li>
+        <li><span class="fname">jsonIO.ts</span><span class="fdesc">CV'yi JSON dosyası olarak indir + yüklenen dosyayı parse edip store'a aktarma. <code>Blob</code> + <code>URL.createObjectURL</code> kullanır.</span></li>
+        <li><span class="fname test">jsonIO.test.ts <span class="badge">test</span></span><span class="fdesc">18 test — round-trip serialization, eksik alan tolerasyonu.</span></li>
+        <li><span class="fname">photoUrl.ts</span><span class="fdesc"><code>resolvePhotoUrl(resume)</code> helper — base64/http/uploads path kombinasyonlarını tek URL'e çevirir (template'lerin fotoğrafı göstermesi için).</span></li>
+        <li><span class="fname test">photoUrl.test.ts <span class="badge">test</span></span><span class="fdesc">6 test — farklı input formatlarının doğru dönüşümü.</span></li>
+        <li><span class="fname">resumeFormat.ts</span><span class="fdesc">Shared helper'lar: <code>formatMonth</code>, <code>formatDateRange</code>, <code>SKILL_LEVEL_LABELS</code>, <code>SKILL_LEVEL_PERCENT</code>, <code>LANGUAGE_PROFICIENCY_PERCENT</code>, <code>monthsBetween</code>. Phase 12'deki yeni 6 template kullanır.</span></li>
+        <li><span class="fname">sampleResume.ts</span><span class="fdesc">"Örnek CV ile başla" butonunun yüklediği dolu örnek CV nesnesi.</span></li>
+        <li><span class="fname">sectionCompletion.ts</span><span class="fdesc">Her bölüm için tamamlık yüzdesini hesaplar (BuilderSidebar'daki progress bar'ı besler).</span></li>
+        <li><span class="fname">slugify.ts</span><span class="fdesc">Türkçe karakterleri ASCII'leştirip URL-safe slug'a çevirir (PDF dosya adı için).</span></li>
+        <li><span class="fname">sync.ts</span><span class="fdesc"><code>saveResume()</code> orkestrasyonu — concurrent save kilidi (aynı anda iki istek atılamaz), pending kuyruğu, offline queue + <code>online</code> event'inde otomatik flush.</span></li>
+        <li><span class="fname test">sync.test.ts <span class="badge">test</span></span><span class="fdesc">13 test — create vs update, concurrent save, offline fallback.</span></li>
+        <li><span class="fname">templateStyles.ts</span><span class="fdesc"><code>FONT_CLASS</code>, <code>PDF_FONT_MAP</code>, <code>WEB_SPACING</code>, <code>PDF_SPACING</code> map'leri. Template'ler theme'e göre class/style seçer.</span></li>
+        <li><span class="fname">toast.ts</span><span class="fdesc">Toast Zustand store — <code>toast.success()</code>, <code>toast.error()</code>, <code>toast.info()</code> action'ları. Auto-dismiss timer.</span></li>
+        <li><span class="fname test">toast.test.ts <span class="badge">test</span></span><span class="fdesc">6 test — add/remove/auto-dismiss.</span></li>
+        <li><span class="fname">trUpper.ts</span><span class="fdesc">Türkçe-güvenli upper-case (<code>i → İ</code>, <code>ı → I</code>). JS default <code>toUpperCase</code> bunu yanlış yapıyor.</span></li>
+        <li><span class="fname">utils.ts</span><span class="fdesc"><code>cn(...)</code> helper — clsx + tailwind-merge. Conditional className birleştirme.</span></li>
+        <li><span class="fname">validateResume.ts</span><span class="fdesc">Tüm section'ların Zod validation'ını tek yerden çalıştırır. Her section için hata sayısı ve ilk hata mesajını döner.</span></li>
+        <li><span class="fname test">validateResume.test.ts <span class="badge">test</span></span><span class="fdesc">17 test.</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">lib/api/ — backend çağrıları</h4>
+      <ul class="files">
+        <li><span class="fname">auth.ts</span><span class="fdesc"><code>registerUser</code>, <code>loginUser</code>, <code>getMe</code>. <code>authStore</code>'un alt katmanı — gerçek HTTP çağrıları burada.</span></li>
+        <li><span class="fname">resumes.ts</span><span class="fdesc"><code>list</code>, <code>get</code>, <code>create</code>, <code>update</code>, <code>delete</code>, <code>uploadPhoto</code>. Frontend <code>Resume</code> ↔ Backend <code>{templateId, theme, content}</code> dönüşümü (<code>toBody</code>/<code>fromApi</code>).</span></li>
+        <li><span class="fname">schemas.ts</span><span class="fdesc">Backend response'larının Zod şemaları (loose — sadece yapı doğrulama, min/max yok).</span></li>
+        <li><span class="fname test">schemas.test.ts <span class="badge">test</span></span><span class="fdesc">10 test.</span></li>
+      </ul>
+
+    </div>
+  </details>
+
+  <!-- schemas -->
+  <details class="dir" id="client-schemas">
+    <summary>client/src/schemas/ <span class="count">(14 dosya)</span> <span class="desc">form validation şemaları (Zod)</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname">index.ts</span><span class="fdesc">Tüm schema'ları re-export eder (tek import noktası).</span></li>
+        <li><span class="fname">common.ts</span><span class="fdesc">Paylaşılan yardımcı schema'lar — <code>trimmedString</code>, <code>optionalUrl</code>, <code>dateString</code> (YYYY-MM formatı), vb.</span></li>
+        <li><span class="fname">basicsSchema.ts</span><span class="fdesc">PersonalInfo formu için — ad, ünvan, email, telefon, özet, fotoğraf, sosyal linkler.</span></li>
+        <li><span class="fname test">basicsSchema.test.ts <span class="badge">test</span></span><span class="fdesc">22 test — her alanın valid/invalid senaryosu.</span></li>
+        <li><span class="fname">workSchema.ts</span><span class="fdesc">İş deneyimi (şirket, pozisyon zorunlu; tarih format).</span></li>
+        <li><span class="fname">educationSchema.ts</span><span class="fdesc">Eğitim (kurum, derece, alan, tarihler).</span></li>
+        <li><span class="fname">skillSchema.ts</span><span class="fdesc">Yetenek (ad + level enum + keywords array).</span></li>
+        <li><span class="fname">projectSchema.ts</span><span class="fdesc">Proje.</span></li>
+        <li><span class="fname">languageSchema.ts</span><span class="fdesc">Dil + yeterlilik.</span></li>
+        <li><span class="fname">certificateSchema.ts</span><span class="fdesc">Sertifika.</span></li>
+        <li><span class="fname">volunteerSchema.ts</span><span class="fdesc">Gönüllülük.</span></li>
+        <li><span class="fname">publicationSchema.ts</span><span class="fdesc">Yayın.</span></li>
+        <li><span class="fname">customSectionSchema.ts</span><span class="fdesc">Custom section + field.</span></li>
+        <li><span class="fname test">sections.test.ts <span class="badge">test</span></span><span class="fdesc">38 test — tüm section schema'larının parse davranışı.</span></li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- store -->
+  <details class="dir" open id="client-store">
+    <summary>client/src/store/ <span class="count">(5 dosya)</span> <span class="desc">Zustand state yönetimi</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname">resumeStore.ts</span><span class="fdesc"><strong>Ana store.</strong> <code>resume</code> (tüm CV içeriği) + <code>remoteId</code> + <code>syncStatus</code> + <code>lastSyncedAt</code> + 50+ action (CRUD for her section + drag reorder). persist middleware v5 migration. <code>localStorage</code>'a otomatik yazar.</span></li>
+        <li><span class="fname test">resumeStore.test.ts <span class="badge">test</span></span><span class="fdesc">46+ test — tüm action'lar + persist davranışı + migration.</span></li>
+        <li><span class="fname">authStore.ts</span><span class="fdesc"><code>user</code>, <code>isAuthenticated</code>, <code>isRestoring</code> + <code>register</code>/<code>login</code>/<code>logout</code>/<code>restoreSession</code>. Logout'ta resumeStore sync state'ini de sıfırlar.</span></li>
+        <li><span class="fname test">authStore.test.ts <span class="badge">test</span></span><span class="fdesc">7 test.</span></li>
+        <li><span class="fname">authModalStore.ts</span><span class="fdesc">Global modal state — <code>isOpen</code>, <code>defaultTab</code>, <code>onSuccessCallback</code>. Herhangi bir component <code>openModal('login', () =&gt; ...)</code> çağırarak modal tetikleyebilir.</span></li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- types -->
+  <details class="dir" id="client-types">
+    <summary>client/src/types/ <span class="count">(2 dosya)</span> <span class="desc">TypeScript tip tanımları</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname">resume.ts</span><span class="fdesc"><strong>Veri modelinin kalbi.</strong> <code>Resume</code>, <code>Basics</code>, <code>Work</code>, <code>Education</code>, <code>Skill</code>, <code>Project</code>, <code>Language</code>, <code>Certificate</code>, <code>Volunteer</code>, <code>Publication</code>, <code>CustomSection/Field</code>, <code>TemplateId</code> (9 literal), <code>Theme</code>, <code>SectionId</code>, <code>DEFAULT_SECTION_ORDER</code>.</span></li>
+        <li><span class="fname">auth.ts</span><span class="fdesc"><code>AuthUser</code> tipi — <code>{id, email, createdAt}</code>.</span></li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="dir" id="client-test">
+    <summary>client/src/test/ <span class="count">(1 dosya)</span> <span class="desc">test setup</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname test">setup.ts <span class="badge">test</span></span><span class="fdesc">Vitest setup — <code>@testing-library/jest-dom</code> matcher'larını import eder. <code>vitest.config.ts</code>'ten çağrılır.</span></li>
+      </ul>
+    </div>
+  </details>
+
+</section>
+
+<!-- ================================================================= -->
+<section class="group" id="server">
+  <h2>Backend — server/</h2>
+  <p class="lead">Node.js + Express 4 + TypeScript + Prisma 7 + PostgreSQL. REST API + auth + photo upload. <code>tsx</code> ile dev ve prod'da çalıştırılır (ESM resolution sorunu için).</p>
+
+  <!-- server config -->
+  <details class="dir" open id="server-config">
+    <summary>server/ <span class="count">(8 config)</span> <span class="desc">backend kök ayarları</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname">package.json</span><span class="fdesc">Backend bağımlılıkları: express, @prisma/client, prisma, bcrypt, jsonwebtoken, multer, cors, morgan, zod, @sentry/node + dev dep'ler.</span></li>
+        <li><span class="fname">tsconfig.json</span><span class="fdesc">Backend TS config — ESM modül, NodeNext resolution, strict, outDir <code>dist/</code>.</span></li>
+        <li><span class="fname">prisma.config.ts</span><span class="fdesc">Prisma CLI config — schema path, generator ayarları.</span></li>
+        <li><span class="fname">vitest.config.ts</span><span class="fdesc">Test config — <code>test/setup.ts</code>'i include eder, <code>.env.test</code>'i yükler.</span></li>
+        <li><span class="fname">.env</span><span class="fdesc">Lokal dev env (git ignored). DATABASE_URL, JWT_SECRET, PORT, CORS_ORIGIN, SENTRY_DSN.</span></li>
+        <li><span class="fname">.env.example</span><span class="fdesc">Env şablonu — commit edilir, değerler placeholder.</span></li>
+        <li><span class="fname">.env.test</span><span class="fdesc">Test için özel env — ayrı test veritabanı (<code>cv_builder_test</code>), 4001 port.</span></li>
+        <li><span class="fname">.gitignore</span><span class="fdesc">Backend'e özel — node_modules, dist, .env, uploads/.</span></li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- prisma -->
+  <details class="dir" open id="server-prisma">
+    <summary>server/prisma/ <span class="count">(4 dosya)</span> <span class="desc">veritabanı şeması ve migration'lar</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname">schema.prisma</span><span class="fdesc"><strong>DB şeması.</strong> İki tablo: <code>User</code> (id, email unique, passwordHash, timestamps + resumes relation) ve <code>Resume</code> (id, userId FK cascade, templateId, theme Json?, content Json, photoUrl?, shareSlug? unique, timestamps).</span></li>
+        <li><span class="fname">migrations/20260414124526_init/migration.sql</span><span class="fdesc">İlk migration — Resume tablosunu oluşturur (o zaman ownerUuid ile).</span></li>
+        <li><span class="fname">migrations/20260421091146_add_user_auth/migration.sql</span><span class="fdesc">Phase 11 migration — User tablosu ekler, <code>ownerUuid</code> sütununu drop eder, <code>userId</code> FK ekler.</span></li>
+        <li><span class="fname">migrations/migration_lock.toml</span><span class="fdesc">Provider lock (<code>postgresql</code>). Farklı DB provider'ına geçişi engeller.</span></li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="dir" id="server-scripts">
+    <summary>server/scripts/ <span class="count">(1 dosya)</span> <span class="desc">utility scripts</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname">seed-furkan-cv.json</span><span class="fdesc">Manual seed verisi. Aktif kullanımda değil — ileride seed script yazılırsa kullanılabilir.</span></li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- server src -->
+  <details class="dir" open id="server-src">
+    <summary>server/src/ <span class="count">(17 dosya)</span> <span class="desc">tüm backend kodu</span></summary>
+    <div class="body">
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:4px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">Giriş noktaları</h4>
+      <ul class="files">
+        <li><span class="fname">server.ts</span><span class="fdesc"><strong>Entry point.</strong> <code>createApp()</code>'i çağırır, <code>env.PORT</code>'ta listen eder. Prod ve dev'de <code>tsx src/server.ts</code> ile çalışır.</span></li>
+        <li><span class="fname">app.ts</span><span class="fdesc"><strong>Express factory.</strong> Middleware zinciri: CORS (dev'de tüm localhost portları) → JSON parser (5MB limit) → morgan logger → <code>/uploads</code> static → Sentry init (DSN varsa) → router'lar (<code>/health</code>, <code>/api/auth</code>, <code>/api/resumes</code>) → 404 handler → Sentry error handler → error handler.</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">config/ — environment</h4>
+      <ul class="files">
+        <li><span class="fname">config/env.ts</span><span class="fdesc">Zod ile env validation. <code>NODE_ENV</code>, <code>PORT</code> (default 4000), <code>DATABASE_URL</code>, <code>CORS_ORIGIN</code>, <code>JWT_SECRET</code> (min 32), <code>SENTRY_DSN</code> (opsiyonel). Invalid env'de <code>process.exit(1)</code>.</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">controllers/ — HTTP handler'lar</h4>
+      <ul class="files">
+        <li><span class="fname">controllers/authController.ts</span><span class="fdesc"><code>register</code> (201 + user + token), <code>login</code> (200 + user + token), <code>me</code> (200 + user). <code>authService</code>'i sarar, response'u <code>{data}</code> envelope'ına alır.</span></li>
+        <li><span class="fname">controllers/resumeController.ts</span><span class="fdesc"><code>list</code>, <code>get</code>, <code>create</code>, <code>update</code>, <code>remove</code>, <code>uploadPhoto</code>. <code>req.userId</code>'yi <code>requireAuth</code>'tan alır, <code>resumeService</code>'i çağırır.</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">services/ — iş mantığı</h4>
+      <ul class="files">
+        <li><span class="fname">services/authService.ts</span><span class="fdesc"><code>register</code> (email unique check + bcrypt hash + JWT sign), <code>login</code> (password verify + JWT sign), <code>me</code> (user by id). Hataları <code>HttpError</code> ile fırlatır.</span></li>
+        <li><span class="fname">services/resumeService.ts</span><span class="fdesc">Prisma CRUD + ownership check. <code>getById</code> owner değilse 403 atar. Diğer method'lar <code>getById</code>'yi çağırarak yetki kontrolü yapar.</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">routes/ — Express router'ları</h4>
+      <ul class="files">
+        <li><span class="fname">routes/auth.ts</span><span class="fdesc">POST <code>/register</code> + <code>/login</code> (validateBody), GET <code>/me</code> (requireAuth).</span></li>
+        <li><span class="fname">routes/health.ts</span><span class="fdesc">GET <code>/health</code> → <code>{status: "ok", timestamp}</code>. Deployment monitoring için.</span></li>
+        <li><span class="fname">routes/resumes.ts</span><span class="fdesc">Tüm route'lar <code>requireAuth</code> altında. <code>GET /</code>, <code>POST /</code>, <code>GET/PUT/DELETE /:id</code>, <code>POST /:id/photo</code> (multer).</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">middleware/ — Express middleware'leri</h4>
+      <ul class="files">
+        <li><span class="fname">middleware/error.ts</span><span class="fdesc"><code>HttpError</code> class'ı + <code>notFoundHandler</code> + <code>errorHandler</code>. ZodError'ları 400 ValidationError'a, Multer hatalarını UploadError'a, Prisma P2002'yi 409'a, P2025'i 404'e çevirir. Diğerleri 500.</span></li>
+        <li><span class="fname">middleware/requireAuth.ts</span><span class="fdesc"><code>Authorization: Bearer &lt;jwt&gt;</code> header'ını doğrular, <code>req.userId</code> set eder. Geçersizse 401. Global Express type augmentation burada.</span></li>
+        <li><span class="fname">middleware/upload.ts</span><span class="fdesc">Multer disk storage — <code>uploads/</code> klasörü, <code>{timestamp}-{randomhex}.{ext}</code> dosya adı, JPG/PNG/WebP filter, 2MB limit.</span></li>
+        <li><span class="fname">middleware/validate.ts</span><span class="fdesc"><code>validateBody(schema)</code> factory — gelen body'yi Zod schema ile parse eder, başarılıysa <code>req.body</code>'ye yazar, hatalıysa ZodError fırlatır (<code>errorHandler</code> yakalar).</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">schemas/ — body validation şemaları</h4>
+      <ul class="files">
+        <li><span class="fname">schemas/auth.ts</span><span class="fdesc"><code>registerSchema</code> (email + password min 8) ve <code>loginSchema</code>. Email <code>toLowerCase + trim</code>.</span></li>
+        <li><span class="fname">schemas/resume.ts</span><span class="fdesc"><code>resumeCreateSchema</code> + <code>resumeUpdateSchema</code>. İçerik <code>z.record(z.unknown())</code> — şu anda gevşek (TODO: strict).</span></li>
+      </ul>
+
+      <h4 style="color:var(--muted);font-size:0.85rem;margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.08em;">lib/ — backend helper'ları</h4>
+      <ul class="files">
+        <li><span class="fname">lib/auth.ts</span><span class="fdesc"><code>hashPassword</code> (bcrypt 10 rounds), <code>verifyPassword</code>, <code>signJwt</code> (1 gün expiry), <code>verifyJwt</code> (payload type guard).</span></li>
+        <li><span class="fname">lib/prisma.ts</span><span class="fdesc">Prisma Client singleton. Dev'de <code>globalThis.__prisma</code> cache'i (HMR'de connection pool yeniden açılmasın). <code>@prisma/adapter-pg</code> ile pg driver'ı kullanır.</span></li>
+      </ul>
+
+    </div>
+  </details>
+
+  <!-- server test -->
+  <details class="dir" id="server-test">
+    <summary>server/test/ <span class="count">(5 dosya, 30 test)</span> <span class="desc">backend integration testleri</span></summary>
+    <div class="body">
+      <ul class="files">
+        <li><span class="fname test">setup.ts <span class="badge">test</span></span><span class="fdesc"><code>.env.test</code> yükler, <code>prisma migrate deploy</code> çalıştırır, her testten sonra DB'yi temizler (cascade ile User → Resume).</span></li>
+        <li><span class="fname test">helpers.ts <span class="badge">test</span></span><span class="fdesc"><code>registerUser</code> (test user oluşturur + token döner), <code>authHeader</code> (<code>Authorization: Bearer</code> header'ı).</span></li>
+        <li><span class="fname test">auth.test.ts <span class="badge">test</span></span><span class="fdesc">12 test — register/login başarı, duplicate email, yanlış şifre, me endpoint, invalid token.</span></li>
+        <li><span class="fname test">resumes.test.ts <span class="badge">test</span></span><span class="fdesc">14 test — auth guard (401/403/404), CRUD senaryoları, başka kullanıcının CV'sine erişim engelleme.</span></li>
+        <li><span class="fname test">upload.test.ts <span class="badge">test</span></span><span class="fdesc">4 test — valid upload, mime type rejection, size limit, photo URL update.</span></li>
+      </ul>
+    </div>
+  </details>
+
+</section>
+
+<footer class="site">
+  <p>Bu rehber <strong>Cv-İn</strong> projesinin 2026-04-22 tarihindeki durumunu yansıtır. Kod değiştikçe güncellenmesi gerekir.</p>
+  <p style="margin-top:8px;">Oluşturma: Claude Code · Dosya sayısı 170 (node_modules / dist / generated Prisma / uploads hariç)</p>
+</footer>
+
+</main>
+
+</div>
+</body>
+</html>

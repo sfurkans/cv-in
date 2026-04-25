@@ -3,6 +3,8 @@ import { useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { importEuropassJson } from '@/lib/europass/fromEuropass'
+import { downloadEuropassJson } from '@/lib/europass/toEuropass'
 import { exportResumeAsJson, importResumeFromJson } from '@/lib/jsonIO'
 import { useResumeStore } from '@/store/resumeStore'
 
@@ -15,11 +17,54 @@ export default function JsonImportExport() {
   const resume = useResumeStore((state) => state.resume)
   const loadResume = useResumeStore((state) => state.loadResume)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const europassFileRef = useRef<HTMLInputElement>(null)
   const [status, setStatus] = useState<Status>({ kind: 'idle' })
 
   const handleExport = () => {
     exportResumeAsJson(resume)
     setStatus({ kind: 'success', message: 'JSON dosyası indirildi.' })
+  }
+
+  const handleEuropassExport = () => {
+    downloadEuropassJson(resume)
+    setStatus({ kind: 'success', message: 'Europass JSON dosyası indirildi.' })
+  }
+
+  const handleEuropassImportClick = () => {
+    europassFileRef.current?.click()
+  }
+
+  const handleEuropassFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    try {
+      const text = await file.text()
+      const result = importEuropassJson(text)
+
+      if (result.ok) {
+        const confirmed = window.confirm(
+          'Mevcut CV tamamen üzerine yazılacak. Devam edilsin mi?',
+        )
+        if (!confirmed) {
+          setStatus({ kind: 'idle' })
+          return
+        }
+        loadResume(result.resume)
+        setStatus({
+          kind: 'success',
+          message: `"${file.name}" Europass formatından yüklendi.`,
+        })
+      } else {
+        setStatus({ kind: 'error', message: result.error })
+      }
+    } catch {
+      setStatus({ kind: 'error', message: 'Dosya okunamadı.' })
+    } finally {
+      if (europassFileRef.current) europassFileRef.current.value = ''
+    }
   }
 
   const handleImportClick = () => {
@@ -92,6 +137,37 @@ export default function JsonImportExport() {
             type="file"
             accept="application/json,.json"
             onChange={handleFileChange}
+            className="hidden"
+            aria-hidden="true"
+          />
+        </div>
+
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="flex-1 gap-2"
+            onClick={handleEuropassExport}
+          >
+            <Download className="h-4 w-4" />
+            Europass İndir
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="flex-1 gap-2"
+            onClick={handleEuropassImportClick}
+          >
+            <Upload className="h-4 w-4" />
+            Europass Yükle
+          </Button>
+          <input
+            ref={europassFileRef}
+            type="file"
+            accept="application/json,.json"
+            onChange={handleEuropassFileChange}
             className="hidden"
             aria-hidden="true"
           />

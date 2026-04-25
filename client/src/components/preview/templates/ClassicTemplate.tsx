@@ -105,7 +105,7 @@ export default function ClassicTemplate({ resume }: ClassicTemplateProps) {
 
   return (
     <div
-      className={`h-[297mm] w-[210mm] overflow-hidden bg-white ${wrapperPadding} ${fontClass} text-[17px] leading-snug text-gray-900 shadow-sm`}
+      className={`min-h-[297mm] w-[210mm] bg-white ${wrapperPadding} ${fontClass} text-[17px] leading-snug text-gray-900 shadow-sm`}
       style={
         {
           '--primary-color': theme.primaryColor,
